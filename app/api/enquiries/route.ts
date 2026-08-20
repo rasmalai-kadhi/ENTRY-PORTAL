@@ -7,7 +7,6 @@ import {
   verifySupabaseConnection,
 } from "@/lib/supabase/admin";
 import type { Enquiry } from "@/types/enquiry";
-import { headers } from "next/headers";
 import { getClientIp } from "@/lib/request/client-ip";
 
 export const runtime = "nodejs";
@@ -24,7 +23,7 @@ function jsonError(message: string, status = 500) {
 
 export async function POST(request: Request) {
   try {
-    const clientIp = getClientIp(await headers());
+    const clientIp = getClientIp(request.headers);
     if (!await verifySupabaseConnection()) {
       return jsonError("Database connection unavailable.", 503);
     }
@@ -105,6 +104,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       message: "Form submitted successfully.",
+      clientIp,
     });
   } catch (error) {
     console.error("ENQUIRY SUBMISSION ERROR:", error);

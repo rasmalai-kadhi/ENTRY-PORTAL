@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
@@ -58,6 +59,7 @@ const fields: FieldConfig[] = [
 ];
 
 export function EnquiryForm() {
+  const [clientIp, setClientIp] = useState("Detecting...");
   const {
     register,
     handleSubmit,
@@ -70,6 +72,23 @@ export function EnquiryForm() {
       gender: undefined,
     },
   });
+
+  useEffect(() => {
+    let active = true;
+
+    fetch("/api/client-ip", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((result: { ip?: string }) => {
+        if (active) setClientIp(result.ip || "Unavailable");
+      })
+      .catch(() => {
+        if (active) setClientIp("Unavailable");
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const mobileRegister = (name: "mobile1" | "mobile2") => {
     const registration = register(name);
@@ -105,6 +124,7 @@ export function EnquiryForm() {
         ok?: boolean;
         error?: string;
         message?: string;
+        clientIp?: string;
       } = {};
 
       try {
@@ -128,6 +148,9 @@ export function EnquiryForm() {
       // -------------------------------------------------------
       // Success
       // -------------------------------------------------------
+      if (json.clientIp) {
+        sessionStorage.setItem("eduspray-submitted-ip", json.clientIp);
+      }
       window.location.href = "/enquiry/success";
     } catch (error) {
       console.error("SUBMISSION ERROR:", error);
@@ -156,8 +179,8 @@ export function EnquiryForm() {
             {name === "gender" ? (
               <select id="gender" aria-invalid={errors[name] ? "true" : "false"} defaultValue="" {...register(name)}>
                 <option value="" disabled>{placeholder}</option>
-                <option value="M">Male</option>
-                <option value="F">Female</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
                 <option value="Other">Other</option>
               </select>
             ) : name === "address" ? (
@@ -186,6 +209,9 @@ export function EnquiryForm() {
           ? "Submitting..."
           : "Submit Enquiry"}
       </button>
+      <p className="form-connection-status" aria-live="polite">
+        Connection detected: <strong>{clientIp}</strong>
+      </p>
     </form>
   );
 }

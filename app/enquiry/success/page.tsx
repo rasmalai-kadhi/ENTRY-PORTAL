@@ -1,3 +1,11 @@
+"use client";
 export default function SuccessPage() {
-  return <main className="container" style={{ padding: '48px 0' }}><p>Form submitted successfully.</p></main>;
+  return (
+    <main className="success-page">
+      <section className="success-panel" aria-labelledby="success-title">
+        <div className="success-mark" aria-hidden="true"><span>✓</span></div>
+        <h1 id="success-title">Form submitted successfully.</h1>
+      </section>
+    </main>
+  );
 }

@@ -17,7 +17,7 @@ export async function GET(request: Request) {
   const from = (page - 1) * pageSize;
 
   let query = context.supabase.from('enquiries').select('*', { count: 'exact' });
-  if (search) query = query.or(`enquiry_number.ilike.%${search}%,name.ilike.%${search}%,mobile1.ilike.%${search}%`);
+  if (search) query = query.or(`enquiry_number.ilike.%${search}%,name.ilike.%${search}%,mobile1.ilike.%${search}%,email.ilike.%${search}%,course.ilike.%${search}%`);
   if (status) query = query.eq('status', status);
 
   const { data, count, error } = await query.order(sort, { ascending }).range(from, from + pageSize - 1);

@@ -1,12 +1,17 @@
-import { getClientIp } from '@/lib/request/client-ip';
-import type { RequestHeaders } from '@/lib/request/client-ip';
+'use client';
 
-export function SiteHeader({ requestHeaders }: { requestHeaders: RequestHeaders }) {
+import { AdminHeader } from '@/components/admin/AdminHeader';
+import { usePathname } from 'next/navigation';
+
+export function SiteHeader({ clientIp }: { clientIp: string }) {
+  const pathname = usePathname();
+  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) return <AdminHeader />;
+
   return (
     <header className="site-header">
       <div className="container site-header-inner">
-        <a className="site-brand" href="/enquiry">Eduspray Enquiry Form</a>
-        <span className="client-ip" title="Your network address">IP: {getClientIp(requestHeaders)}</span>
+        <a className="brand-lockup" href="/enquiry"><span className="brand-mark">E</span><span><strong>eduspray</strong><small>Enquiry portal</small></span></a>
+        <span className="client-ip" title="Your network address">IP: {clientIp}</span>
       </div>
     </header>
   );

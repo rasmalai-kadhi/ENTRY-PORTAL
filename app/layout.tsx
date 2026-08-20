@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { SiteHeader } from '@/components/site/SiteHeader';
+import { getClientIp } from '@/lib/request/client-ip';
 
 export const metadata: Metadata = {
   title: 'Eduspray Enquiry System',
@@ -9,5 +10,6 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><SiteHeader requestHeaders={await headers()} />{children}</body></html>;
+  const requestHeaders = await headers();
+  return <html lang="en"><body><SiteHeader clientIp={getClientIp(requestHeaders)} />{children}</body></html>;
 }
