@@ -3,6 +3,7 @@
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { Button } from '@/components/ui/Button';
 
 export function LoginForm() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export function LoginForm() {
     const form = new FormData(event.currentTarget);
     const { error: signInError } = await createClient().auth.signInWithPassword({ email: String(form.get('email')), password: String(form.get('password')) });
     if (signInError) setError('Invalid email or password.');
-    else router.push('/admin');
+    else router.push(new URLSearchParams(window.location.search).get('next') || '/admin');
     setIsSubmitting(false);
   }
 
@@ -25,6 +26,6 @@ export function LoginForm() {
     <div className="field"><label htmlFor="email">Email</label><input id="email" name="email" type="email" required /></div>
     <div className="field"><label htmlFor="password">Password</label><input id="password" name="password" type="password" required /></div>
     {error && <p className="error">{error}</p>}
-    <button className="btn-primary" disabled={isSubmitting}>{isSubmitting ? 'Signing in...' : 'Sign in'}</button>
+    <Button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Signing in...' : 'Sign in'}</Button>
   </form>;
 }

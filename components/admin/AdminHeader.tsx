@@ -28,11 +28,10 @@ export function AdminHeader() {
       <nav className="admin-nav" aria-label="Admin navigation">
         <Link className={pathname === '/admin' ? 'active' : ''} href="/admin">Dashboard</Link>
         <Link className={pathname === '/admin/enquiries' ? 'active' : ''} href="/admin/enquiries">Enquiries</Link>
-        <Link className={pathname === '/admin/search' ? 'active' : ''} href="/admin/search">Search</Link>
       </nav>
       <div className="profile-wrap">
-        <button className="profile-button" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span className="avatar">{email ? email[0].toUpperCase() : 'A'}</span><span className="profile-label">Profile</span><span aria-hidden="true">⌄</span></button>
-        {menuOpen && <div className="profile-menu"><span>{email || 'Authenticated admin'}</span><button onClick={signOut}>Log out</button></div>}
+        <button className="profile-button" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span className="avatar">{email ? email[0].toUpperCase() : 'A'}</span><span className="profile-label">Profile</span></button>
+        {menuOpen && <div className="profile-menu"><span>{email || 'Authenticated admin'}</span><Link className="profile-menu-link" href="/admin/settings" onClick={() => setMenuOpen(false)}>PDF field mapping</Link><button onClick={signOut}>Log out</button></div>}
       </div>
     </div>
   </header>;

@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import type { EnquiryInput } from "@/schemas/enquiry.schema";
 import { enquirySchema } from "@/schemas/enquiry.schema";
+import { Button } from "@/components/ui/Button";
 
 type FieldConfig = {
   name: keyof EnquiryInput;
@@ -179,8 +180,8 @@ export function EnquiryForm() {
             {name === "gender" ? (
               <select id="gender" aria-invalid={errors[name] ? "true" : "false"} defaultValue="" {...register(name)}>
                 <option value="" disabled>{placeholder}</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
                 <option value="Other">Other</option>
               </select>
             ) : name === "address" ? (
@@ -200,15 +201,15 @@ export function EnquiryForm() {
         ))}
       </div>
 
-      <button
-        className="btn-primary"
+      <Button
+        className="form-submit"
         type="submit"
         disabled={isSubmitting}
       >
         {isSubmitting
           ? "Submitting..."
           : "Submit Enquiry"}
-      </button>
+      </Button>
       <p className="form-connection-status" aria-live="polite">
         Connection detected: <strong>{clientIp}</strong>
       </p>

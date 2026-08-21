@@ -1,1 +1,8 @@
-export default function SettingsPage() { return <main className="container" style={{ padding: '48px 0' }}><div className="card"><h1>Settings</h1><p>System settings placeholder.</p></div></main>; }
+import { PdfMappingEditor } from '@/components/admin/PdfMappingEditor';
+import { getAdminContext } from '@/lib/auth/admin';
+import { redirect } from 'next/navigation';
+
+export default async function SettingsPage() {
+  if (!await getAdminContext()) redirect('/admin/login');
+  return <PdfMappingEditor />;
+}

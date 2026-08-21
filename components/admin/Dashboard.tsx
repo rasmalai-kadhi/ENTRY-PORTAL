@@ -36,22 +36,18 @@ export function Dashboard() {
           <h1>Good morning, admin.</h1>
           <p className="admin-subtitle">Keep track of new student enquiries and follow up with every prospective learner.</p>
         </div>
-        <div className="admin-actions"><Link className="btn-primary" href="/admin/enquiries">View all enquiries <span aria-hidden="true">→</span></Link></div>
       </header>
 
       {loadError ? <div className="admin-alert" role="alert">We could not load the dashboard right now. Please refresh and try again.</div> : null}
 
       <section className="stat-grid" aria-label="Enquiry overview">
         <div className="admin-stat admin-stat-total">
-          <div className="stat-icon" aria-hidden="true">01</div>
           <div><span>Total submissions</span><strong>{stats?.total ?? '...'}</strong><small>All submissions received</small></div>
         </div>
         <div className="admin-stat admin-stat-today">
-          <div className="stat-icon" aria-hidden="true">02</div>
           <div><span>Submissions today</span><strong>{stats?.today ?? '...'}</strong><small>New submissions today</small></div>
         </div>
         <div className="admin-stat admin-stat-rate">
-          <div className="stat-icon" aria-hidden="true">03</div>
           <div><span>Past hour</span><strong>{stats?.pastHour ?? '...'}</strong><small>Submissions in the last 60 minutes</small></div>
         </div>
       </section>

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { enquirySchema } from "@/schemas/enquiry.schema";
-import { stampEnquiryPdf } from "@/lib/pdf/stamp";
+import { generateEnquiryPdf } from "@/lib/pdf/generate";
 import { generateEnquiryNumber } from "@/lib/enquiry/numbering";
 import {
   createAdminClient,
@@ -42,7 +42,10 @@ export async function POST(request: Request) {
     // ---------------------------------------------------------
     // 2. Validate
     // ---------------------------------------------------------
-    const parsed = enquirySchema.safeParse(body);
+    const normalizedBody = body && typeof body === 'object'
+      ? { ...(body as Record<string, unknown>), gender: ({ Male: 'M', Female: 'F' } as Record<string, string>)[String((body as Record<string, unknown>).gender)] ?? (body as Record<string, unknown>).gender }
+      : body;
+    const parsed = enquirySchema.safeParse(normalizedBody);
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -70,7 +73,7 @@ export async function POST(request: Request) {
     // ---------------------------------------------------------
     // 5. Stamp submitted data onto original PDF
     // ---------------------------------------------------------
-    const pdfBytes = await stampEnquiryPdf(enquiry);
+    const pdfBytes = await generateEnquiryPdf(enquiry);
 
     const pdfStoragePath = `${enquiryNumber}/${enquiryNumber}.pdf`;
     const supabase = createAdminClient();
