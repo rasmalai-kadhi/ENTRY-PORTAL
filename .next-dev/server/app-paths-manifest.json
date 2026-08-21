@@ -1,0 +1,11 @@
+{
+  "/admin/pdf-mapping/test/page": "app/admin/pdf-mapping/test/page.js",
+  "/api/admin/pdf-mapping/preview/route": "app/api/admin/pdf-mapping/preview/route.js",
+  "/api/admin/pdf-mappings/route": "app/api/admin/pdf-mappings/route.js",
+  "/api/admin/pdf-template/route": "app/api/admin/pdf-template/route.js",
+  "/api/admin/session/route": "app/api/admin/session/route.js",
+  "/api/client-ip/route": "app/api/client-ip/route.js",
+  "/api/enquiries/route": "app/api/enquiries/route.js",
+  "/enquiry/success/page": "app/enquiry/success/page.js",
+  "/page": "app/page.js"
+}

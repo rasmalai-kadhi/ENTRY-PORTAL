@@ -42,7 +42,10 @@ export async function POST(request: Request) {
     // ---------------------------------------------------------
     // 2. Validate
     // ---------------------------------------------------------
-    const parsed = enquirySchema.safeParse(body);
+    const normalizedBody = body && typeof body === 'object'
+      ? { ...(body as Record<string, unknown>), gender: ({ Male: 'M', Female: 'F' } as Record<string, string>)[String((body as Record<string, unknown>).gender)] ?? (body as Record<string, unknown>).gender }
+      : body;
+    const parsed = enquirySchema.safeParse(normalizedBody);
 
     if (!parsed.success) {
       return NextResponse.json(

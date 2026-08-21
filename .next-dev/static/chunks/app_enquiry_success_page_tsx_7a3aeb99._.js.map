@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///D:/eduspray-enquiry-system/app/enquiry/success/page.tsx"],"sourcesContent":["\"use client\";\nexport default function SuccessPage() {\n  return (\n    <main className=\"success-page\">\n      <section className=\"success-panel\" aria-labelledby=\"success-title\">\n        <div className=\"success-mark\" aria-hidden=\"true\"><span>✓</span></div>\n        <h1 id=\"success-title\">Form submitted successfully.</h1>\n      </section>\n    </main>\n  );\n}\n"],"names":[],"mappings":";;;;;AAAA;;AACe,SAAS;IACtB,qBACE,6LAAC;QAAK,WAAU;kBACd,cAAA,6LAAC;YAAQ,WAAU;YAAgB,mBAAgB;;8BACjD,6LAAC;oBAAI,WAAU;oBAAe,eAAY;8BAAO,cAAA,6LAAC;kCAAK;;;;;;;;;;;8BACvD,6LAAC;oBAAG,IAAG;8BAAgB;;;;;;;;;;;;;;;;;AAI/B;KATwB","debugId":null}}]
+}

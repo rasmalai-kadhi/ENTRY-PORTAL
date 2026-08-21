@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
+    {"offset": {"line": 55, "column": 0}, "map": {"version":3,"sources":["file:///D:/eduspray-enquiry-system/lib/request/client-ip.ts"],"sourcesContent":["export type RequestHeaders = Pick<globalThis.Headers, 'get'>;\r\n\r\nexport function getClientIp(headers: RequestHeaders): string {\r\n  const forwarded = headers.get('x-forwarded-for');\r\n  const ip = headers.get('cf-connecting-ip')\r\n    ?? headers.get('x-real-ip')\r\n    ?? forwarded?.split(',')[0]?.trim();\r\n\r\n  return ip || 'Unavailable';\r\n}\r\n"],"names":[],"mappings":";;;;AAEO,SAAS,YAAY,OAAuB;IACjD,MAAM,YAAY,QAAQ,GAAG,CAAC;IAC9B,MAAM,KAAK,QAAQ,GAAG,CAAC,uBAClB,QAAQ,GAAG,CAAC,gBACZ,WAAW,MAAM,IAAI,CAAC,EAAE,EAAE;IAE/B,OAAO,MAAM;AACf","debugId":null}},
+    {"offset": {"line": 68, "column": 0}, "map": {"version":3,"sources":["file:///D:/eduspray-enquiry-system/app/api/client-ip/route.ts"],"sourcesContent":["import { headers } from 'next/headers';\r\nimport { NextResponse } from 'next/server';\r\nimport { getClientIp } from '@/lib/request/client-ip';\r\n\r\nexport async function GET() {\r\n  return NextResponse.json({ ip: getClientIp(await headers()) }, { headers: { 'Cache-Control': 'no-store' } });\r\n}\r\n"],"names":[],"mappings":";;;;AAAA;AACA;AACA;;;;AAEO,eAAe;IACpB,OAAO,gJAAY,CAAC,IAAI,CAAC;QAAE,IAAI,IAAA,+IAAW,EAAC,MAAM,IAAA,4IAAO;IAAI,GAAG;QAAE,SAAS;YAAE,iBAAiB;QAAW;IAAE;AAC5G","debugId":null}}]
+}
