@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { manualPdfMappings } from '@/config/pdf-field-coordinates';
 import { PdfPreview } from '@/components/admin/PdfPreview';
 import type { Enquiry } from '@/types/enquiry';
 import type { PdfAlignment, PdfFieldMapping } from '@/types/pdf-mapping';
@@ -27,7 +26,7 @@ const sample: Enquiry = {
 function withId(mapping: PdfFieldMapping, index: number): PdfFieldMapping { return { ...mapping, id: mapping.id ?? `${mapping.field_key}-${index}` }; }
 function cloneMappings(mappings: PdfFieldMapping[]) { return mappings.map(mapping => ({ ...mapping })); }
 
-export function PdfMappingTestEditor() {
+export function PdfMappingTestEditor({ initialMappings }: { initialMappings: PdfFieldMapping[] }) {
   const stageRef = useRef<HTMLDivElement>(null);
   const interaction = useRef<Interaction | null>(null);
   const renderTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -49,19 +48,18 @@ export function PdfMappingTestEditor() {
   useEffect(() => {
     let active = true;
     async function load() {
-      const [pdfjs, mappingResponse, templateResponse] = await Promise.all([
+      const [pdfjs, templateResponse] = await Promise.all([
         import('pdfjs-dist/legacy/build/pdf.mjs'),
-        fetch('/api/admin/pdf-mappings', { cache: 'no-store' }),
         fetch('/api/admin/pdf-template', { cache: 'no-store' }),
       ]);
-      if (!mappingResponse.ok || !templateResponse.ok) throw new Error('Unable to load the PDF mapping test.');
-      const result = await mappingResponse.json() as { data?: PdfFieldMapping[] };
+      if (!templateResponse.ok) throw new Error('Unable to load the PDF mapping test.');
       const bytes = await templateResponse.arrayBuffer();
       pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
       const document = await pdfjs.getDocument({ data: bytes }).promise;
       const page = await document.getPage(1);
       const viewport = page.getViewport({ scale: 1 });
-      const nextMappings = (result.data?.length ? result.data : manualPdfMappings).map(withId);
+      const nextMappings = initialMappings.map(withId);
+      if (!nextMappings.length) throw new Error('No saved PDF mappings found. Run the PDF mapping setup before opening this test page.');
       if (!active) return;
       setPdf({ document, width: viewport.width, height: viewport.height, pageCount: document.numPages });
       setFitScale(Math.min(1, Math.max(.35, ((stageRef.current?.clientWidth ?? 900) - 36) / viewport.width)));
@@ -101,9 +99,9 @@ export function PdfMappingTestEditor() {
   }
   function undo() { const previous = history.at(-1); if (!previous) return; setFuture(next => [cloneMappings(mappings), ...next]); setMappings(cloneMappings(previous)); setHistory(history.slice(0, -1)); }
   function redo() { const next = future[0]; if (!next) return; setHistory(previous => [...previous, cloneMappings(mappings)]); setMappings(cloneMappings(next)); setFuture(future.slice(1)); }
-  async function save() { const response = await fetch('/api/admin/pdf-mappings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mappings }) }); if (response.ok) { setSavedMappings(cloneMappings(mappings)); setNotice('Mappings saved to Supabase.'); } else setNotice('Could not save mappings.'); }
+  async function save() { const response = await fetch('/api/admin/pdf-mappings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mappings }) }); if (!response.ok) { setNotice('Could not save mappings.'); return; } const refreshedResponse = await fetch('/api/admin/pdf-mappings', { cache: 'no-store' }); const refreshed = await refreshedResponse.json() as { data?: PdfFieldMapping[] }; const nextMappings = (refreshed.data ?? []).map(withId); setMappings(cloneMappings(nextMappings)); setSavedMappings(cloneMappings(nextMappings)); setNotice('Mappings saved to Supabase and preview refreshed.'); }
   function resetSaved() { snapshot(); setMappings(cloneMappings(savedMappings)); setSelectedId(null); }
-  function resetDefaults() { snapshot(); setMappings(manualPdfMappings.map(withId)); setSelectedId(null); }
+  function resetDefaults() { snapshot(); setMappings(cloneMappings(savedMappings)); setSelectedId(null); setNotice('Reset to the current saved Supabase mappings.'); }
   async function changePage(next: number) { if (!pdf || next < 1 || next > pdf.pageCount) return; const page = await pdf.document.getPage(next); const viewport = page.getViewport({ scale: 1 }); setPdf({ ...pdf, width: viewport.width, height: viewport.height }); setPageNumber(next); setSelectedId(null); }
   function changeNumber(key: keyof PdfFieldMapping, value: string) { if (!current) return; const number = Number(value); if (Number.isFinite(number)) updateMapping(current.id!, { [key]: number }); }
 

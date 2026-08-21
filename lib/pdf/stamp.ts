@@ -3,9 +3,9 @@ import path from 'node:path';
 import { PDFDocument, StandardFonts, degrees, rgb } from 'pdf-lib';
 import type { Enquiry } from '@/types/enquiry';
 import type { PdfFieldMapping } from '@/types/pdf-mapping';
-import { createAdminClient } from '@/lib/supabase/admin';
 
 const TEMPLATE = path.join(process.cwd(), 'private', 'templates', 'entry-form.pdf');
+const NON_PDF_KEYS = new Set(['id', 'pdfStoragePath', 'status', 'createdAt', 'updatedAt']);
 
 function valueFor(enquiry: Enquiry, key: string) {
   if (key === 'enquiryNumber') return enquiry.enquiryNumber;
@@ -33,15 +33,15 @@ function wrapText(value: string, font: Awaited<ReturnType<PDFDocument['embedFont
   return lines;
 }
 
-export async function stampEnquiryPdf(enquiry: Enquiry): Promise<Uint8Array> {
-  const [input, mappingResult] = await Promise.all([fs.readFile(TEMPLATE), createAdminClient().from('pdf_field_mappings').select('*').eq('template_id', 'entry-form').order('page_number')]);
-  if (mappingResult.error) throw mappingResult.error;
-  const mappings = (mappingResult.data ?? []) as PdfFieldMapping[];
-  return stampPdf(input, enquiry, mappings);
-}
-
-export async function stampPdf(input: Uint8Array, enquiry: Enquiry, mappings: PdfFieldMapping[]): Promise<Uint8Array> {
+export async function stampPdf(enquiry: Enquiry, mappings: PdfFieldMapping[]): Promise<Uint8Array> {
+  if (!mappings.length) throw new Error('Cannot generate PDF: no saved field mappings were supplied.');
+  const input = await fs.readFile(TEMPLATE);
   const pdf = await PDFDocument.load(input);
+  const mappedKeys = new Set(mappings.map(mapping => mapping.field_key));
+  for (const [key, value] of Object.entries(enquiry)) {
+    if (value && !mappedKeys.has(key) && !NON_PDF_KEYS.has(key)) throw new Error(`No mapping found for field: ${key}`);
+  }
+  console.info('MAPPING_SOURCE = SUPABASE');
   const fonts = new Map<string, Awaited<ReturnType<PDFDocument['embedFont']>>>();
   async function getFont(family: string) {
     const name = family in StandardFonts ? family : family === 'Times-Roman' ? StandardFonts.TimesRoman : family === 'Courier' ? StandardFonts.Courier : StandardFonts.Helvetica;
@@ -51,12 +51,16 @@ export async function stampPdf(input: Uint8Array, enquiry: Enquiry, mappings: Pd
 
   for (const mapping of mappings) {
     const page = pdf.getPages()[mapping.page_number - 1];
-    if (!page) continue;
+    if (!page) {
+      console.warn(`PDF mapping skipped: page ${mapping.page_number} does not exist for field "${mapping.field_key}".`);
+      continue;
+    }
     const raw = valueFor(enquiry, mapping.field_key);
     if (!raw) continue;
     const mediaBox = page.getMediaBox();
     const x = mapping.x + mediaBox.x;
     const y = mapping.y + mediaBox.y;
+    console.debug('PDF mapping', { fieldKey: mapping.field_key, page: mapping.page_number, x: mapping.x, y: mapping.y, width: mapping.width, height: mapping.height });
     const color = parseColor(mapping.color);
     if (mapping.field_key === 'signatureDataUrl' && raw.startsWith('data:image/')) {
       const [, meta, base64] = raw.match(/^data:(image\/(?:png|jpeg));base64,(.+)$/) ?? [];

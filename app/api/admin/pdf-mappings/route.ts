@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAdminContext } from '@/lib/auth/admin';
+import { getPdfFieldMappings } from '@/lib/pdf/get-mappings';
 import { PDF_TEMPLATE_ID } from '@/types/pdf-mapping';
 
 export const runtime = 'nodejs';
@@ -7,9 +8,11 @@ export const runtime = 'nodejs';
 export async function GET() {
   const context = await getAdminContext();
   if (!context) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const { data, error } = await context.supabase.from('pdf_field_mappings').select('*').eq('template_id', PDF_TEMPLATE_ID).order('page_number').order('field_label');
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ data: data ?? [] });
+  try {
+    return NextResponse.json({ data: await getPdfFieldMappings() });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unable to load mappings.' }, { status: 500 });
+  }
 }
 
 export async function PUT(request: Request) {

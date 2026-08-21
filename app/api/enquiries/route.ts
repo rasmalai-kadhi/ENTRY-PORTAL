@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { enquirySchema } from "@/schemas/enquiry.schema";
-import { stampEnquiryPdf } from "@/lib/pdf/stamp";
+import { generateEnquiryPdf } from "@/lib/pdf/generate";
 import { generateEnquiryNumber } from "@/lib/enquiry/numbering";
 import {
   createAdminClient,
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
     // ---------------------------------------------------------
     // 5. Stamp submitted data onto original PDF
     // ---------------------------------------------------------
-    const pdfBytes = await stampEnquiryPdf(enquiry);
+    const pdfBytes = await generateEnquiryPdf(enquiry);
 
     const pdfStoragePath = `${enquiryNumber}/${enquiryNumber}.pdf`;
     const supabase = createAdminClient();

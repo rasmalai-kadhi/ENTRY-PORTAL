@@ -161,24 +161,15 @@ async function getAdminContext() {
 "use strict";
 
 __turbopack_context__.s([
-    "stampEnquiryPdf",
-    ()=>stampEnquiryPdf,
     "stampPdf",
     ()=>stampPdf
 ]);
-var __TURBOPACK__imported__module__$5b$externals$5d2f$node$3a$fs$2f$promises__$5b$external$5d$__$28$node$3a$fs$2f$promises$2c$__cjs$29$__ = __turbopack_context__.i("[externals]/node:fs/promises [external] (node:fs/promises, cjs)");
-var __TURBOPACK__imported__module__$5b$externals$5d2f$node$3a$path__$5b$external$5d$__$28$node$3a$path$2c$__cjs$29$__ = __turbopack_context__.i("[externals]/node:path [external] (node:path, cjs)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$pdf$2d$lib$2f$es$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/pdf-lib/es/index.js [app-route] (ecmascript) <locals>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$pdf$2d$lib$2f$es$2f$api$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/pdf-lib/es/api/index.js [app-route] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$pdf$2d$lib$2f$es$2f$api$2f$StandardFonts$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/pdf-lib/es/api/StandardFonts.js [app-route] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$pdf$2d$lib$2f$es$2f$api$2f$rotations$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/pdf-lib/es/api/rotations.js [app-route] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$pdf$2d$lib$2f$es$2f$api$2f$colors$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/pdf-lib/es/api/colors.js [app-route] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/supabase/admin.ts [app-route] (ecmascript)");
 ;
-;
-;
-;
-const TEMPLATE = __TURBOPACK__imported__module__$5b$externals$5d2f$node$3a$path__$5b$external$5d$__$28$node$3a$path$2c$__cjs$29$__["default"].join(process.cwd(), 'private', 'templates', 'entry-form.pdf');
 function valueFor(enquiry, key) {
     if (key === 'enquiryNumber') return enquiry.enquiryNumber;
     if (key === 'date') return enquiry.date;
@@ -202,17 +193,21 @@ function wrapText(value, font, size, width) {
     if (line) lines.push(line);
     return lines;
 }
-async function stampEnquiryPdf(enquiry) {
-    const [input, mappingResult] = await Promise.all([
-        __TURBOPACK__imported__module__$5b$externals$5d2f$node$3a$fs$2f$promises__$5b$external$5d$__$28$node$3a$fs$2f$promises$2c$__cjs$29$__["default"].readFile(TEMPLATE),
-        (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])().from('pdf_field_mappings').select('*').eq('template_id', 'entry-form').order('page_number')
-    ]);
-    if (mappingResult.error) throw mappingResult.error;
-    const mappings = mappingResult.data ?? [];
-    return stampPdf(input, enquiry, mappings);
-}
 async function stampPdf(input, enquiry, mappings) {
+    if (!mappings.length) throw new Error('Cannot generate PDF: no saved field mappings were supplied.');
     const pdf = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$pdf$2d$lib$2f$es$2f$api$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["PDFDocument"].load(input);
+    const mappedKeys = new Set(mappings.map((mapping)=>mapping.field_key));
+    for (const [key, value] of Object.entries(enquiry)){
+        if (value && !mappedKeys.has(key) && ![
+            'id',
+            'pdfStoragePath',
+            'status',
+            'createdAt',
+            'updatedAt'
+        ].includes(key)) {
+            console.warn(`PDF field has no saved mapping and will not be stamped: "${key}".`);
+        }
+    }
     const fonts = new Map();
     async function getFont(family) {
         const name = family in __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$pdf$2d$lib$2f$es$2f$api$2f$StandardFonts$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["StandardFonts"] ? family : family === 'Times-Roman' ? __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$pdf$2d$lib$2f$es$2f$api$2f$StandardFonts$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["StandardFonts"].TimesRoman : family === 'Courier' ? __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$pdf$2d$lib$2f$es$2f$api$2f$StandardFonts$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["StandardFonts"].Courier : __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$pdf$2d$lib$2f$es$2f$api$2f$StandardFonts$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["StandardFonts"].Helvetica;
@@ -221,7 +216,10 @@ async function stampPdf(input, enquiry, mappings) {
     }
     for (const mapping of mappings){
         const page = pdf.getPages()[mapping.page_number - 1];
-        if (!page) continue;
+        if (!page) {
+            console.warn(`PDF mapping skipped: page ${mapping.page_number} does not exist for field "${mapping.field_key}".`);
+            continue;
+        }
         const raw = valueFor(enquiry, mapping.field_key);
         if (!raw) continue;
         const mediaBox = page.getMediaBox();
