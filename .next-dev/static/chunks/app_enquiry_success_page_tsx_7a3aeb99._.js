@@ -31,12 +31,20 @@ function SuccessPage() {
                     lineNumber: 6,
                     columnNumber: 9
                 }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                    id: "success-title",
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                    className: "success-kicker",
                     children: "Form submitted successfully."
                 }, void 0, false, {
                     fileName: "[project]/app/enquiry/success/page.tsx",
                     lineNumber: 7,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                    id: "success-title",
+                    children: "Your first step towards a bright future with Eduspray has been taken."
+                }, void 0, false, {
+                    fileName: "[project]/app/enquiry/success/page.tsx",
+                    lineNumber: 8,
                     columnNumber: 9
                 }, this)
             ]

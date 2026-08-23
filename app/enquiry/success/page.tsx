@@ -4,7 +4,8 @@ export default function SuccessPage() {
     <main className="success-page">
       <section className="success-panel" aria-labelledby="success-title">
         <div className="success-mark" aria-hidden="true"><span>✓</span></div>
-        <h1 id="success-title">Form submitted successfully.</h1>
+        <p className="success-kicker">Form submitted successfully.</p>
+        <h1 id="success-title">Your first step towards a bright future with Eduspray has been taken.</h1>
       </section>
     </main>
   );

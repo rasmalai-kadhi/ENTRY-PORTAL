@@ -266,7 +266,7 @@ const fields = [
     },
     {
         name: "category",
-        label: "What is your admission category?",
+        label: "What is your category?",
         description: "Use the category shown on your application documents.",
         placeholder: "e.g. General, OBC, SC, ST"
     },

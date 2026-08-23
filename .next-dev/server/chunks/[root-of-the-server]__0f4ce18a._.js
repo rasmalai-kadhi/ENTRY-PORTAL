@@ -59,8 +59,20 @@ __turbopack_context__.s([
 ]);
 function getClientIp(headers) {
     const forwarded = headers.get('x-forwarded-for');
-    const ip = headers.get('cf-connecting-ip') ?? headers.get('x-real-ip') ?? forwarded?.split(',')[0]?.trim();
-    return ip || 'Unavailable';
+    const candidates = [
+        ...forwarded?.split(',').map((value)=>value.trim()) ?? [],
+        headers.get('x-real-ip')?.trim(),
+        headers.get('cf-connecting-ip')?.trim(),
+        headers.get('true-client-ip')?.trim()
+    ].filter((value)=>Boolean(value));
+    const ip = candidates.find((value)=>/^(?:\d{1,3}\.){3}\d{1,3}$|^[0-9a-f:]+$/i.test(value)) ?? 'Unavailable';
+    const source = ip === 'Unavailable' ? 'none' : forwarded?.includes(ip) ? 'x-forwarded-for' : headers.get('x-real-ip')?.trim() === ip ? 'x-real-ip' : headers.get('cf-connecting-ip')?.trim() === ip ? 'cf-connecting-ip' : 'true-client-ip';
+    console.info('CLIENT_IP_DETECTED', {
+        ip,
+        source,
+        forwarded: forwarded ?? null
+    });
+    return ip;
 }
 }),
 "[project]/app/api/client-ip/route.ts [app-route] (ecmascript)", ((__turbopack_context__) => {

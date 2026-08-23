@@ -51,9 +51,14 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/rsc/react-jsx-dev-runtime.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$enquiry$2f$EnquiryForm$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/enquiry/EnquiryForm.tsx [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$headers$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/headers.js [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$request$2f$client$2d$ip$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/request/client-ip.ts [app-rsc] (ecmascript)");
 ;
 ;
-function EnquiryPage() {
+;
+;
+async function EnquiryPage() {
+    const clientIp = (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$request$2f$client$2d$ip$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getClientIp"])(await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$headers$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["headers"])());
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
         className: "container enquiry-page",
         children: [
@@ -61,18 +66,20 @@ function EnquiryPage() {
                 children: "Self Declaration Enquiry Form"
             }, void 0, false, {
                 fileName: "[project]/app/enquiry/page.tsx",
-                lineNumber: 4,
+                lineNumber: 7,
                 columnNumber: 51
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$enquiry$2f$EnquiryForm$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["EnquiryForm"], {}, void 0, false, {
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$enquiry$2f$EnquiryForm$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["EnquiryForm"], {
+                initialClientIp: clientIp
+            }, void 0, false, {
                 fileName: "[project]/app/enquiry/page.tsx",
-                lineNumber: 4,
+                lineNumber: 7,
                 columnNumber: 89
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/enquiry/page.tsx",
-        lineNumber: 4,
+        lineNumber: 7,
         columnNumber: 10
     }, this);
 }

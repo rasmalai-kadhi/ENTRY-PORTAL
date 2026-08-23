@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -24,10 +25,11 @@ export function AdminHeader() {
 
   return <header className="admin-topbar">
     <div className="admin-topbar-inner">
-      <Link className="brand-lockup admin-brand" href="/admin"><span className="brand-mark">E</span><span><strong>eduspray</strong><small>Admin portal</small></span></Link>
+      <Link className="brand-lockup admin-brand" href="/admin" aria-label="Eduspray dashboard"><Image src="/images/logo.jpeg" alt="Eduspray" width={200} height={64} className="brand-mark" /></Link>
       <nav className="admin-nav" aria-label="Admin navigation">
         <Link className={pathname === '/admin' ? 'active' : ''} href="/admin">Dashboard</Link>
         <Link className={pathname === '/admin/enquiries' ? 'active' : ''} href="/admin/enquiries">Enquiries</Link>
+        <Link className={pathname === '/admin/questions' ? 'active' : ''} href="/admin/questions">Questions</Link>
       </nav>
       <div className="profile-wrap">
         <button className="profile-button" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span className="avatar">{email ? email[0].toUpperCase() : 'A'}</span><span className="profile-label">Profile</span></button>

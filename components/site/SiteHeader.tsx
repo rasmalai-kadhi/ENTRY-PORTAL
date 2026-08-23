@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { usePathname } from 'next/navigation';
 
@@ -10,7 +11,7 @@ export function SiteHeader({ clientIp }: { clientIp: string }) {
   return (
     <header className="site-header">
       <div className="container site-header-inner">
-        <a className="brand-lockup" href="/enquiry"><span className="brand-mark">E</span><span><strong>eduspray</strong><small>Enquiry portal</small></span></a>
+        <a className="brand-lockup site-brand-logo" href="/enquiry" aria-label="Eduspray home"><Image src="/images/logo.jpeg" alt="Eduspray" width={200} height={64} className="brand-mark" /></a>
         <span className="client-ip" title="Your network address">IP: {clientIp}</span>
       </div>
     </header>
