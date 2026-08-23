@@ -20,6 +20,7 @@ function EnquiryList(param) {
     let { title = 'View all enquiries', searchOnly = false } = param;
     _s();
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
+    const searchParams = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSearchParams"])();
     const [rows, setRows] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const [search, setSearch] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
     const [status, setStatus] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
@@ -93,6 +94,15 @@ function EnquiryList(param) {
                     lineNumber: 13,
                     columnNumber: 67
                 }, this),
+                searchParams.get('deleted') === '1' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                    className: "admin-alert",
+                    role: "status",
+                    children: "Enquiry deleted successfully."
+                }, void 0, false, {
+                    fileName: "[project]/components/admin/EnquiryList.tsx",
+                    lineNumber: 13,
+                    columnNumber: 299
+                }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "filters",
                     children: [
@@ -107,7 +117,7 @@ function EnquiryList(param) {
                         }, void 0, false, {
                             fileName: "[project]/components/admin/EnquiryList.tsx",
                             lineNumber: 13,
-                            columnNumber: 284
+                            columnNumber: 399
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
                             "aria-label": "Filter by status",
@@ -123,7 +133,7 @@ function EnquiryList(param) {
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/EnquiryList.tsx",
                                     lineNumber: 13,
-                                    columnNumber: 645
+                                    columnNumber: 760
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                     value: "submitted",
@@ -131,19 +141,19 @@ function EnquiryList(param) {
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/EnquiryList.tsx",
                                     lineNumber: 13,
-                                    columnNumber: 683
+                                    columnNumber: 798
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/EnquiryList.tsx",
                             lineNumber: 13,
-                            columnNumber: 525
+                            columnNumber: 640
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/admin/EnquiryList.tsx",
                     lineNumber: 13,
-                    columnNumber: 259
+                    columnNumber: 374
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
                     className: "admin-content-card table-wrap",
@@ -157,46 +167,46 @@ function EnquiryList(param) {
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/EnquiryList.tsx",
                                             lineNumber: 13,
-                                            columnNumber: 811
+                                            columnNumber: 926
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                             children: "Name"
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/EnquiryList.tsx",
                                             lineNumber: 13,
-                                            columnNumber: 830
+                                            columnNumber: 945
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                             children: "Course"
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/EnquiryList.tsx",
                                             lineNumber: 13,
-                                            columnNumber: 843
+                                            columnNumber: 958
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                             children: "Submitted At"
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/EnquiryList.tsx",
                                             lineNumber: 13,
-                                            columnNumber: 858
+                                            columnNumber: 973
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                             children: "Action"
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/EnquiryList.tsx",
                                             lineNumber: 13,
-                                            columnNumber: 879
+                                            columnNumber: 994
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/admin/EnquiryList.tsx",
                                     lineNumber: 13,
-                                    columnNumber: 807
+                                    columnNumber: 922
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/admin/EnquiryList.tsx",
                                 lineNumber: 13,
-                                columnNumber: 800
+                                columnNumber: 915
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
                                 children: [
@@ -210,12 +220,12 @@ function EnquiryList(param) {
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/admin/EnquiryList.tsx",
                                                         lineNumber: 13,
-                                                        columnNumber: 952
+                                                        columnNumber: 1067
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/admin/EnquiryList.tsx",
                                                     lineNumber: 13,
-                                                    columnNumber: 948
+                                                    columnNumber: 1063
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                                     children: [
@@ -225,7 +235,7 @@ function EnquiryList(param) {
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/admin/EnquiryList.tsx",
                                                             lineNumber: 13,
-                                                            columnNumber: 1057
+                                                            columnNumber: 1172
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
                                                             className: "table-secondary",
@@ -233,27 +243,27 @@ function EnquiryList(param) {
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/admin/EnquiryList.tsx",
                                                             lineNumber: 13,
-                                                            columnNumber: 1111
+                                                            columnNumber: 1226
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/admin/EnquiryList.tsx",
                                                     lineNumber: 13,
-                                                    columnNumber: 1053
+                                                    columnNumber: 1168
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                                     children: row.course
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/admin/EnquiryList.tsx",
                                                     lineNumber: 13,
-                                                    columnNumber: 1170
+                                                    columnNumber: 1285
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                                     children: new Date(row.created_at).toLocaleString()
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/admin/EnquiryList.tsx",
                                                     lineNumber: 13,
-                                                    columnNumber: 1191
+                                                    columnNumber: 1306
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -263,18 +273,18 @@ function EnquiryList(param) {
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/admin/EnquiryList.tsx",
                                                         lineNumber: 13,
-                                                        columnNumber: 1247
+                                                        columnNumber: 1362
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/admin/EnquiryList.tsx",
                                                     lineNumber: 13,
-                                                    columnNumber: 1243
+                                                    columnNumber: 1358
                                                 }, this)
                                             ]
                                         }, row.id, true, {
                                             fileName: "[project]/components/admin/EnquiryList.tsx",
                                             lineNumber: 13,
-                                            columnNumber: 931
+                                            columnNumber: 1046
                                         }, this)),
                                     rows.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -284,29 +294,29 @@ function EnquiryList(param) {
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/EnquiryList.tsx",
                                             lineNumber: 13,
-                                            columnNumber: 1372
+                                            columnNumber: 1487
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/admin/EnquiryList.tsx",
                                         lineNumber: 13,
-                                        columnNumber: 1368
+                                        columnNumber: 1483
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/admin/EnquiryList.tsx",
                                 lineNumber: 13,
-                                columnNumber: 907
+                                columnNumber: 1022
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/admin/EnquiryList.tsx",
                         lineNumber: 13,
-                        columnNumber: 793
+                        columnNumber: 908
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/admin/EnquiryList.tsx",
                     lineNumber: 13,
-                    columnNumber: 742
+                    columnNumber: 857
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
                     className: "pagination",
@@ -319,7 +329,7 @@ function EnquiryList(param) {
                         }, void 0, false, {
                             fileName: "[project]/components/admin/EnquiryList.tsx",
                             lineNumber: 13,
-                            columnNumber: 1563
+                            columnNumber: 1678
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                             children: [
@@ -331,7 +341,7 @@ function EnquiryList(param) {
                         }, void 0, true, {
                             fileName: "[project]/components/admin/EnquiryList.tsx",
                             lineNumber: 13,
-                            columnNumber: 1670
+                            columnNumber: 1785
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                             className: "btn-secondary",
@@ -341,13 +351,13 @@ function EnquiryList(param) {
                         }, void 0, false, {
                             fileName: "[project]/components/admin/EnquiryList.tsx",
                             lineNumber: 13,
-                            columnNumber: 1709
+                            columnNumber: 1824
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/admin/EnquiryList.tsx",
                     lineNumber: 13,
-                    columnNumber: 1535
+                    columnNumber: 1650
                 }, this)
             ]
         }, void 0, true, {
@@ -361,9 +371,10 @@ function EnquiryList(param) {
         columnNumber: 10
     }, this);
 }
-_s(EnquiryList, "FWzyutQkQuP+qWw6hW/3/VYQ9og=", false, function() {
+_s(EnquiryList, "ysTraN/vdMcfJZLl+MYAuelFe5U=", false, function() {
     return [
-        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"],
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSearchParams"]
     ];
 });
 _c = EnquiryList;

@@ -37,6 +37,12 @@ export interface Enquiry {
   marks: string;
   reference: string;
   signatureDataUrl: string;
+  answers?: Record<string, string>;
+  termsAccepted?: boolean;
+  termsAcceptedAt?: string;
+  termsVersion?: string;
+  privacyVersion?: string;
+  clientIp?: string;
   pdfStoragePath?: string;
   status?: 'submitted' | 'error';
   createdAt?: unknown;

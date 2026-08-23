@@ -169,6 +169,9 @@ function EnquiryDetail(param) {
     _s();
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     const [data, setData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [deleteOpen, setDeleteOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [deleteText, setDeleteText] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
+    const [notice, setNotice] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "EnquiryDetail.useEffect": ()=>{
             fetch("/api/admin/enquiries/".concat(id)).then({
@@ -182,6 +185,25 @@ function EnquiryDetail(param) {
         id,
         router
     ]);
+    async function deleteEnquiry() {
+        if (deleteText !== 'DELETE') return;
+        const response = await fetch("/api/admin/enquiries/".concat(id), {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                confirmation: 'DELETE'
+            })
+        });
+        if (!response.ok) {
+            var _error;
+            setNotice((_error = (await response.json()).error) !== null && _error !== void 0 ? _error : 'Unable to delete enquiry.');
+            return;
+        }
+        setDeleteOpen(false);
+        router.replace('/admin/enquiries?deleted=1');
+    }
     if (!data) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
         className: "admin-shell",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -191,17 +213,17 @@ function EnquiryDetail(param) {
                 children: "Loading enquiry details..."
             }, void 0, false, {
                 fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                lineNumber: 23,
+                lineNumber: 24,
                 columnNumber: 78
             }, this)
         }, void 0, false, {
             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-            lineNumber: 23,
+            lineNumber: 24,
             columnNumber: 51
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/admin/EnquiryDetail.tsx",
-        lineNumber: 23,
+        lineNumber: 24,
         columnNumber: 21
     }, this);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -220,14 +242,14 @@ function EnquiryDetail(param) {
                                     children: "← All enquiries"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 24,
+                                    lineNumber: 25,
                                     columnNumber: 105
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                                     children: data.enquiry_number
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 24,
+                                    lineNumber: 25,
                                     columnNumber: 179
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -235,13 +257,13 @@ function EnquiryDetail(param) {
                                     children: "Review the submitted information and generated form."
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 24,
+                                    lineNumber: 25,
                                     columnNumber: 209
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                            lineNumber: 24,
+                            lineNumber: 25,
                             columnNumber: 100
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -253,7 +275,7 @@ function EnquiryDetail(param) {
                                     children: "Download PDF"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 24,
+                                    lineNumber: 25,
                                     columnNumber: 332
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -263,20 +285,41 @@ function EnquiryDetail(param) {
                                     children: "Print PDF"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 24,
+                                    lineNumber: 25,
                                     columnNumber: 426
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    className: "danger-button",
+                                    onClick: ()=>{
+                                        setDeleteOpen(true);
+                                        setDeleteText('');
+                                    },
+                                    children: "Delete enquiry"
+                                }, void 0, false, {
+                                    fileName: "[project]/components/admin/EnquiryDetail.tsx",
+                                    lineNumber: 25,
+                                    columnNumber: 525
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                            lineNumber: 24,
+                            lineNumber: 25,
                             columnNumber: 301
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                    lineNumber: 24,
+                    lineNumber: 25,
                     columnNumber: 67
+                }, this),
+                notice && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                    className: "admin-alert admin-alert-error",
+                    role: "alert",
+                    children: notice
+                }, void 0, false, {
+                    fileName: "[project]/components/admin/EnquiryDetail.tsx",
+                    lineNumber: 25,
+                    columnNumber: 668
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "detail-layout",
@@ -296,21 +339,21 @@ function EnquiryDetail(param) {
                                                     children: "Submission record"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                                    lineNumber: 24,
-                                                    columnNumber: 721
+                                                    lineNumber: 25,
+                                                    columnNumber: 920
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                                     children: heading
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                                    lineNumber: 24,
-                                                    columnNumber: 779
+                                                    lineNumber: 25,
+                                                    columnNumber: 978
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                            lineNumber: 24,
-                                            columnNumber: 684
+                                            lineNumber: 25,
+                                            columnNumber: 883
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("dl", {
                                             children: keys.filter((key)=>!hidden.has(key) && data[key] !== undefined).map((key)=>{
@@ -322,39 +365,39 @@ function EnquiryDetail(param) {
                                                             children: (_labels_key = labels[key]) !== null && _labels_key !== void 0 ? _labels_key : key
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                                            lineNumber: 24,
-                                                            columnNumber: 919
+                                                            lineNumber: 25,
+                                                            columnNumber: 1118
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("dd", {
                                                             children: key === 'created_at' ? new Date((_data_key = data[key]) !== null && _data_key !== void 0 ? _data_key : '').toLocaleString() : data[key] || 'Not provided'
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                                            lineNumber: 24,
-                                                            columnNumber: 948
+                                                            lineNumber: 25,
+                                                            columnNumber: 1147
                                                         }, this)
                                                     ]
                                                 }, key, true, {
                                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                                    lineNumber: 24,
-                                                    columnNumber: 883
+                                                    lineNumber: 25,
+                                                    columnNumber: 1082
                                                 }, this);
                                             })
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                            lineNumber: 24,
-                                            columnNumber: 803
+                                            lineNumber: 25,
+                                            columnNumber: 1002
                                         }, this)
                                     ]
                                 }, heading, true, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 24,
-                                    columnNumber: 637
+                                    lineNumber: 25,
+                                    columnNumber: 836
                                 }, this);
                             })
                         }, void 0, false, {
                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                            lineNumber: 24,
-                            columnNumber: 571
+                            lineNumber: 25,
+                            columnNumber: 770
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
                             className: "pdf-panel",
@@ -367,55 +410,137 @@ function EnquiryDetail(param) {
                                             children: "Document preview"
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                            lineNumber: 24,
-                                            columnNumber: 1151
+                                            lineNumber: 25,
+                                            columnNumber: 1350
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                             children: "Generated PDF"
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                            lineNumber: 24,
-                                            columnNumber: 1208
+                                            lineNumber: 25,
+                                            columnNumber: 1407
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 24,
-                                    columnNumber: 1116
+                                    lineNumber: 25,
+                                    columnNumber: 1315
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("iframe", {
                                     title: "Generated enquiry PDF",
                                     src: "/api/admin/enquiries/".concat(id, "/pdf")
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 24,
-                                    columnNumber: 1236
+                                    lineNumber: 25,
+                                    columnNumber: 1435
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                            lineNumber: 24,
-                            columnNumber: 1085
+                            lineNumber: 25,
+                            columnNumber: 1284
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                    lineNumber: 24,
-                    columnNumber: 540
+                    lineNumber: 25,
+                    columnNumber: 739
+                }, this),
+                deleteOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "modal-backdrop",
+                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
+                        className: "question-dialog",
+                        role: "dialog",
+                        "aria-modal": "true",
+                        "aria-labelledby": "delete-enquiry-title",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                id: "delete-enquiry-title",
+                                children: "Delete enquiry?"
+                            }, void 0, false, {
+                                fileName: "[project]/components/admin/EnquiryDetail.tsx",
+                                lineNumber: 25,
+                                columnNumber: 1685
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                children: [
+                                    "This enquiry and its generated PDF will be permanently deleted. Type ",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                        children: "DELETE"
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/admin/EnquiryDetail.tsx",
+                                        lineNumber: 25,
+                                        columnNumber: 1807
+                                    }, this),
+                                    " to confirm."
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/components/admin/EnquiryDetail.tsx",
+                                lineNumber: 25,
+                                columnNumber: 1735
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                autoFocus: true,
+                                value: deleteText,
+                                onChange: (event)=>setDeleteText(event.target.value),
+                                placeholder: "Type DELETE",
+                                "aria-label": "Type DELETE to confirm"
+                            }, void 0, false, {
+                                fileName: "[project]/components/admin/EnquiryDetail.tsx",
+                                lineNumber: 25,
+                                columnNumber: 1846
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "dialog-actions",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: ()=>setDeleteOpen(false),
+                                        children: "Cancel"
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/admin/EnquiryDetail.tsx",
+                                        lineNumber: 25,
+                                        columnNumber: 2032
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        className: "danger-button",
+                                        disabled: deleteText !== 'DELETE',
+                                        onClick: deleteEnquiry,
+                                        children: "Delete"
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/admin/EnquiryDetail.tsx",
+                                        lineNumber: 25,
+                                        columnNumber: 2092
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/components/admin/EnquiryDetail.tsx",
+                                lineNumber: 25,
+                                columnNumber: 2000
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/components/admin/EnquiryDetail.tsx",
+                        lineNumber: 25,
+                        columnNumber: 1577
+                    }, this)
+                }, void 0, false, {
+                    fileName: "[project]/components/admin/EnquiryDetail.tsx",
+                    lineNumber: 25,
+                    columnNumber: 1545
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-            lineNumber: 24,
+            lineNumber: 25,
             columnNumber: 40
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/admin/EnquiryDetail.tsx",
-        lineNumber: 24,
+        lineNumber: 25,
         columnNumber: 10
     }, this);
 }
-_s(EnquiryDetail, "6U2T51/jNhmPcxTeyDPW+bX4mlQ=", false, function() {
+_s(EnquiryDetail, "82NobAVSp7vnCCZC44wepqnwHq8=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
     ];

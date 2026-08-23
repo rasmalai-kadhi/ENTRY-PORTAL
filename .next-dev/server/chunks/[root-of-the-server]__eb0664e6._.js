@@ -149,6 +149,8 @@ async function getAdminContext() {
 "use strict";
 
 __turbopack_context__.s([
+    "DELETE",
+    ()=>DELETE,
     "GET",
     ()=>GET,
     "PATCH",
@@ -223,6 +225,44 @@ async function PATCH(request, { params }) {
     });
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
         data
+    });
+}
+async function DELETE(request, { params }) {
+    const context = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$auth$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getAdminContext"])();
+    if (!context) return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+        error: 'Unauthorized'
+    }, {
+        status: 401
+    });
+    const { id } = await params;
+    const body = await request.json().catch(()=>null);
+    if (body?.confirmation !== 'DELETE') return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+        error: 'Type DELETE to confirm deletion.'
+    }, {
+        status: 400
+    });
+    const { data: enquiry, error: loadError } = await context.supabase.from('enquiries').select('id, pdf_storage_path').eq('id', id).maybeSingle();
+    if (loadError) return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+        error: loadError.message
+    }, {
+        status: 500
+    });
+    if (!enquiry) return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+        error: 'Enquiry not found.'
+    }, {
+        status: 404
+    });
+    const { error } = await context.supabase.from('enquiries').delete().eq('id', id);
+    if (error) return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+        error: error.message
+    }, {
+        status: 500
+    });
+    if (enquiry.pdf_storage_path) await context.supabase.storage.from('generated-forms').remove([
+        enquiry.pdf_storage_path
+    ]);
+    return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+        ok: true
     });
 }
 }),

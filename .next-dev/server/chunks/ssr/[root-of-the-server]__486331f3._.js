@@ -45,11 +45,13 @@ __turbopack_context__.s([
     ()=>AdminHeader
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/image.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/app-dir/link.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/supabase/client.ts [app-ssr] (ecmascript)");
 'use client';
+;
 ;
 ;
 ;
@@ -79,41 +81,21 @@ function AdminHeader() {
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                     className: "brand-lockup admin-brand",
                     href: "/admin",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                            className: "brand-mark",
-                            children: "E"
-                        }, void 0, false, {
-                            fileName: "[project]/components/admin/AdminHeader.tsx",
-                            lineNumber: 27,
-                            columnNumber: 64
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
-                                    children: "eduspray"
-                                }, void 0, false, {
-                                    fileName: "[project]/components/admin/AdminHeader.tsx",
-                                    lineNumber: 27,
-                                    columnNumber: 107
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
-                                    children: "Admin portal"
-                                }, void 0, false, {
-                                    fileName: "[project]/components/admin/AdminHeader.tsx",
-                                    lineNumber: 27,
-                                    columnNumber: 132
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/components/admin/AdminHeader.tsx",
-                            lineNumber: 27,
-                            columnNumber: 101
-                        }, this)
-                    ]
-                }, void 0, true, {
+                    "aria-label": "Eduspray dashboard",
+                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                        src: "/images/logo.jpeg",
+                        alt: "Eduspray",
+                        width: 200,
+                        height: 64,
+                        className: "brand-mark"
+                    }, void 0, false, {
+                        fileName: "[project]/components/admin/AdminHeader.tsx",
+                        lineNumber: 28,
+                        columnNumber: 96
+                    }, this)
+                }, void 0, false, {
                     fileName: "[project]/components/admin/AdminHeader.tsx",
-                    lineNumber: 27,
+                    lineNumber: 28,
                     columnNumber: 7
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
@@ -126,7 +108,7 @@ function AdminHeader() {
                             children: "Dashboard"
                         }, void 0, false, {
                             fileName: "[project]/components/admin/AdminHeader.tsx",
-                            lineNumber: 29,
+                            lineNumber: 30,
                             columnNumber: 9
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -135,13 +117,22 @@ function AdminHeader() {
                             children: "Enquiries"
                         }, void 0, false, {
                             fileName: "[project]/components/admin/AdminHeader.tsx",
-                            lineNumber: 30,
+                            lineNumber: 31,
+                            columnNumber: 9
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                            className: pathname === '/admin/questions' ? 'active' : '',
+                            href: "/admin/questions",
+                            children: "Questions"
+                        }, void 0, false, {
+                            fileName: "[project]/components/admin/AdminHeader.tsx",
+                            lineNumber: 32,
                             columnNumber: 9
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/admin/AdminHeader.tsx",
-                    lineNumber: 28,
+                    lineNumber: 29,
                     columnNumber: 7
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -157,7 +148,7 @@ function AdminHeader() {
                                     children: email ? email[0].toUpperCase() : 'A'
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/AdminHeader.tsx",
-                                    lineNumber: 33,
+                                    lineNumber: 35,
                                     columnNumber: 108
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -165,13 +156,13 @@ function AdminHeader() {
                                     children: "Profile"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/AdminHeader.tsx",
-                                    lineNumber: 33,
+                                    lineNumber: 35,
                                     columnNumber: 178
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/AdminHeader.tsx",
-                            lineNumber: 33,
+                            lineNumber: 35,
                             columnNumber: 9
                         }, this),
                         menuOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -181,7 +172,7 @@ function AdminHeader() {
                                     children: email || 'Authenticated admin'
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/AdminHeader.tsx",
-                                    lineNumber: 34,
+                                    lineNumber: 36,
                                     columnNumber: 52
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -191,7 +182,7 @@ function AdminHeader() {
                                     children: "PDF field mapping"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/AdminHeader.tsx",
-                                    lineNumber: 34,
+                                    lineNumber: 36,
                                     columnNumber: 97
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -199,30 +190,30 @@ function AdminHeader() {
                                     children: "Log out"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/AdminHeader.tsx",
-                                    lineNumber: 34,
+                                    lineNumber: 36,
                                     columnNumber: 215
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/AdminHeader.tsx",
-                            lineNumber: 34,
+                            lineNumber: 36,
                             columnNumber: 22
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/admin/AdminHeader.tsx",
-                    lineNumber: 32,
+                    lineNumber: 34,
                     columnNumber: 7
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/admin/AdminHeader.tsx",
-            lineNumber: 26,
+            lineNumber: 27,
             columnNumber: 5
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/admin/AdminHeader.tsx",
-        lineNumber: 25,
+        lineNumber: 26,
         columnNumber: 10
     }, this);
 }
@@ -235,9 +226,11 @@ __turbopack_context__.s([
     ()=>SiteHeader
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/image.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$admin$2f$AdminHeader$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/admin/AdminHeader.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-ssr] (ecmascript)");
 'use client';
+;
 ;
 ;
 ;
@@ -245,7 +238,7 @@ function SiteHeader({ clientIp }) {
     const pathname = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["usePathname"])();
     if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$admin$2f$AdminHeader$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AdminHeader"], {}, void 0, false, {
         fileName: "[project]/components/site/SiteHeader.tsx",
-        lineNumber: 8,
+        lineNumber: 9,
         columnNumber: 85
     }, this);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
@@ -254,43 +247,23 @@ function SiteHeader({ clientIp }) {
             className: "container site-header-inner",
             children: [
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
-                    className: "brand-lockup",
+                    className: "brand-lockup site-brand-logo",
                     href: "/enquiry",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                            className: "brand-mark",
-                            children: "E"
-                        }, void 0, false, {
-                            fileName: "[project]/components/site/SiteHeader.tsx",
-                            lineNumber: 13,
-                            columnNumber: 53
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
-                                    children: "eduspray"
-                                }, void 0, false, {
-                                    fileName: "[project]/components/site/SiteHeader.tsx",
-                                    lineNumber: 13,
-                                    columnNumber: 96
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
-                                    children: "Enquiry portal"
-                                }, void 0, false, {
-                                    fileName: "[project]/components/site/SiteHeader.tsx",
-                                    lineNumber: 13,
-                                    columnNumber: 121
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/components/site/SiteHeader.tsx",
-                            lineNumber: 13,
-                            columnNumber: 90
-                        }, this)
-                    ]
-                }, void 0, true, {
+                    "aria-label": "Eduspray home",
+                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                        src: "/images/logo.jpeg",
+                        alt: "Eduspray",
+                        width: 200,
+                        height: 64,
+                        className: "brand-mark"
+                    }, void 0, false, {
+                        fileName: "[project]/components/site/SiteHeader.tsx",
+                        lineNumber: 14,
+                        columnNumber: 96
+                    }, this)
+                }, void 0, false, {
                     fileName: "[project]/components/site/SiteHeader.tsx",
-                    lineNumber: 13,
+                    lineNumber: 14,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -302,18 +275,18 @@ function SiteHeader({ clientIp }) {
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/site/SiteHeader.tsx",
-                    lineNumber: 14,
+                    lineNumber: 15,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/site/SiteHeader.tsx",
-            lineNumber: 12,
+            lineNumber: 13,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/site/SiteHeader.tsx",
-        lineNumber: 11,
+        lineNumber: 12,
         columnNumber: 5
     }, this);
 }
