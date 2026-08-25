@@ -3,6 +3,7 @@ create table if not exists public.form_questions (
   field_key text not null unique check (field_key ~ '^[A-Za-z][A-Za-z0-9_]*$'),
   label text not null,
   type text not null check (type in ('text', 'number', 'email', 'date', 'textarea', 'select', 'phone')),
+  number_format text not null default 'integer' check (number_format in ('integer', 'decimal')),
   required boolean not null default false,
   allow_alphabets boolean not null default true,
   allow_numbers boolean not null default true,

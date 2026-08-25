@@ -6,6 +6,7 @@ export type FormQuestion = {
   field_key: string;
   label: string;
   type: QuestionType;
+  number_format: 'integer' | 'decimal';
   required: boolean;
   allow_alphabets: boolean;
   allow_numbers: boolean;

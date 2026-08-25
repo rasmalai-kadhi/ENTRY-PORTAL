@@ -7,6 +7,7 @@ import { getClientIp } from '@/lib/request/client-ip';
 export const metadata: Metadata = {
   title: 'Eduspray Enquiry System',
   description: 'Digital enquiry and entry-form management system',
+  icons: { icon: '/images/favicon.png' },
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

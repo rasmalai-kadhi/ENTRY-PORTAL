@@ -107,6 +107,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$v4$2f
 ;
 function characterPattern(question) {
     let pattern = '';
+    if (question.type === 'number' && question.number_format === 'decimal') pattern += '\\.';
     if (question.allow_alphabets) pattern += 'A-Za-z';
     if (question.allow_numbers) pattern += '0-9';
     if (question.allow_special_characters) pattern += '\\s\\p{P}';
@@ -121,7 +122,10 @@ function buildQuestionSchema(question) {
     schema = schema.max(question.max_length, `${question.label} must be ${question.max_length} characters or fewer`);
     if (question.type === 'email') schema = schema.refine((value)=>value === '' || __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$v4$2f$classic$2f$external$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$export__$2a$__as__z$3e$__["z"].email().safeParse(value).success, 'Enter a valid email');
     if (question.type === 'date') schema = schema.refine((value)=>value === '' || !Number.isNaN(Date.parse(value)) && /^\d{4}-\d{2}-\d{2}$/.test(value), 'Enter a valid date');
-    if (question.type === 'number') schema = schema.refine((value)=>value === '' || /^\d+(\.\d+)?$/.test(value), 'Enter a valid number');
+    if (question.type === 'number') {
+        const numberPattern = question.number_format === 'decimal' ? /^\d+(\.\d+)?$/ : /^\d+$/;
+        schema = schema.refine((value)=>value === '' || numberPattern.test(value), question.number_format === 'decimal' ? 'Enter a valid decimal number' : 'Enter a whole number');
+    }
     if (question.type === 'phone') schema = schema.refine((value)=>value === '' || /^\d{10}$/.test(value), 'Enter a 10-digit phone number');
     if (question.type === 'select') schema = schema.refine((value)=>value === '' || question.options.includes(value), 'Select a valid option');
     const pattern = characterPattern(question);

@@ -30,8 +30,9 @@ export function detectClientIp(headers: RequestHeaders): ClientIpResult {
     const local = normalize(headers.get('x-forwarded-for')?.split(',')[0] ?? '') ?? normalize(headers.get('x-real-ip') ?? '');
     if (local === '::1' || local === '127.0.0.1') { ip = local; source = 'local-development'; }
   }
+  if (ip === '::1' || ip === '127.0.0.1') { ip = 'localhost'; source = 'local-development'; }
   const result = { ip: ip ?? 'proxy-ip-unavailable', source, environment };
-  console.info('CLIENT_IP_DETECTED', { ...result, forwarded: headers.get('x-forwarded-for') ?? null });
+  console.info('CLIENT_IP_DETECTED', { ...result, relevantProxyHeader: source.includes('-') ? headers.get(source) : null, forwarded: headers.get('x-forwarded-for') ?? null });
   return result;
 }
 
