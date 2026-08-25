@@ -2,16 +2,9 @@
   "/admin/enquiries/[id]/page": "app/admin/enquiries/[id]/page.js",
   "/admin/enquiries/page": "app/admin/enquiries/page.js",
   "/admin/page": "app/admin/page.js",
-  "/admin/questions/page": "app/admin/questions/page.js",
   "/api/admin/enquiries/[id]/pdf/route": "app/api/admin/enquiries/[id]/pdf/route.js",
   "/api/admin/enquiries/[id]/route": "app/api/admin/enquiries/[id]/route.js",
   "/api/admin/enquiries/route": "app/api/admin/enquiries/route.js",
-  "/api/admin/form-questions/route": "app/api/admin/form-questions/route.js",
   "/api/admin/session/route": "app/api/admin/session/route.js",
-  "/api/admin/stats/route": "app/api/admin/stats/route.js",
-  "/api/client-ip/route": "app/api/client-ip/route.js",
-  "/api/enquiries/route": "app/api/enquiries/route.js",
-  "/api/form-questions/route": "app/api/form-questions/route.js",
-  "/enquiry/page": "app/enquiry/page.js",
-  "/enquiry/success/page": "app/enquiry/success/page.js"
+  "/api/admin/stats/route": "app/api/admin/stats/route.js"
 }

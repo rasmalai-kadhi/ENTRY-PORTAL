@@ -97,6 +97,10 @@ function detectClientIp(headers) {
             source = 'local-development';
         }
     }
+    if (ip === '::1' || ip === '127.0.0.1') {
+        ip = 'localhost';
+        source = 'local-development';
+    }
     const result = {
         ip: ip ?? 'proxy-ip-unavailable',
         source,
@@ -104,6 +108,7 @@ function detectClientIp(headers) {
     };
     console.info('CLIENT_IP_DETECTED', {
         ...result,
+        relevantProxyHeader: source.includes('-') ? headers.get(source) : null,
         forwarded: headers.get('x-forwarded-for') ?? null
     });
     return result;
@@ -132,7 +137,10 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$request$2f$client$2d$
 ;
 const metadata = {
     title: 'Eduspray Enquiry System',
-    description: 'Digital enquiry and entry-form management system'
+    description: 'Digital enquiry and entry-form management system',
+    icons: {
+        icon: '/images/favicon.png'
+    }
 };
 async function RootLayout({ children }) {
     const requestHeaders = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$headers$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["headers"])();
@@ -144,19 +152,19 @@ async function RootLayout({ children }) {
                     clientIp: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$request$2f$client$2d$ip$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getClientIp"])(requestHeaders)
                 }, void 0, false, {
                     fileName: "[project]/app/layout.tsx",
-                    lineNumber: 14,
+                    lineNumber: 15,
                     columnNumber: 32
                 }, this),
                 children
             ]
         }, void 0, true, {
             fileName: "[project]/app/layout.tsx",
-            lineNumber: 14,
+            lineNumber: 15,
             columnNumber: 26
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/layout.tsx",
-        lineNumber: 14,
+        lineNumber: 15,
         columnNumber: 10
     }, this);
 }

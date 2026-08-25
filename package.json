@@ -17,6 +17,8 @@
     "@hookform/resolvers": "^5.9.1",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.112.3",
+    "@types/canvas-confetti": "^1.9.0",
+    "canvas-confetti": "^1.9.4",
     "next": "^15.5.0",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^6.2.108",

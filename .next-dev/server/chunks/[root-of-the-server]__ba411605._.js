@@ -65,6 +65,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$v4$2f
 ;
 function characterPattern(question) {
     let pattern = '';
+    if (question.type === 'number' && question.number_format === 'decimal') pattern += '\\.';
     if (question.allow_alphabets) pattern += 'A-Za-z';
     if (question.allow_numbers) pattern += '0-9';
     if (question.allow_special_characters) pattern += '\\s\\p{P}';
@@ -79,7 +80,10 @@ function buildQuestionSchema(question) {
     schema = schema.max(question.max_length, `${question.label} must be ${question.max_length} characters or fewer`);
     if (question.type === 'email') schema = schema.refine((value)=>value === '' || __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$v4$2f$classic$2f$external$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$export__$2a$__as__z$3e$__["z"].email().safeParse(value).success, 'Enter a valid email');
     if (question.type === 'date') schema = schema.refine((value)=>value === '' || !Number.isNaN(Date.parse(value)) && /^\d{4}-\d{2}-\d{2}$/.test(value), 'Enter a valid date');
-    if (question.type === 'number') schema = schema.refine((value)=>value === '' || /^\d+(\.\d+)?$/.test(value), 'Enter a valid number');
+    if (question.type === 'number') {
+        const numberPattern = question.number_format === 'decimal' ? /^\d+(\.\d+)?$/ : /^\d+$/;
+        schema = schema.refine((value)=>value === '' || numberPattern.test(value), question.number_format === 'decimal' ? 'Enter a valid decimal number' : 'Enter a whole number');
+    }
     if (question.type === 'phone') schema = schema.refine((value)=>value === '' || /^\d{10}$/.test(value), 'Enter a 10-digit phone number');
     if (question.type === 'select') schema = schema.refine((value)=>value === '' || question.options.includes(value), 'Select a valid option');
     const pattern = characterPattern(question);
@@ -333,8 +337,24 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/supabase/admin.ts [app-route] (ecmascript)");
 ;
+function applicationDate() {
+    const timezone = process.env.APP_TIMEZONE || 'Asia/Kolkata';
+    const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: timezone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    }).formatToParts(new Date());
+    const values = Object.fromEntries(parts.map((part)=>[
+            part.type,
+            part.value
+        ]));
+    return `${values.year}-${values.month}-${values.day}`;
+}
 async function generateEnquiryNumber() {
-    const { data, error } = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])().rpc('next_enquiry_number');
+    const { data, error } = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])().rpc('next_enquiry_number', {
+        p_enquiry_date: applicationDate()
+    });
     if (error || !data) throw error ?? new Error('Unable to generate enquiry number.');
     return data;
 }
@@ -401,6 +421,10 @@ function detectClientIp(headers) {
             source = 'local-development';
         }
     }
+    if (ip === '::1' || ip === '127.0.0.1') {
+        ip = 'localhost';
+        source = 'local-development';
+    }
     const result = {
         ip: ip ?? 'proxy-ip-unavailable',
         source,
@@ -408,6 +432,7 @@ function detectClientIp(headers) {
     };
     console.info('CLIENT_IP_DETECTED', {
         ...result,
+        relevantProxyHeader: source.includes('-') ? headers.get(source) : null,
         forwarded: headers.get('x-forwarded-for') ?? null
     });
     return result;
@@ -548,7 +573,8 @@ async function POST(request) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
             ok: true,
             message: "Form submitted successfully.",
-            clientIp
+            clientIp,
+            enquiryNumber
         });
     } catch (error) {
         console.error("ENQUIRY SUBMISSION ERROR:", error);

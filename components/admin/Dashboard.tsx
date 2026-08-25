@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { AdminGreeting } from '@/components/admin/AdminGreeting';
 
 type Stats = { total: number; today: number; pastHour: number; recent: Array<{ id: string; enquiry_number: string; name: string; course: string; created_at: string; status: string }> };
 
@@ -33,7 +34,7 @@ export function Dashboard() {
       <header className="admin-header">
         <div>
           <p className="eyebrow">Eduspray control centre</p>
-          <h1>Good morning, admin.</h1>
+          <h1><AdminGreeting /></h1>
           <p className="admin-subtitle">Keep track of new student enquiries and follow up with every prospective learner.</p>
         </div>
       </header>

@@ -83,6 +83,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../app/admin/pdf-mapping/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/admin/pdf-mapping">> = Specific
+  const handler = {} as typeof import("../../app/admin/pdf-mapping/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../app/admin/pdf-mapping/test/page.tsx
 {
   type __IsExpected<Specific extends AppPageConfig<"/admin/pdf-mapping/test">> = Specific
@@ -186,6 +195,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/admin/enquiries/[id]">> = Specific
   const handler = {} as typeof import("../../app/api/admin/enquiries/[id]/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../app/api/admin/enquiries/export/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/admin/enquiries/export">> = Specific
+  const handler = {} as typeof import("../../app/api/admin/enquiries/export/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

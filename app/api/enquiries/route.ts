@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     const legacyValues = Object.fromEntries(legacyKeys.map(key => [key, answerValues[key] ?? '']));
     const { error: insertError } = await supabase.from("enquiries").insert({ ...legacyValues, answers: answerValues, date: enquiry.date, enquiry_number: enquiryNumber, client_ip: clientIp, terms_accepted: true, terms_accepted_at: now.toISOString(), terms_version: TERMS_VERSION, privacy_version: PRIVACY_VERSION, submitted_at: now.toISOString(), pdf_storage_path: pdfStoragePath, status: "submitted" });
     if (insertError) { await supabase.storage.from("generated-forms").remove([pdfStoragePath]); throw insertError; }
-    return NextResponse.json({ ok: true, message: "Form submitted successfully.", clientIp });
+    return NextResponse.json({ ok: true, message: "Form submitted successfully.", clientIp, enquiryNumber });
   } catch (error) {
     console.error("ENQUIRY SUBMISSION ERROR:", error);
     return jsonError(error instanceof Error ? error.message : "Unable to submit enquiry.");

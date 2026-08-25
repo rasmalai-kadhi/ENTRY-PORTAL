@@ -15,9 +15,16 @@ export function LoginForm() {
     setIsSubmitting(true);
     setError('');
     const form = new FormData(event.currentTarget);
-    const { error: signInError } = await createClient().auth.signInWithPassword({ email: String(form.get('email')), password: String(form.get('password')) });
+    const client = createClient();
+    const { error: signInError } = await client.auth.signInWithPassword({ email: String(form.get('email')), password: String(form.get('password')) });
     if (signInError) setError('Invalid email or password.');
-    else router.push(new URLSearchParams(window.location.search).get('next') || '/admin');
+    else {
+      const sessionResponse = await fetch('/api/admin/session', { cache: 'no-store' });
+      if (!sessionResponse.ok || !(await sessionResponse.json()).authenticated) {
+        await client.auth.signOut();
+        setError('This account is authenticated but is not authorized for the admin panel.');
+      } else router.push(new URLSearchParams(window.location.search).get('next') || '/admin');
+    }
     setIsSubmitting(false);
   }
 

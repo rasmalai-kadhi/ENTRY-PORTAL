@@ -27,7 +27,7 @@ const sample: Enquiry = {
 function withId(mapping: PdfFieldMapping, index: number): PdfFieldMapping { return { ...mapping, id: mapping.id ?? `${mapping.field_key}-${index}` }; }
 function cloneMappings(mappings: PdfFieldMapping[]) { return mappings.map(mapping => ({ ...mapping })); }
 
-export function PdfMappingTestEditor({ initialMappings }: { initialMappings: PdfFieldMapping[] }) {
+export function PdfMappingTestEditor({ initialMappings }: { initialMappings?: PdfFieldMapping[] }) {
   const stageRef = useRef<HTMLDivElement>(null);
   const interaction = useRef<Interaction | null>(null);
   const renderTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -59,7 +59,15 @@ export function PdfMappingTestEditor({ initialMappings }: { initialMappings: Pdf
       const document = await pdfjs.getDocument({ data: bytes }).promise;
       const page = await document.getPage(1);
       const viewport = page.getViewport({ scale: 1 });
-      const nextMappings = initialMappings.map(withId);
+      const mappingsResponse = initialMappings
+        ? null
+        : await fetch('/api/admin/pdf-mappings', { cache: 'no-store' });
+      if (mappingsResponse && !mappingsResponse.ok) throw new Error('Unable to load saved PDF mappings.');
+      const responseData = mappingsResponse
+        ? await mappingsResponse.json() as { data?: PdfFieldMapping[] }
+        : undefined;
+      const savedMappings = initialMappings ?? responseData?.data ?? [];
+      const nextMappings = savedMappings.map(withId);
       if (!nextMappings.length) throw new Error('No saved PDF mappings found. Run the PDF mapping setup before opening this test page.');
       if (!active) return;
       setPdf({ document, width: viewport.width, height: viewport.height, pageCount: document.numPages });

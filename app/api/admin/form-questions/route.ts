@@ -9,9 +9,10 @@ function clean(value: unknown) {
   const fieldKey = String(input.field_key ?? '').trim();
   const label = String(input.label ?? '').trim();
   const type = String(input.type ?? 'text');
+  const numberFormat = input.number_format === 'decimal' ? 'decimal' : 'integer';
   const maxLength = Number(input.max_length ?? 255);
   if (!/^[A-Za-z][A-Za-z0-9_]*$/.test(fieldKey) || !label || !questionTypes.includes(type as typeof questionTypes[number]) || !Number.isInteger(maxLength) || maxLength < 1 || maxLength > 10000) return null;
-  return { field_key: fieldKey, label, type, required: Boolean(input.required), allow_alphabets: Boolean(input.allow_alphabets), allow_numbers: Boolean(input.allow_numbers), allow_special_characters: Boolean(input.allow_special_characters), max_length: maxLength, options: Array.isArray(input.options) ? input.options.filter(option => typeof option === 'string').slice(0, 100) : [], display_order: Number.isInteger(input.display_order) ? Number(input.display_order) : 0, active: input.active !== false, placeholder: input.placeholder ? String(input.placeholder).slice(0, 500) : null };
+  return { field_key: fieldKey, label, type, number_format: numberFormat, required: Boolean(input.required), allow_alphabets: Boolean(input.allow_alphabets), allow_numbers: Boolean(input.allow_numbers), allow_special_characters: Boolean(input.allow_special_characters), max_length: maxLength, options: Array.isArray(input.options) ? input.options.filter(option => typeof option === 'string').slice(0, 100) : [], display_order: Number.isInteger(input.display_order) ? Number(input.display_order) : 0, active: input.active !== false, placeholder: input.placeholder ? String(input.placeholder).slice(0, 500) : null };
 }
 
 export async function GET() {

@@ -1533,7 +1533,8 @@ td {
 @media (max-width: 520px) {
   .app-toast {
     max-width: none;
-    bottom: 12px;
+    top: 12px;
+    bottom: auto;
     left: 12px;
     right: 12px;
   }
@@ -1541,6 +1542,80 @@ td {
   .site-brand-logo .brand-mark, .admin-brand .brand-mark {
     width: min(200px, 48vw);
     height: 52px;
+  }
+}
+
+.site-header {
+  z-index: 100;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+
+.admin-topbar {
+  z-index: 100;
+}
+
+.app-toast {
+  z-index: 1000;
+  color: #fff;
+  border: 0;
+  top: 20px;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}
+
+.app-toast-success {
+  background: #16803c;
+}
+
+.app-toast-error {
+  background: #c62828;
+}
+
+.app-toast-warning {
+  background: #a86600;
+}
+
+.app-toast-info {
+  background: #1261a0;
+}
+
+.app-toast-icon {
+  border: 2px solid;
+  border-radius: 50%;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  font-weight: 800;
+  display: inline-grid;
+}
+
+.app-toast button {
+  color: #fff;
+}
+
+.submit-spinner {
+  border: 2px solid;
+  border-right-color: rgba(0, 0, 0, 0);
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: .7s linear infinite submit-spin;
+  display: inline-block;
+}
+
+@keyframes submit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 520px) {
+  .app-toast {
+    top: 12px;
   }
 
   .site-header-inner {

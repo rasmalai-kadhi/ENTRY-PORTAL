@@ -50,6 +50,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$v4$2f
 ;
 function characterPattern(question) {
     let pattern = '';
+    if (question.type === 'number' && question.number_format === 'decimal') pattern += '\\.';
     if (question.allow_alphabets) pattern += 'A-Za-z';
     if (question.allow_numbers) pattern += '0-9';
     if (question.allow_special_characters) pattern += '\\s\\p{P}';
@@ -64,7 +65,10 @@ function buildQuestionSchema(question) {
     schema = schema.max(question.max_length, `${question.label} must be ${question.max_length} characters or fewer`);
     if (question.type === 'email') schema = schema.refine((value)=>value === '' || __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$v4$2f$classic$2f$external$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__$2a$__as__z$3e$__["z"].email().safeParse(value).success, 'Enter a valid email');
     if (question.type === 'date') schema = schema.refine((value)=>value === '' || !Number.isNaN(Date.parse(value)) && /^\d{4}-\d{2}-\d{2}$/.test(value), 'Enter a valid date');
-    if (question.type === 'number') schema = schema.refine((value)=>value === '' || /^\d+(\.\d+)?$/.test(value), 'Enter a valid number');
+    if (question.type === 'number') {
+        const numberPattern = question.number_format === 'decimal' ? /^\d+(\.\d+)?$/ : /^\d+$/;
+        schema = schema.refine((value)=>value === '' || numberPattern.test(value), question.number_format === 'decimal' ? 'Enter a valid decimal number' : 'Enter a whole number');
+    }
     if (question.type === 'phone') schema = schema.refine((value)=>value === '' || /^\d{10}$/.test(value), 'Enter a 10-digit phone number');
     if (question.type === 'select') schema = schema.refine((value)=>value === '' || question.options.includes(value), 'Select a valid option');
     const pattern = characterPattern(question);
@@ -155,7 +159,6 @@ function EnquiryForm({ initialClientIp }) {
     }, this);
 }
 function DynamicQuestionForm({ questions, initialClientIp }) {
-    const clientIp = initialClientIp;
     const [focusedField, setFocusedField] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [consent, setConsent] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const schema = (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$enquiry$2f$question$2d$validation$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["buildQuestionsSchema"])(questions);
@@ -170,10 +173,18 @@ function DynamicQuestionForm({ questions, initialClientIp }) {
     });
     const values = watch();
     function fieldProps(key) {
+        const question = questions.find((item)=>item.field_key === key);
         const registration = register(key);
         return {
             ...registration,
             onFocus: ()=>setFocusedField(key),
+            onChange: (event)=>{
+                if (question.type === 'number') {
+                    const sanitized = event.target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+                    event.target.value = question.number_format === 'integer' ? sanitized.replace('.', '') : sanitized;
+                }
+                void registration.onChange(event);
+            },
             onBlur: (event)=>{
                 registration.onBlur(event);
                 setFocusedField(null);
@@ -204,6 +215,7 @@ function DynamicQuestionForm({ questions, initialClientIp }) {
             const json = text ? JSON.parse(text) : {};
             if (!response.ok) throw new Error(json.error || json.message || `Submission failed with status ${response.status}.`);
             if (json.clientIp) sessionStorage.setItem("eduspray-submitted-ip", json.clientIp);
+            if (json.enquiryNumber) sessionStorage.setItem("eduspray-enquiry-number", json.enquiryNumber);
             window.location.href = "/enquiry/success";
         } catch (error) {
             alert(error instanceof Error ? error.message : "Unable to submit enquiry.");
@@ -287,8 +299,9 @@ function DynamicQuestionForm({ questions, initialClientIp }) {
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                 className: fieldClass(question),
                                 id: question.field_key,
-                                type: question.type === 'phone' ? 'tel' : question.type,
-                                inputMode: question.type === 'phone' || question.type === 'number' ? 'numeric' : undefined,
+                                type: question.type === 'phone' ? 'tel' : question.type === 'number' ? 'text' : question.type,
+                                inputMode: question.type === 'phone' ? 'numeric' : question.type === 'number' ? question.number_format === 'decimal' ? 'decimal' : 'numeric' : undefined,
+                                step: question.type === 'number' ? question.number_format === 'decimal' ? 'any' : '1' : undefined,
                                 maxLength: question.max_length,
                                 placeholder: question.placeholder ?? '',
                                 "aria-invalid": errors[question.field_key] ? "true" : "false",
@@ -304,7 +317,7 @@ function DynamicQuestionForm({ questions, initialClientIp }) {
                             }, void 0, false, {
                                 fileName: "[project]/components/enquiry/EnquiryForm.tsx",
                                 lineNumber: 39,
-                                columnNumber: 1489
+                                columnNumber: 1688
                             }, this)
                         ]
                     }, question.id, true, {
@@ -327,7 +340,7 @@ function DynamicQuestionForm({ questions, initialClientIp }) {
                     }, void 0, false, {
                         fileName: "[project]/components/enquiry/EnquiryForm.tsx",
                         lineNumber: 39,
-                        columnNumber: 1617
+                        columnNumber: 1816
                     }, this),
                     " ",
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -341,7 +354,7 @@ function DynamicQuestionForm({ questions, initialClientIp }) {
                             }, void 0, false, {
                                 fileName: "[project]/components/enquiry/EnquiryForm.tsx",
                                 lineNumber: 39,
-                                columnNumber: 1735
+                                columnNumber: 1934
                             }, this),
                             " and acknowledge the ",
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -352,20 +365,20 @@ function DynamicQuestionForm({ questions, initialClientIp }) {
                             }, void 0, false, {
                                 fileName: "[project]/components/enquiry/EnquiryForm.tsx",
                                 lineNumber: 39,
-                                columnNumber: 1822
+                                columnNumber: 2021
                             }, this),
                             "."
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/enquiry/EnquiryForm.tsx",
                         lineNumber: 39,
-                        columnNumber: 1714
+                        columnNumber: 1913
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/enquiry/EnquiryForm.tsx",
                 lineNumber: 39,
-                columnNumber: 1586
+                columnNumber: 1785
             }, this),
             (!isValid || !consent) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                 className: "form-submit-hint",
@@ -374,17 +387,29 @@ function DynamicQuestionForm({ questions, initialClientIp }) {
             }, void 0, false, {
                 fileName: "[project]/components/enquiry/EnquiryForm.tsx",
                 lineNumber: 39,
-                columnNumber: 1951
+                columnNumber: 2150
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
                 className: "form-submit",
                 type: "submit",
                 disabled: !isValid || !consent || isSubmitting,
-                children: isSubmitting ? "Submitting..." : "Submit Enquiry"
+                children: isSubmitting ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                            className: "submit-spinner",
+                            "aria-hidden": "true"
+                        }, void 0, false, {
+                            fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                            lineNumber: 39,
+                            columnNumber: 2441
+                        }, this),
+                        " Submitting..."
+                    ]
+                }, void 0, true) : "Submit Enquiry"
             }, void 0, false, {
                 fileName: "[project]/components/enquiry/EnquiryForm.tsx",
                 lineNumber: 39,
-                columnNumber: 2130
+                columnNumber: 2329
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                 className: "form-connection-status",
@@ -392,11 +417,11 @@ function DynamicQuestionForm({ questions, initialClientIp }) {
                 children: [
                     "Network record: ",
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
-                        children: clientIp
+                        children: initialClientIp
                     }, void 0, false, {
                         fileName: "[project]/components/enquiry/EnquiryForm.tsx",
                         lineNumber: 39,
-                        columnNumber: 2357
+                        columnNumber: 2614
                     }, this),
                     ". This portal collects IP addresses as described in the ",
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -405,14 +430,14 @@ function DynamicQuestionForm({ questions, initialClientIp }) {
                     }, void 0, false, {
                         fileName: "[project]/components/enquiry/EnquiryForm.tsx",
                         lineNumber: 39,
-                        columnNumber: 2440
+                        columnNumber: 2704
                     }, this),
                     "."
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/enquiry/EnquiryForm.tsx",
                 lineNumber: 39,
-                columnNumber: 2284
+                columnNumber: 2541
             }, this)
         ]
     }, void 0, true, {
