@@ -43,7 +43,6 @@ __turbopack_context__.s([
     ()=>EnquiryDetail
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/app-dir/link.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/Button.tsx [app-ssr] (ecmascript)");
@@ -52,11 +51,14 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2
 ;
 ;
 ;
-;
 const hidden = new Set([
     'id',
     'pdf_storage_path',
-    'signatureDataUrl'
+    'signatureDataUrl',
+    'google_sheet_synced',
+    'google_sheet_synced_at',
+    'google_sheet_error',
+    'google_sheet_row_id'
 ]);
 const groups = [
     [
@@ -162,6 +164,8 @@ function EnquiryDetail({ id }) {
     const [deleteOpen, setDeleteOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [deleteText, setDeleteText] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [notice, setNotice] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
+    const [syncLoading, setSyncLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [deleteLoading, setDeleteLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         fetch(`/api/admin/enquiries/${id}`).then(async (response)=>{
             if (response.status === 401) router.replace('/admin/login');
@@ -173,44 +177,78 @@ function EnquiryDetail({ id }) {
     ]);
     async function deleteEnquiry() {
         if (deleteText !== 'DELETE') return;
-        const response = await fetch(`/api/admin/enquiries/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                confirmation: 'DELETE'
-            })
-        });
-        if (!response.ok) {
-            setNotice((await response.json()).error ?? 'Unable to delete enquiry.');
-            return;
+        setDeleteLoading(true);
+        try {
+            const response = await fetch(`/api/admin/enquiries/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    confirmation: 'DELETE'
+                })
+            });
+            if (!response.ok) {
+                setNotice((await response.json()).error ?? 'Unable to delete enquiry.');
+                return;
+            }
+            setDeleteOpen(false);
+            router.replace('/admin/enquiries?deleted=1');
+        } finally{
+            setDeleteLoading(false);
         }
-        setDeleteOpen(false);
-        router.replace('/admin/enquiries?deleted=1');
     }
-    if (!data) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
-        className: "admin-shell",
-        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: "container",
+    async function syncToGoogleSheets() {
+        setSyncLoading(true);
+        setNotice('');
+        try {
+            const response = await fetch(`/api/admin/enquiries/${id}/sync-google-sheets`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const result = await response.json();
+            if (!response.ok) {
+                setNotice(result.error || result.message || 'Failed to sync to Google Sheets.');
+                return;
+            }
+            setNotice('Successfully synced to Google Sheets!');
+            // Refresh the data
+            const refreshResponse = await fetch(`/api/admin/enquiries/${id}`);
+            if (refreshResponse.ok) {
+                setData((await refreshResponse.json()).data);
+            }
+        } catch (error) {
+            setNotice(error instanceof Error ? error.message : 'Failed to sync to Google Sheets.');
+        } finally{
+            setSyncLoading(false);
+        }
+    }
+    if (!data) {
+        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
+            className: "admin-shell",
             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "loading-state",
-                children: "Loading enquiry details..."
+                className: "container",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "loading-state",
+                    children: "Loading enquiry details..."
+                }, void 0, false, {
+                    fileName: "[project]/components/admin/EnquiryDetail.tsx",
+                    lineNumber: 121,
+                    columnNumber: 11
+                }, this)
             }, void 0, false, {
                 fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                lineNumber: 24,
-                columnNumber: 78
+                lineNumber: 120,
+                columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-            lineNumber: 24,
-            columnNumber: 51
-        }, this)
-    }, void 0, false, {
-        fileName: "[project]/components/admin/EnquiryDetail.tsx",
-        lineNumber: 24,
-        columnNumber: 21
-    }, this);
+            lineNumber: 119,
+            columnNumber: 7
+        }, this);
+    }
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
         className: "admin-shell",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -221,35 +259,35 @@ function EnquiryDetail({ id }) {
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                                    className: "back-link",
-                                    href: "/admin/enquiries",
-                                    children: "← All enquiries"
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    className: "back-button",
+                                    onClick: ()=>router.back(),
+                                    children: "← Back"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 25,
-                                    columnNumber: 105
+                                    lineNumber: 132,
+                                    columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                                     children: data.enquiry_number
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 25,
-                                    columnNumber: 179
+                                    lineNumber: 133,
+                                    columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     className: "admin-subtitle",
                                     children: "Review the submitted information and generated form."
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 25,
-                                    columnNumber: 209
+                                    lineNumber: 134,
+                                    columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                            lineNumber: 25,
-                            columnNumber: 100
+                            lineNumber: 131,
+                            columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "admin-actions",
@@ -260,8 +298,8 @@ function EnquiryDetail({ id }) {
                                     children: "Download PDF"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 25,
-                                    columnNumber: 332
+                                    lineNumber: 139,
+                                    columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
                                     href: `/api/admin/enquiries/${id}/pdf`,
@@ -270,11 +308,22 @@ function EnquiryDetail({ id }) {
                                     children: "Print PDF"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 25,
-                                    columnNumber: 426
+                                    lineNumber: 142,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    disabled: syncLoading,
+                                    onClick: syncToGoogleSheets,
+                                    className: "sync-button",
+                                    children: syncLoading ? 'Syncing...' : 'Sync to Google Sheets'
+                                }, void 0, false, {
+                                    fileName: "[project]/components/admin/EnquiryDetail.tsx",
+                                    lineNumber: 145,
+                                    columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     className: "danger-button",
+                                    disabled: deleteLoading,
                                     onClick: ()=>{
                                         setDeleteOpen(true);
                                         setDeleteText('');
@@ -282,29 +331,40 @@ function EnquiryDetail({ id }) {
                                     children: "Delete enquiry"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 25,
-                                    columnNumber: 525
+                                    lineNumber: 152,
+                                    columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                            lineNumber: 25,
-                            columnNumber: 301
+                            lineNumber: 138,
+                            columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                    lineNumber: 25,
-                    columnNumber: 67
+                    lineNumber: 130,
+                    columnNumber: 9
                 }, this),
                 notice && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                    className: "admin-alert admin-alert-error",
+                    className: `admin-alert ${notice.includes('Successfully') ? 'admin-alert-success' : 'admin-alert-error'}`,
                     role: "alert",
                     children: notice
                 }, void 0, false, {
                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                    lineNumber: 25,
-                    columnNumber: 668
+                    lineNumber: 166,
+                    columnNumber: 11
+                }, this),
+                data.google_sheet_synced && data.google_sheet_synced_at && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                    className: "sync-status",
+                    children: [
+                        "✓ Synced to Google Sheets on ",
+                        new Date(data.google_sheet_synced_at).toLocaleString()
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/components/admin/EnquiryDetail.tsx",
+                    lineNumber: 177,
+                    columnNumber: 11
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "detail-layout",
@@ -322,21 +382,21 @@ function EnquiryDetail({ id }) {
                                                     children: "Submission record"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                                    lineNumber: 25,
-                                                    columnNumber: 920
+                                                    lineNumber: 187,
+                                                    columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                                     children: heading
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                                    lineNumber: 25,
-                                                    columnNumber: 978
+                                                    lineNumber: 188,
+                                                    columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                            lineNumber: 25,
-                                            columnNumber: 883
+                                            lineNumber: 186,
+                                            columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("dl", {
                                             children: keys.filter((key)=>!hidden.has(key) && data[key] !== undefined).map((key)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -346,37 +406,37 @@ function EnquiryDetail({ id }) {
                                                             children: labels[key] ?? key
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                                            lineNumber: 25,
-                                                            columnNumber: 1118
+                                                            lineNumber: 195,
+                                                            columnNumber: 25
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("dd", {
                                                             children: key === 'created_at' ? new Date(data[key] ?? '').toLocaleString() : data[key] || 'Not provided'
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                                            lineNumber: 25,
-                                                            columnNumber: 1147
+                                                            lineNumber: 196,
+                                                            columnNumber: 25
                                                         }, this)
                                                     ]
                                                 }, key, true, {
                                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                                    lineNumber: 25,
-                                                    columnNumber: 1082
+                                                    lineNumber: 194,
+                                                    columnNumber: 23
                                                 }, this))
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                            lineNumber: 25,
-                                            columnNumber: 1002
+                                            lineNumber: 190,
+                                            columnNumber: 17
                                         }, this)
                                     ]
                                 }, heading, true, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 25,
-                                    columnNumber: 836
+                                    lineNumber: 185,
+                                    columnNumber: 15
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                            lineNumber: 25,
-                            columnNumber: 770
+                            lineNumber: 183,
+                            columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
                             className: "pdf-panel",
@@ -389,41 +449,41 @@ function EnquiryDetail({ id }) {
                                             children: "Document preview"
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                            lineNumber: 25,
-                                            columnNumber: 1350
+                                            lineNumber: 209,
+                                            columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                             children: "Generated PDF"
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                            lineNumber: 25,
-                                            columnNumber: 1407
+                                            lineNumber: 210,
+                                            columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 25,
-                                    columnNumber: 1315
+                                    lineNumber: 208,
+                                    columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("iframe", {
                                     title: "Generated enquiry PDF",
                                     src: `/api/admin/enquiries/${id}/pdf`
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                    lineNumber: 25,
-                                    columnNumber: 1435
+                                    lineNumber: 212,
+                                    columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                            lineNumber: 25,
-                            columnNumber: 1284
+                            lineNumber: 207,
+                            columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                    lineNumber: 25,
-                    columnNumber: 739
+                    lineNumber: 182,
+                    columnNumber: 9
                 }, this),
                 deleteOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "modal-backdrop",
@@ -438,25 +498,26 @@ function EnquiryDetail({ id }) {
                                 children: "Delete enquiry?"
                             }, void 0, false, {
                                 fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                lineNumber: 25,
-                                columnNumber: 1685
+                                lineNumber: 227,
+                                columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: [
-                                    "This enquiry and its generated PDF will be permanently deleted. Type ",
+                                    "This enquiry and its generated PDF will be permanently deleted. Type",
+                                    ' ',
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
                                         children: "DELETE"
                                     }, void 0, false, {
                                         fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                        lineNumber: 25,
-                                        columnNumber: 1807
+                                        lineNumber: 230,
+                                        columnNumber: 17
                                     }, this),
                                     " to confirm."
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                lineNumber: 25,
-                                columnNumber: 1735
+                                lineNumber: 228,
+                                columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                 autoFocus: true,
@@ -466,57 +527,58 @@ function EnquiryDetail({ id }) {
                                 "aria-label": "Type DELETE to confirm"
                             }, void 0, false, {
                                 fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                lineNumber: 25,
-                                columnNumber: 1846
+                                lineNumber: 232,
+                                columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "dialog-actions",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: ()=>setDeleteOpen(false),
+                                        disabled: deleteLoading,
                                         children: "Cancel"
                                     }, void 0, false, {
                                         fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                        lineNumber: 25,
-                                        columnNumber: 2032
+                                        lineNumber: 240,
+                                        columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                        className: "danger-button",
-                                        disabled: deleteText !== 'DELETE',
+                                        disabled: deleteText !== 'DELETE' || deleteLoading,
                                         onClick: deleteEnquiry,
-                                        children: "Delete"
+                                        className: "danger-button",
+                                        children: deleteLoading ? 'Deleting...' : 'Delete permanently'
                                     }, void 0, false, {
                                         fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                        lineNumber: 25,
-                                        columnNumber: 2092
+                                        lineNumber: 241,
+                                        columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                                lineNumber: 25,
-                                columnNumber: 2000
+                                lineNumber: 239,
+                                columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                        lineNumber: 25,
-                        columnNumber: 1577
+                        lineNumber: 221,
+                        columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/admin/EnquiryDetail.tsx",
-                    lineNumber: 25,
-                    columnNumber: 1545
+                    lineNumber: 220,
+                    columnNumber: 11
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/admin/EnquiryDetail.tsx",
-            lineNumber: 25,
-            columnNumber: 40
+            lineNumber: 129,
+            columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/admin/EnquiryDetail.tsx",
-        lineNumber: 25,
-        columnNumber: 10
+        lineNumber: 128,
+        columnNumber: 5
     }, this);
 }
 }),

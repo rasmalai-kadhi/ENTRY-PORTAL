@@ -92,12 +92,21 @@ function AdminHeader() {
     const pathname = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["usePathname"])();
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
     const [email, setEmail] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
+    const [displayName, setDisplayName] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [menuOpen, setMenuOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [editingDisplayName, setEditingDisplayName] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [displayNameInput, setDisplayNameInput] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
+    const [savingDisplayName, setSavingDisplayName] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         fetch('/api/admin/session', {
             cache: 'no-store'
         }).then(async (response)=>{
-            if (response.ok) setEmail((await response.json()).email ?? '');
+            if (response.ok) {
+                const data = await response.json();
+                setEmail(data.email ?? '');
+                setDisplayName(data.displayName ?? '');
+                setDisplayNameInput(data.displayName ?? '');
+            }
         });
         const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createClient"])();
         let timer;
@@ -120,6 +129,28 @@ function AdminHeader() {
     }, [
         router
     ]);
+    async function saveDisplayName() {
+        const newName = displayNameInput.trim();
+        if (!newName) return;
+        setSavingDisplayName(true);
+        try {
+            const response = await fetch('/api/admin/session', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    displayName: newName
+                })
+            });
+            if (response.ok) {
+                setDisplayName(newName);
+                setEditingDisplayName(false);
+            }
+        } finally{
+            setSavingDisplayName(false);
+        }
+    }
     async function signOut() {
         await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createClient"])().auth.signOut();
         router.replace('/admin/login');
@@ -141,12 +172,12 @@ function AdminHeader() {
                         className: "brand-mark"
                     }, void 0, false, {
                         fileName: "[project]/components/admin/AdminHeader.tsx",
-                        lineNumber: 38,
+                        lineNumber: 66,
                         columnNumber: 96
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/admin/AdminHeader.tsx",
-                    lineNumber: 38,
+                    lineNumber: 66,
                     columnNumber: 7
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
@@ -159,7 +190,7 @@ function AdminHeader() {
                             children: "Dashboard"
                         }, void 0, false, {
                             fileName: "[project]/components/admin/AdminHeader.tsx",
-                            lineNumber: 40,
+                            lineNumber: 68,
                             columnNumber: 9
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -168,7 +199,7 @@ function AdminHeader() {
                             children: "Enquiries"
                         }, void 0, false, {
                             fileName: "[project]/components/admin/AdminHeader.tsx",
-                            lineNumber: 41,
+                            lineNumber: 69,
                             columnNumber: 9
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -177,13 +208,13 @@ function AdminHeader() {
                             children: "Questions"
                         }, void 0, false, {
                             fileName: "[project]/components/admin/AdminHeader.tsx",
-                            lineNumber: 42,
+                            lineNumber: 70,
                             columnNumber: 9
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/admin/AdminHeader.tsx",
-                    lineNumber: 39,
+                    lineNumber: 67,
                     columnNumber: 7
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -199,7 +230,7 @@ function AdminHeader() {
                                     children: email ? email[0].toUpperCase() : 'A'
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/AdminHeader.tsx",
-                                    lineNumber: 45,
+                                    lineNumber: 73,
                                     columnNumber: 108
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -207,64 +238,129 @@ function AdminHeader() {
                                     children: "Profile"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/AdminHeader.tsx",
-                                    lineNumber: 45,
+                                    lineNumber: 73,
                                     columnNumber: 178
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/AdminHeader.tsx",
-                            lineNumber: 45,
+                            lineNumber: 73,
                             columnNumber: 9
                         }, this),
                         menuOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "profile-menu",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    children: email || 'Authenticated admin'
+                                    children: displayName || email || 'Admin'
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/AdminHeader.tsx",
-                                    lineNumber: 46,
-                                    columnNumber: 52
+                                    lineNumber: 76,
+                                    columnNumber: 13
                                 }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                                    className: "profile-menu-link",
-                                    href: "/admin/settings",
-                                    onClick: ()=>setMenuOpen(false),
-                                    children: "PDF field mapping"
-                                }, void 0, false, {
+                                editingDisplayName ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "profile-display-name-editor",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                            autoFocus: true,
+                                            type: "text",
+                                            value: displayNameInput,
+                                            onChange: (e)=>setDisplayNameInput(e.target.value),
+                                            placeholder: "Enter display name",
+                                            disabled: savingDisplayName
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/admin/AdminHeader.tsx",
+                                            lineNumber: 79,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "profile-editor-actions",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                    onClick: saveDisplayName,
+                                                    disabled: savingDisplayName || !displayNameInput.trim(),
+                                                    children: savingDisplayName ? 'Saving...' : 'Save'
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/admin/AdminHeader.tsx",
+                                                    lineNumber: 88,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                    onClick: ()=>{
+                                                        setEditingDisplayName(false);
+                                                        setDisplayNameInput(displayName);
+                                                    },
+                                                    disabled: savingDisplayName,
+                                                    children: "Cancel"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/admin/AdminHeader.tsx",
+                                                    lineNumber: 91,
+                                                    columnNumber: 19
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/components/admin/AdminHeader.tsx",
+                                            lineNumber: 87,
+                                            columnNumber: 17
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
                                     fileName: "[project]/components/admin/AdminHeader.tsx",
-                                    lineNumber: 46,
-                                    columnNumber: 97
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                    onClick: signOut,
-                                    children: "Log out"
-                                }, void 0, false, {
-                                    fileName: "[project]/components/admin/AdminHeader.tsx",
-                                    lineNumber: 46,
-                                    columnNumber: 215
-                                }, this)
+                                    lineNumber: 78,
+                                    columnNumber: 15
+                                }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                            className: "profile-menu-link",
+                                            onClick: ()=>{
+                                                router.push('/admin/settings');
+                                                setMenuOpen(false);
+                                            },
+                                            children: "PDF field mapping"
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/admin/AdminHeader.tsx",
+                                            lineNumber: 98,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                            className: "profile-menu-link",
+                                            onClick: ()=>setEditingDisplayName(true),
+                                            children: "Edit display name"
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/admin/AdminHeader.tsx",
+                                            lineNumber: 99,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                            onClick: signOut,
+                                            children: "Log out"
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/admin/AdminHeader.tsx",
+                                            lineNumber: 100,
+                                            columnNumber: 17
+                                        }, this)
+                                    ]
+                                }, void 0, true)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/AdminHeader.tsx",
-                            lineNumber: 46,
-                            columnNumber: 22
+                            lineNumber: 75,
+                            columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/admin/AdminHeader.tsx",
-                    lineNumber: 44,
+                    lineNumber: 72,
                     columnNumber: 7
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/admin/AdminHeader.tsx",
-            lineNumber: 37,
+            lineNumber: 65,
             columnNumber: 5
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/admin/AdminHeader.tsx",
-        lineNumber: 36,
+        lineNumber: 64,
         columnNumber: 10
     }, this);
 }

@@ -137,7 +137,7 @@ async function getAdminContext() {
     const supabase = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createClient"])();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
-    const { data: admin } = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])().from('admins').select('id, user_id, email, role').eq('user_id', user.id).eq('role', 'admin').maybeSingle();
+    const { data: admin } = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])().from('admins').select('id, user_id, email, role, display_name').eq('user_id', user.id).eq('role', 'admin').maybeSingle();
     return admin ? {
         user,
         admin,
@@ -190,12 +190,14 @@ function clean(value) {
     const fieldKey = String(input.field_key ?? '').trim();
     const label = String(input.label ?? '').trim();
     const type = String(input.type ?? 'text');
+    const numberFormat = input.number_format === 'decimal' ? 'decimal' : 'integer';
     const maxLength = Number(input.max_length ?? 255);
     if (!/^[A-Za-z][A-Za-z0-9_]*$/.test(fieldKey) || !label || !__TURBOPACK__imported__module__$5b$project$5d2f$types$2f$form$2d$question$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["questionTypes"].includes(type) || !Number.isInteger(maxLength) || maxLength < 1 || maxLength > 10000) return null;
     return {
         field_key: fieldKey,
         label,
         type,
+        number_format: numberFormat,
         required: Boolean(input.required),
         allow_alphabets: Boolean(input.allow_alphabets),
         allow_numbers: Boolean(input.allow_numbers),

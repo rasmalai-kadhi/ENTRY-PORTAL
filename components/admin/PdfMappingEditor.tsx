@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import type { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist';
 import type { PdfAlignment, PdfFieldMapping } from '@/types/pdf-mapping';
@@ -22,6 +22,7 @@ function makeMapping(fieldKey: string, pageWidth: number, pageHeight: number, x 
 }
 
 export function PdfMappingEditor() {
+  const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const [pdf, setPdf] = useState<PdfState | null>(null);
@@ -36,6 +37,7 @@ export function PdfMappingEditor() {
   const [placingField, setPlacingField] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteText, setDeleteText] = useState('');
+  const [saving, setSaving] = useState(false);
   const interaction = useRef<Interaction | null>(null);
 
   const current = selectedId ? mappings.find(mapping => mapping.id === selectedId) : undefined;
@@ -149,7 +151,20 @@ export function PdfMappingEditor() {
 
   function undo() { const previous = history.at(-1); if (!previous) return; setFuture(futureState => [mappings, ...futureState]); setMappings(previous); setHistory(history.slice(0, -1)); setSelectedId(null); }
   function redo() { const next = future[0]; if (!next) return; setHistory(previous => [...previous, mappings]); setMappings(next); setFuture(future.slice(1)); }
-  async function save() { const response = await fetch('/api/admin/pdf-mappings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mappings }) }); setNotice(response.ok ? 'Mappings saved.' : 'Could not save mappings.'); setTimeout(() => setNotice(''), 3000); }
+  async function save() {
+    setSaving(true);
+    try {
+      const response = await fetch('/api/admin/pdf-mappings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mappings }),
+      });
+      setNotice(response.ok ? 'Mappings saved.' : 'Could not save mappings.');
+      setTimeout(() => setNotice(''), 3000);
+    } finally {
+      setSaving(false);
+    }
+  }
   function reset() { snapshot(); setMappings([]); setSelectedId(null); }
   function requestDelete() { setDeleteText(''); setDeleteOpen(true); }
   function confirmDelete() { if (deleteText !== 'DELETE' || !current) return; snapshot(); setMappings(previous => previous.filter(mapping => mapping.id !== current.id)); setSelectedId(null); setDeleteOpen(false); }
@@ -157,8 +172,8 @@ export function PdfMappingEditor() {
   const pageMappings = mappings.filter(mapping => mapping.page_number === pageNumber);
   return <main className="mapping-editor-page">
     <header className="mapping-toolbar">
-      <div><Link className="back-link" href="/admin">← Dashboard</Link><h1>PDF field mapping</h1><p>Place submitted values on the original entry form.</p></div>
-      <div className="mapping-toolbar-actions"><button className="btn-secondary" onClick={undo} disabled={!history.length}>Undo</button><button className="btn-secondary" onClick={redo} disabled={!future.length}>Redo</button><button className="btn-secondary" onClick={reset}>Reset</button><button className="btn-primary" onClick={save}>Save mappings</button></div>
+      <div><button className="back-button" onClick={() => router.back()}>← Back</button><h1>PDF field mapping</h1><p>Place submitted values on the original entry form.</p></div>
+      <div className="mapping-toolbar-actions"><button className="btn-secondary" onClick={undo} disabled={!history.length}>Undo</button><button className="btn-secondary" onClick={redo} disabled={!future.length}>Redo</button><button className="btn-secondary" onClick={reset} disabled={saving}>Reset</button><button className="btn-primary" onClick={save} disabled={saving}>{saving ? 'Saving...' : 'Save mappings'}</button></div>
     </header>
     {notice && <Toast message={notice} onClose={() => setNotice('')} />}
     <div className="mapping-layout">

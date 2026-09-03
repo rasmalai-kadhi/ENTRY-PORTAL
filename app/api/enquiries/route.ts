@@ -3,6 +3,7 @@ import { buildQuestionsSchema, normalizeQuestions } from "@/lib/enquiry/question
 import { generateEnquiryPdf } from "@/lib/pdf/generate";
 import { generateEnquiryNumber } from "@/lib/enquiry/numbering";
 import { createAdminClient, verifySupabaseConnection } from "@/lib/supabase/admin";
+import { syncEnquiryToGoogleSheets } from "@/lib/pdf/google-sheets-sync";
 import type { Enquiry } from "@/types/enquiry";
 import { getClientIp } from "@/lib/request/client-ip";
 
@@ -38,6 +39,34 @@ export async function POST(request: Request) {
     const legacyValues = Object.fromEntries(legacyKeys.map(key => [key, answerValues[key] ?? '']));
     const { error: insertError } = await supabase.from("enquiries").insert({ ...legacyValues, answers: answerValues, date: enquiry.date, enquiry_number: enquiryNumber, client_ip: clientIp, terms_accepted: true, terms_accepted_at: now.toISOString(), terms_version: TERMS_VERSION, privacy_version: PRIVACY_VERSION, submitted_at: now.toISOString(), pdf_storage_path: pdfStoragePath, status: "submitted" });
     if (insertError) { await supabase.storage.from("generated-forms").remove([pdfStoragePath]); throw insertError; }
+    
+    // Trigger Google Sheets sync asynchronously (non-blocking)
+    const enquiryForSync = { ...legacyValues, answers: answerValues, enquiry_number: enquiryNumber, date: enquiry.date, client_ip: clientIp, status: "submitted", submitted_at: now.toISOString() } as Record<string, unknown>;
+    syncEnquiryToGoogleSheets(enquiryForSync).then(result => {
+      if (result.success) {
+        console.log(`[SYNC SUCCESS] Enquiry ${enquiryNumber} synced to Google Sheets (Row: ${result.rowId})`);
+        // Update the sync status in the database
+        supabase.from("enquiries").update({
+          google_sheet_synced: true,
+          google_sheet_synced_at: new Date().toISOString(),
+          google_sheet_row_id: result.rowId || null,
+        }).eq("enquiry_number", enquiryNumber).then(({ error }) => {
+          if (error) console.error(`[SYNC UPDATE ERROR] Failed to update sync status for ${enquiryNumber}:`, error);
+        });
+      } else {
+        console.error(`[SYNC ERROR] Failed to sync ${enquiryNumber}:`, result.error);
+        // Update error status in the database
+        supabase.from("enquiries").update({
+          google_sheet_synced: false,
+          google_sheet_error: result.error || "Unknown error",
+        }).eq("enquiry_number", enquiryNumber).then(({ error }) => {
+          if (error) console.error(`[SYNC UPDATE ERROR] Failed to update error status for ${enquiryNumber}:`, error);
+        });
+      }
+    }).catch(error => {
+      console.error(`[SYNC EXCEPTION] Exception during sync of ${enquiryNumber}:`, error);
+    });
+    
     return NextResponse.json({ ok: true, message: "Form submitted successfully.", clientIp, enquiryNumber });
   } catch (error) {
     console.error("ENQUIRY SUBMISSION ERROR:", error);

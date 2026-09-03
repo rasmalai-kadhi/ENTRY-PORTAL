@@ -137,7 +137,7 @@ async function getAdminContext() {
     const supabase = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createClient"])();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
-    const { data: admin } = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])().from('admins').select('id, user_id, email, role').eq('user_id', user.id).eq('role', 'admin').maybeSingle();
+    const { data: admin } = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])().from('admins').select('id, user_id, email, role, display_name').eq('user_id', user.id).eq('role', 'admin').maybeSingle();
     return admin ? {
         user,
         admin,
@@ -150,7 +150,9 @@ async function getAdminContext() {
 
 __turbopack_context__.s([
     "GET",
-    ()=>GET
+    ()=>GET,
+    "PUT",
+    ()=>PUT
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/server.js [app-route] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$auth$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/auth/admin.ts [app-route] (ecmascript)");
@@ -160,8 +162,46 @@ async function GET() {
     const context = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$auth$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getAdminContext"])();
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
         authenticated: Boolean(context),
-        email: context?.user.email ?? null
+        email: context?.user.email ?? null,
+        displayName: context?.admin.display_name ?? null
     });
+}
+async function PUT(request) {
+    try {
+        const context = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$auth$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getAdminContext"])();
+        if (!context) return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            error: 'Unauthorized'
+        }, {
+            status: 401
+        });
+        const { displayName } = await request.json();
+        if (!displayName || typeof displayName !== 'string' || displayName.trim().length === 0) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                error: 'Display name must be a non-empty string'
+            }, {
+                status: 400
+            });
+        }
+        const { error } = await context.supabase.from('admins').update({
+            display_name: displayName.trim()
+        }).eq('user_id', context.user.id);
+        if (error) return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            error: error.message
+        }, {
+            status: 500
+        });
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            success: true,
+            displayName: displayName.trim()
+        });
+    } catch (error) {
+        console.error('Error updating display name:', error);
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            error: error instanceof Error ? error.message : 'Failed to update display name'
+        }, {
+            status: 500
+        });
+    }
 }
 }),
 ];

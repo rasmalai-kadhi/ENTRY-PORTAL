@@ -140,6 +140,10 @@ const metadata = {
     description: 'Digital enquiry and entry-form management system',
     icons: {
         icon: '/images/favicon.png'
+    },
+    openGraph: {
+        title: 'Eduspray',
+        description: 'Digital enquiry and entry-form management system'
     }
 };
 async function RootLayout({ children }) {
@@ -152,19 +156,19 @@ async function RootLayout({ children }) {
                     clientIp: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$request$2f$client$2d$ip$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getClientIp"])(requestHeaders)
                 }, void 0, false, {
                     fileName: "[project]/app/layout.tsx",
-                    lineNumber: 15,
+                    lineNumber: 16,
                     columnNumber: 32
                 }, this),
                 children
             ]
         }, void 0, true, {
             fileName: "[project]/app/layout.tsx",
-            lineNumber: 15,
+            lineNumber: 16,
             columnNumber: 26
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/layout.tsx",
-        lineNumber: 15,
+        lineNumber: 16,
         columnNumber: 10
     }, this);
 }

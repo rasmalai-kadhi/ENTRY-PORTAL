@@ -10,44 +10,44 @@ __turbopack_context__.s([
 ]);
 const phrases = {
     morning: [
-        'Good Morning',
-        'Namaste',
-        'Bonjour',
-        'Konnichiwa',
-        'Nǐ hǎo',
-        'Hola',
-        'Ciao'
+        "Good Morning",
+        "Namaste",
+        "Bonjour",
+        "Konnichiwa",
+        "Nǐ hǎo",
+        "Hola",
+        "Buongiorno"
     ],
     afternoon: [
-        'Good Afternoon',
-        'Namaste',
-        'Bonjour',
-        'Konnichiwa',
-        'Nǐ hǎo',
-        'Hola',
-        'Ciao'
+        "Good Afternoon",
+        "Namaste",
+        "Bonjour",
+        "Konnichiwa",
+        "Nǐ hǎo",
+        "Hola",
+        "Buon pomeriggio"
     ],
     evening: [
-        'Good Evening',
-        'Namaste',
-        'Bonjour',
-        'Nǐ hǎo',
-        'Hola',
-        'Ciao'
+        "Good Evening",
+        "Namaste",
+        "Bonsoir",
+        "Konnichiwa",
+        "Nǐ hǎo",
+        "Buenas tardes",
+        "Buona sera"
     ],
     night: [
-        'Good Night',
-        'Namaste',
-        'Bonjour',
-        'Nǐ hǎo',
-        'Hola',
-        'Ciao'
+        "Good Night",
+        "Namaste",
+        "Bonne nuit",
+        "Buenas noches",
+        "Buona notte"
     ]
 };
 function greetingPeriodForHour(hour) {
     if (hour < 5 || hour >= 19) return 'night';
     if (hour < 12) return 'morning';
-    if (hour < 17) return 'afternoon';
+    if (hour < 16) return 'afternoon';
     return 'evening';
 }
 function greetingForLocalHour(hour, random = Math.random()) {
@@ -69,15 +69,27 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$greetings$2e$ts__$5b$
 ;
 ;
 ;
-function AdminGreeting() {
+function extractNameFromEmail(email) {
+    if (!email) return 'admin';
+    // Extract the part before @ symbol
+    const localPart = email.split('@')[0];
+    // Replace dots and underscores with spaces
+    const withSpaces = localPart.replace(/[._-]/g, ' ');
+    // Capitalize each word
+    return withSpaces.split(' ').map((word)=>word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).filter((word)=>word.length > 0).slice(0, 2) // Take only first two words
+    .join(' ');
+}
+function AdminGreeting({ email = '', displayName = '' }) {
     const [greeting, setGreeting] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('Good Morning');
+    const adminName = displayName || extractNameFromEmail(email);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         setGreeting((0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$greetings$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["greetingForLocalHour"])(new Date().getHours()));
     }, []);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
         children: [
             greeting,
-            ", admin."
+            ", ",
+            adminName
         ]
     }, void 0, true);
 }
@@ -102,9 +114,22 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$admin$2f$Admin
 ;
 function Dashboard() {
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
+    const [email, setEmail] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
+    const [displayName, setDisplayName] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [stats, setStats] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [loadError, setLoadError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [search, setSearch] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        fetch('/api/admin/session', {
+            cache: 'no-store'
+        }).then(async (response)=>{
+            if (response.ok) {
+                const data = await response.json();
+                setEmail(data.email ?? '');
+                setDisplayName(data.displayName ?? '');
+            }
+        });
+    }, []);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         const params = new URLSearchParams();
         if (search.trim()) params.set('search', search.trim());
@@ -133,18 +158,21 @@ function Dashboard() {
                             children: "Eduspray control centre"
                         }, void 0, false, {
                             fileName: "[project]/components/admin/Dashboard.tsx",
-                            lineNumber: 36,
+                            lineNumber: 48,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$admin$2f$AdminGreeting$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AdminGreeting"], {}, void 0, false, {
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$admin$2f$AdminGreeting$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AdminGreeting"], {
+                                email: email,
+                                displayName: displayName
+                            }, void 0, false, {
                                 fileName: "[project]/components/admin/Dashboard.tsx",
-                                lineNumber: 37,
+                                lineNumber: 49,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/admin/Dashboard.tsx",
-                            lineNumber: 37,
+                            lineNumber: 49,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -152,18 +180,18 @@ function Dashboard() {
                             children: "Keep track of new student enquiries and follow up with every prospective learner."
                         }, void 0, false, {
                             fileName: "[project]/components/admin/Dashboard.tsx",
-                            lineNumber: 38,
+                            lineNumber: 50,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/admin/Dashboard.tsx",
-                    lineNumber: 35,
+                    lineNumber: 47,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/admin/Dashboard.tsx",
-                lineNumber: 34,
+                lineNumber: 46,
                 columnNumber: 7
             }, this),
             loadError ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -172,7 +200,7 @@ function Dashboard() {
                 children: "We could not load the dashboard right now. Please refresh and try again."
             }, void 0, false, {
                 fileName: "[project]/components/admin/Dashboard.tsx",
-                lineNumber: 42,
+                lineNumber: 54,
                 columnNumber: 20
             }, this) : null,
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -187,32 +215,32 @@ function Dashboard() {
                                     children: "Total submissions"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/Dashboard.tsx",
-                                    lineNumber: 46,
+                                    lineNumber: 58,
                                     columnNumber: 16
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
                                     children: stats?.total ?? '...'
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/Dashboard.tsx",
-                                    lineNumber: 46,
+                                    lineNumber: 58,
                                     columnNumber: 46
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
                                     children: "All submissions received"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/Dashboard.tsx",
-                                    lineNumber: 46,
+                                    lineNumber: 58,
                                     columnNumber: 86
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/Dashboard.tsx",
-                            lineNumber: 46,
+                            lineNumber: 58,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/admin/Dashboard.tsx",
-                        lineNumber: 45,
+                        lineNumber: 57,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -223,32 +251,32 @@ function Dashboard() {
                                     children: "Submissions today"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/Dashboard.tsx",
-                                    lineNumber: 49,
+                                    lineNumber: 61,
                                     columnNumber: 16
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
                                     children: stats?.today ?? '...'
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/Dashboard.tsx",
-                                    lineNumber: 49,
+                                    lineNumber: 61,
                                     columnNumber: 46
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
                                     children: "New submissions today"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/Dashboard.tsx",
-                                    lineNumber: 49,
+                                    lineNumber: 61,
                                     columnNumber: 86
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/Dashboard.tsx",
-                            lineNumber: 49,
+                            lineNumber: 61,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/admin/Dashboard.tsx",
-                        lineNumber: 48,
+                        lineNumber: 60,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -259,38 +287,38 @@ function Dashboard() {
                                     children: "Past hour"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/Dashboard.tsx",
-                                    lineNumber: 52,
+                                    lineNumber: 64,
                                     columnNumber: 16
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
                                     children: stats?.pastHour ?? '...'
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/Dashboard.tsx",
-                                    lineNumber: 52,
+                                    lineNumber: 64,
                                     columnNumber: 38
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
                                     children: "Submissions in the last 60 minutes"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/Dashboard.tsx",
-                                    lineNumber: 52,
+                                    lineNumber: 64,
                                     columnNumber: 81
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/Dashboard.tsx",
-                            lineNumber: 52,
+                            lineNumber: 64,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/admin/Dashboard.tsx",
-                        lineNumber: 51,
+                        lineNumber: 63,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/admin/Dashboard.tsx",
-                lineNumber: 44,
+                lineNumber: 56,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -306,20 +334,20 @@ function Dashboard() {
                                         children: "Inbox"
                                     }, void 0, false, {
                                         fileName: "[project]/components/admin/Dashboard.tsx",
-                                        lineNumber: 58,
+                                        lineNumber: 70,
                                         columnNumber: 16
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                         children: "Recent submissions"
                                     }, void 0, false, {
                                         fileName: "[project]/components/admin/Dashboard.tsx",
-                                        lineNumber: 58,
+                                        lineNumber: 70,
                                         columnNumber: 56
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/admin/Dashboard.tsx",
-                                lineNumber: 58,
+                                lineNumber: 70,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -332,19 +360,19 @@ function Dashboard() {
                                         children: "→"
                                     }, void 0, false, {
                                         fileName: "[project]/components/admin/Dashboard.tsx",
-                                        lineNumber: 59,
+                                        lineNumber: 71,
                                         columnNumber: 82
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/admin/Dashboard.tsx",
-                                lineNumber: 59,
+                                lineNumber: 71,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/admin/Dashboard.tsx",
-                        lineNumber: 57,
+                        lineNumber: 69,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -358,46 +386,46 @@ function Dashboard() {
                                                 children: "Enquiry ID"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/admin/Dashboard.tsx",
-                                                lineNumber: 63,
+                                                lineNumber: 75,
                                                 columnNumber: 24
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                                 children: "Name"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/admin/Dashboard.tsx",
-                                                lineNumber: 63,
+                                                lineNumber: 75,
                                                 columnNumber: 43
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                                 children: "Course"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/admin/Dashboard.tsx",
-                                                lineNumber: 63,
+                                                lineNumber: 75,
                                                 columnNumber: 56
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                                 children: "Submitted At"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/admin/Dashboard.tsx",
-                                                lineNumber: 63,
+                                                lineNumber: 75,
                                                 columnNumber: 71
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                                 children: "Action"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/admin/Dashboard.tsx",
-                                                lineNumber: 63,
+                                                lineNumber: 75,
                                                 columnNumber: 92
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/admin/Dashboard.tsx",
-                                        lineNumber: 63,
+                                        lineNumber: 75,
                                         columnNumber: 20
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/Dashboard.tsx",
-                                    lineNumber: 63,
+                                    lineNumber: 75,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -411,12 +439,12 @@ function Dashboard() {
                                                             children: item.enquiry_number
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/admin/Dashboard.tsx",
-                                                            lineNumber: 65,
+                                                            lineNumber: 77,
                                                             columnNumber: 64
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/admin/Dashboard.tsx",
-                                                        lineNumber: 65,
+                                                        lineNumber: 77,
                                                         columnNumber: 60
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -425,26 +453,26 @@ function Dashboard() {
                                                             children: item.name
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/admin/Dashboard.tsx",
-                                                            lineNumber: 65,
+                                                            lineNumber: 77,
                                                             columnNumber: 171
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/admin/Dashboard.tsx",
-                                                        lineNumber: 65,
+                                                        lineNumber: 77,
                                                         columnNumber: 167
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                                         children: item.course
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/admin/Dashboard.tsx",
-                                                        lineNumber: 65,
+                                                        lineNumber: 77,
                                                         columnNumber: 231
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                                         children: new Date(item.created_at).toLocaleString()
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/admin/Dashboard.tsx",
-                                                        lineNumber: 65,
+                                                        lineNumber: 77,
                                                         columnNumber: 253
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -454,18 +482,18 @@ function Dashboard() {
                                                             children: "View"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/admin/Dashboard.tsx",
-                                                            lineNumber: 65,
+                                                            lineNumber: 77,
                                                             columnNumber: 310
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/admin/Dashboard.tsx",
-                                                        lineNumber: 65,
+                                                        lineNumber: 77,
                                                         columnNumber: 306
                                                     }, this)
                                                 ]
                                             }, item.id, true, {
                                                 fileName: "[project]/components/admin/Dashboard.tsx",
-                                                lineNumber: 65,
+                                                lineNumber: 77,
                                                 columnNumber: 42
                                             }, this)),
                                         stats && stats.recent.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
@@ -475,41 +503,41 @@ function Dashboard() {
                                                 children: "No recent enquiries yet."
                                             }, void 0, false, {
                                                 fileName: "[project]/components/admin/Dashboard.tsx",
-                                                lineNumber: 66,
+                                                lineNumber: 78,
                                                 columnNumber: 57
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/Dashboard.tsx",
-                                            lineNumber: 66,
+                                            lineNumber: 78,
                                             columnNumber: 53
                                         }, this) : null
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/admin/Dashboard.tsx",
-                                    lineNumber: 64,
+                                    lineNumber: 76,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/Dashboard.tsx",
-                            lineNumber: 62,
+                            lineNumber: 74,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/admin/Dashboard.tsx",
-                        lineNumber: 61,
+                        lineNumber: 73,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/admin/Dashboard.tsx",
-                lineNumber: 56,
+                lineNumber: 68,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/admin/Dashboard.tsx",
-        lineNumber: 33,
+        lineNumber: 45,
         columnNumber: 5
     }, this);
 }

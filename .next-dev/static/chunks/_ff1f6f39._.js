@@ -19,6 +19,7 @@ function SuccessPage() {
     const [enquiryNumber, setEnquiryNumber] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "SuccessPage.useEffect": ()=>{
+            document.title = 'Submission Successful - Eduspray Enquiry Form';
             setEnquiryNumber(sessionStorage.getItem('eduspray-enquiry-number') || '');
             if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) void (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$canvas$2d$confetti$2f$dist$2f$confetti$2e$module$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"])({
                 particleCount: 120,
@@ -42,12 +43,12 @@ function SuccessPage() {
                         children: "✓"
                     }, void 0, false, {
                         fileName: "[project]/app/enquiry/success/page.tsx",
-                        lineNumber: 13,
+                        lineNumber: 17,
                         columnNumber: 58
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/enquiry/success/page.tsx",
-                    lineNumber: 13,
+                    lineNumber: 17,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -55,7 +56,7 @@ function SuccessPage() {
                     children: "Form submitted successfully."
                 }, void 0, false, {
                     fileName: "[project]/app/enquiry/success/page.tsx",
-                    lineNumber: 14,
+                    lineNumber: 18,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
@@ -63,7 +64,7 @@ function SuccessPage() {
                     children: "You've officially taken the first step toward a bright future with Eduspray."
                 }, void 0, false, {
                     fileName: "[project]/app/enquiry/success/page.tsx",
-                    lineNumber: 15,
+                    lineNumber: 19,
                     columnNumber: 9
                 }, this),
                 enquiryNumber && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -74,24 +75,24 @@ function SuccessPage() {
                             children: enquiryNumber
                         }, void 0, false, {
                             fileName: "[project]/app/enquiry/success/page.tsx",
-                            lineNumber: 16,
+                            lineNumber: 20,
                             columnNumber: 71
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/enquiry/success/page.tsx",
-                    lineNumber: 16,
+                    lineNumber: 20,
                     columnNumber: 27
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/enquiry/success/page.tsx",
-            lineNumber: 12,
+            lineNumber: 16,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/enquiry/success/page.tsx",
-        lineNumber: 11,
+        lineNumber: 15,
         columnNumber: 5
     }, this);
 }

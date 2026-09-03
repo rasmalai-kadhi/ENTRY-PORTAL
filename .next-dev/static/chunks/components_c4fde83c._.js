@@ -71,12 +71,21 @@ function LoginForm() {
         setIsSubmitting(true);
         setError('');
         const form = new FormData(event.currentTarget);
-        const { error: signInError } = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createClient"])().auth.signInWithPassword({
+        const client = (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createClient"])();
+        const { error: signInError } = await client.auth.signInWithPassword({
             email: String(form.get('email')),
             password: String(form.get('password'))
         });
         if (signInError) setError('Invalid email or password.');
-        else router.push(new URLSearchParams(window.location.search).get('next') || '/admin');
+        else {
+            const sessionResponse = await fetch('/api/admin/session', {
+                cache: 'no-store'
+            });
+            if (!sessionResponse.ok || !(await sessionResponse.json()).authenticated) {
+                await client.auth.signOut();
+                setError('This account is authenticated but is not authorized for the admin panel.');
+            } else router.push(new URLSearchParams(window.location.search).get('next') || '/admin');
+        }
         setIsSubmitting(false);
     }
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -87,7 +96,7 @@ function LoginForm() {
                 children: "Admin Login"
             }, void 0, false, {
                 fileName: "[project]/components/admin/LoginForm.tsx",
-                lineNumber: 25,
+                lineNumber: 32,
                 columnNumber: 5
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -98,7 +107,7 @@ function LoginForm() {
                         children: "Email"
                     }, void 0, false, {
                         fileName: "[project]/components/admin/LoginForm.tsx",
-                        lineNumber: 26,
+                        lineNumber: 33,
                         columnNumber: 28
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -108,13 +117,13 @@ function LoginForm() {
                         required: true
                     }, void 0, false, {
                         fileName: "[project]/components/admin/LoginForm.tsx",
-                        lineNumber: 26,
+                        lineNumber: 33,
                         columnNumber: 64
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/admin/LoginForm.tsx",
-                lineNumber: 26,
+                lineNumber: 33,
                 columnNumber: 5
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -125,7 +134,7 @@ function LoginForm() {
                         children: "Password"
                     }, void 0, false, {
                         fileName: "[project]/components/admin/LoginForm.tsx",
-                        lineNumber: 27,
+                        lineNumber: 34,
                         columnNumber: 28
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -135,13 +144,13 @@ function LoginForm() {
                         required: true
                     }, void 0, false, {
                         fileName: "[project]/components/admin/LoginForm.tsx",
-                        lineNumber: 27,
+                        lineNumber: 34,
                         columnNumber: 70
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/admin/LoginForm.tsx",
-                lineNumber: 27,
+                lineNumber: 34,
                 columnNumber: 5
             }, this),
             error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -149,7 +158,7 @@ function LoginForm() {
                 children: error
             }, void 0, false, {
                 fileName: "[project]/components/admin/LoginForm.tsx",
-                lineNumber: 28,
+                lineNumber: 35,
                 columnNumber: 15
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -158,13 +167,13 @@ function LoginForm() {
                 children: isSubmitting ? 'Signing in...' : 'Sign in'
             }, void 0, false, {
                 fileName: "[project]/components/admin/LoginForm.tsx",
-                lineNumber: 29,
+                lineNumber: 36,
                 columnNumber: 5
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/admin/LoginForm.tsx",
-        lineNumber: 24,
+        lineNumber: 31,
         columnNumber: 10
     }, this);
 }
