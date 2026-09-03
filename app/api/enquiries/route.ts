@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     if (insertError) { await supabase.storage.from("generated-forms").remove([pdfStoragePath]); throw insertError; }
     
     // Trigger Google Sheets sync asynchronously (non-blocking)
-    const enquiryForSync = { ...legacyValues, answers: answerValues, enquiry_number: enquiryNumber, date: enquiry.date, client_ip: clientIp, status: "submitted", submitted_at: now.toISOString() } as Enquiry & { submitted_at: string; client_ip: string; status: string };
+    const enquiryForSync = { ...legacyValues, answers: answerValues, enquiry_number: enquiryNumber, date: enquiry.date, client_ip: clientIp, status: "submitted", submitted_at: now.toISOString() } as Record<string, unknown>;
     syncEnquiryToGoogleSheets(enquiryForSync).then(result => {
       if (result.success) {
         console.log(`[SYNC SUCCESS] Enquiry ${enquiryNumber} synced to Google Sheets (Row: ${result.rowId})`);
