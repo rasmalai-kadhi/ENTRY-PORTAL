@@ -200,6 +200,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../app/api/admin/enquiries/[id]/sync-google-sheets/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/admin/enquiries/[id]/sync-google-sheets">> = Specific
+  const handler = {} as typeof import("../../app/api/admin/enquiries/[id]/sync-google-sheets/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../app/api/admin/enquiries/export/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/admin/enquiries/export">> = Specific
@@ -302,6 +311,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 
 
 
+
+// Validate ../../app/admin/layout.tsx
+{
+  type __IsExpected<Specific extends LayoutConfig<"/admin">> = Specific
+  const handler = {} as typeof import("../../app/admin/layout.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
 
 // Validate ../../app/layout.tsx
 {

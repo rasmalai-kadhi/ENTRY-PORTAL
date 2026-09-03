@@ -149,7 +149,7 @@ async function getAdminContext() {
     const supabase = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createClient"])();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
-    const { data: admin } = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])().from('admins').select('id, user_id, email, role').eq('user_id', user.id).eq('role', 'admin').maybeSingle();
+    const { data: admin } = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])().from('admins').select('id, user_id, email, role, display_name').eq('user_id', user.id).eq('role', 'admin').maybeSingle();
     return admin ? {
         user,
         admin,

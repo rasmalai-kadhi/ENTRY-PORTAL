@@ -8,7 +8,7 @@ export async function getAdminContext() {
 
   const { data: admin } = await createAdminClient()
     .from('admins')
-    .select('id, user_id, email, role')
+    .select('id, user_id, email, role, display_name')
     .eq('user_id', user.id)
     .eq('role', 'admin')
     .maybeSingle();

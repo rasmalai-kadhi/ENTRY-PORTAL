@@ -4,19 +4,37 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AdminGreeting } from '@/components/admin/AdminGreeting';
+import { useRealtimeEnquiries } from '@/lib/hooks/useRealtimeEnquiries';
 
 type Stats = { total: number; today: number; pastHour: number; recent: Array<{ id: string; enquiry_number: string; name: string; course: string; created_at: string; status: string }> };
 
 export function Dashboard() {
   const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [stats, setStats] = useState<Stats | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [search, setSearch] = useState('');
+  const [notificationMessage, setNotificationMessage] = useState('');
 
-  useEffect(() => {
+  const { notification, clearNotification } = useRealtimeEnquiries({
+    onNewEnquiry: (enquiry) => {
+      setNotificationMessage(`New enquiry received: ${enquiry.name} for ${enquiry.course}`);
+      // Refresh stats after a short delay to ensure data is persisted
+      setTimeout(() => {
+        refreshStats();
+      }, 500);
+      // Clear notification after 5 seconds
+      setTimeout(() => {
+        setNotificationMessage('');
+        clearNotification();
+      }, 5000);
+    },
+  });
+
+  const refreshStats = (searchQuery = search) => {
     const params = new URLSearchParams();
-    if (search.trim()) params.set('search', search.trim());
-    setLoadError(false);
+    if (searchQuery.trim()) params.set('search', searchQuery.trim());
     fetch(`/api/admin/stats?${params}`)
       .then(async response => {
         if (response.status === 401) {
@@ -27,17 +45,43 @@ export function Dashboard() {
         setStats(await response.json());
       })
       .catch(() => setLoadError(true));
-  }, [router, search]);
+  };
+
+  useEffect(() => {
+    fetch('/api/admin/session', { cache: 'no-store' }).then(async response => {
+      if (response.ok) {
+        const data = await response.json() as { email?: string; displayName?: string };
+        setEmail(data.email ?? '');
+        setDisplayName(data.displayName ?? '');
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    setLoadError(false);
+    refreshStats();
+  }, [search, router]);
 
   return (
     <main className="container admin-shell">
       <header className="admin-header">
         <div>
           <p className="eyebrow">Eduspray control centre</p>
-          <h1><AdminGreeting /></h1>
+          <h1><AdminGreeting email={email} displayName={displayName} /></h1>
           <p className="admin-subtitle">Keep track of new student enquiries and follow up with every prospective learner.</p>
         </div>
       </header>
+
+      {notificationMessage && (
+        <div className="admin-notification-toast" role="status" aria-live="polite">
+          <p>{notificationMessage}</p>
+          {notification && (
+            <Link href={`/admin/enquiries/${notification.id}`} className="notification-link">
+              View enquiry →
+            </Link>
+          )}
+        </div>
+      )}
 
       {loadError ? <div className="admin-alert" role="alert">We could not load the dashboard right now. Please refresh and try again.</div> : null}
 
