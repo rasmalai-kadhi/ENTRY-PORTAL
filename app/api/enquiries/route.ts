@@ -6,6 +6,7 @@ import { createAdminClient, verifySupabaseConnection } from "@/lib/supabase/admi
 import { syncEnquiryToGoogleSheets } from "@/lib/pdf/google-sheets-sync";
 import type { Enquiry } from "@/types/enquiry";
 import { getClientIp } from "@/lib/request/client-ip";
+import { normalizeDob } from "@/lib/enquiry/dob";
 
 export const runtime = "nodejs";
 const legacyKeys = ['course', 'name', 'dob', 'gender', 'motherName', 'fatherName', 'address', 'mobile1', 'mobile2', 'email', 'class10Percent', 'class12Stream', 'class12Percent', 'physicsMarks', 'chemistryMarks', 'mathsMarks', 'biologyMarks', 'csMarks', 'schoolNameWithState', 'neetUgScore', 'neetPgScore', 'category', 'cuetScoreRank', 'cetScoreRank', 'clatScoreRank', 'catScoreRank', 'jeeMainsCrl', 'percentile', 'pcmPercent', 'pcbPercent', 'collegeUniversityName', 'courses', 'marks', 'reference', 'signatureDataUrl'];
@@ -25,7 +26,8 @@ export async function POST(request: Request) {
     if (questionsResult.error) return jsonError('Unable to load form configuration.', 503);
     const questions = normalizeQuestions(questionsResult.data);
     const answers = body.answers && typeof body.answers === 'object' ? body.answers as Record<string, unknown> : body;
-    const parsed = buildQuestionsSchema(questions).safeParse(answers);
+    const normalizedAnswers = { ...answers, ...(typeof answers.dob === 'string' ? { dob: normalizeDob(answers.dob) } : {}) };
+    const parsed = buildQuestionsSchema(questions).safeParse(normalizedAnswers);
     if (!parsed.success) return NextResponse.json({ ok: false, error: "Please check the form fields.", fields: parsed.error.flatten().fieldErrors }, { status: 400 });
     const now = new Date();
     const enquiryNumber = await generateEnquiryNumber();

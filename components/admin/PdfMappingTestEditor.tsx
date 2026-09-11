@@ -18,7 +18,7 @@ type PdfInfo = { document: import('pdfjs-dist').PDFDocumentProxy; width: number;
 type Interaction = { id: string; mode: 'move' | 'resize'; startX: number; startY: number; original: PdfFieldMapping };
 
 const sample: Enquiry = {
-  enquiryNumber: 'ENQ-2026-0042', date: '21/08/2026', course: 'MBBS', name: 'Rahul Sharma', dob: '15/08/2005', gender: 'M',
+  enquiryNumber: 'ENQ-2026-0042', date: '21/08/2026', course: 'MBBS', name: 'Rahul Sharma', dob: '15-08-2005', gender: 'M',
   motherName: 'Sunita Sharma', fatherName: 'Rajesh Sharma', address: '42 Green Park, New Delhi, Delhi - 110016', mobile1: '9876543210', mobile2: '9812345678', email: 'rahul@example.com',
   class10Percent: '94%', class12Stream: 'Science', class12Percent: '91%', physicsMarks: '88', chemistryMarks: '92', mathsMarks: '95', biologyMarks: '90', csMarks: '87', schoolNameWithState: 'DPS RK Puram, Delhi',
   neetUgScore: '682', neetPgScore: 'N/A', category: 'General', cuetScoreRank: '98.4 percentile', cetScoreRank: 'N/A', clatScoreRank: 'N/A', catScoreRank: 'N/A', jeeMainsCrl: 'N/A', percentile: '98.4', pcmPercent: '92%', pcbPercent: '91%', collegeUniversityName: 'Delhi University', courses: 'NEET preparation', marks: 'Strong Biology', reference: 'Google search', signatureDataUrl: '',
@@ -43,6 +43,8 @@ export function PdfMappingTestEditor({ initialMappings }: { initialMappings?: Pd
   const [history, setHistory] = useState<PdfFieldMapping[][]>([]);
   const [future, setFuture] = useState<PdfFieldMapping[][]>([]);
   const [loading, setLoading] = useState(true);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const scale = fitScale * zoom;
   const current = mappings.find(mapping => mapping.id === selectedId);
 
@@ -84,10 +86,13 @@ export function PdfMappingTestEditor({ initialMappings }: { initialMappings?: Pd
     if (!mappings.length || !pdf) return;
     if (renderTimer.current) clearTimeout(renderTimer.current);
     renderTimer.current = setTimeout(async () => {
-      const response = await fetch('/api/admin/pdf-mapping/preview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ enquiry: sample, mappings }) });
-      if (!response.ok) { setNotice('Preview generation failed.'); return; }
-      const nextUrl = URL.createObjectURL(await response.blob());
-      setPreviewUrl(previous => { if (previous) URL.revokeObjectURL(previous); return nextUrl; });
+      setPreviewLoading(true);
+      try {
+        const response = await fetch('/api/admin/pdf-mapping/preview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ enquiry: sample, mappings }) });
+        if (!response.ok) { setNotice('Preview generation failed.'); return; }
+        const nextUrl = URL.createObjectURL(await response.blob());
+        setPreviewUrl(previous => { if (previous) URL.revokeObjectURL(previous); return nextUrl; });
+      } finally { setPreviewLoading(false); }
     }, 180);
     return () => { if (renderTimer.current) clearTimeout(renderTimer.current); };
   }, [mappings, pdf]);
@@ -108,7 +113,7 @@ export function PdfMappingTestEditor({ initialMappings }: { initialMappings?: Pd
   }
   function undo() { const previous = history.at(-1); if (!previous) return; setFuture(next => [cloneMappings(mappings), ...next]); setMappings(cloneMappings(previous)); setHistory(history.slice(0, -1)); }
   function redo() { const next = future[0]; if (!next) return; setHistory(previous => [...previous, cloneMappings(mappings)]); setMappings(cloneMappings(next)); setFuture(future.slice(1)); }
-  async function save() { const response = await fetch('/api/admin/pdf-mappings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mappings }) }); if (!response.ok) { setNotice('Could not save mappings.'); return; } const refreshedResponse = await fetch('/api/admin/pdf-mappings', { cache: 'no-store' }); const refreshed = await refreshedResponse.json() as { data?: PdfFieldMapping[] }; const nextMappings = (refreshed.data ?? []).map(withId); setMappings(cloneMappings(nextMappings)); setSavedMappings(cloneMappings(nextMappings)); setNotice('Mappings saved to Supabase and preview refreshed.'); }
+  async function save() { if (saving) return; setSaving(true); try { const response = await fetch('/api/admin/pdf-mappings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mappings }) }); if (!response.ok) { setNotice('Could not save mappings.'); return; } const refreshedResponse = await fetch('/api/admin/pdf-mappings', { cache: 'no-store' }); const refreshed = await refreshedResponse.json() as { data?: PdfFieldMapping[] }; const nextMappings = (refreshed.data ?? []).map(withId); setMappings(cloneMappings(nextMappings)); setSavedMappings(cloneMappings(nextMappings)); setNotice('Mappings saved to Supabase and preview refreshed.'); } catch { setNotice('Could not save mappings.'); } finally { setSaving(false); } }
   function resetSaved() { snapshot(); setMappings(cloneMappings(savedMappings)); setSelectedId(null); }
   function resetDefaults() { snapshot(); setMappings(cloneMappings(savedMappings)); setSelectedId(null); setNotice('Reset to the current saved Supabase mappings.'); }
   async function changePage(next: number) { if (!pdf || next < 1 || next > pdf.pageCount) return; const page = await pdf.document.getPage(next); const viewport = page.getViewport({ scale: 1 }); setPdf({ ...pdf, width: viewport.width, height: viewport.height }); setPageNumber(next); setSelectedId(null); }
@@ -117,7 +122,8 @@ export function PdfMappingTestEditor({ initialMappings }: { initialMappings?: Pd
   if (loading) return <main className="mapping-editor-page"><div className="mapping-loading">Loading PDF mapping test...</div></main>;
   const pageMappings = mappings.filter(mapping => mapping.page_number === pageNumber);
   return <main className="mapping-editor-page">
-    <header className="mapping-toolbar"><div><Link className="back-link" href="/admin">← Dashboard</Link><div className="dev-badge">TEST / DEVELOPMENT</div><h1>PDF mapping calibration</h1><p>Changes are preview-only until you explicitly save mappings.</p></div><div className="mapping-toolbar-actions"><button className="btn-secondary" onClick={undo} disabled={!history.length}>Undo</button><button className="btn-secondary" onClick={redo} disabled={!future.length}>Redo</button><button className="btn-secondary" onClick={resetSaved}>Reset</button><button className="btn-secondary" onClick={resetDefaults}>Reset all</button><button className="btn-primary" onClick={save}>Save mapping</button></div></header>
+    <header className="mapping-toolbar"><div><Link className="back-link" href="/admin">← Dashboard</Link><div className="dev-badge">TEST / DEVELOPMENT</div><h1>PDF mapping calibration</h1><p>Changes are preview-only until you explicitly save mappings.</p></div><div className="mapping-toolbar-actions"><button className="btn-secondary" onClick={undo} disabled={!history.length || saving}>Undo</button><button className="btn-secondary" onClick={redo} disabled={!future.length || saving}>Redo</button><button className="btn-secondary" onClick={resetSaved} disabled={saving}>Reset</button><button className="btn-secondary" onClick={resetDefaults} disabled={saving}>Reset all</button><button className="btn-primary" onClick={save} disabled={saving}>{saving ? 'Saving...' : 'Save mapping'}</button></div></header>
+    {previewLoading && <p className="mapping-notice" role="status">Generating preview...</p>}
     {notice && <Toast message={notice} error={notice.toLowerCase().includes('error') || notice.toLowerCase().includes('failed') || notice.toLowerCase().includes('unable')} onClose={() => setNotice('')} />}
     <div className="mapping-layout">
       <aside className="mapping-sidebar mapping-fields"><div className="mapping-sidebar-heading"><span className="section-eyebrow">Sample enquiry</span><h2>Rahul Sharma</h2><p>Fixed data only. This page never creates an enquiry or uploads a file.</p></div><div className="sample-data">{Object.entries(sample).filter(([key, value]) => key !== 'signatureDataUrl' && value).map(([key, value]) => <div key={key}><small>{key}</small><span>{String(value)}</span></div>)}</div></aside>

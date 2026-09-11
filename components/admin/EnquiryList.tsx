@@ -17,9 +17,12 @@ export function EnquiryList({ title = 'View all enquiries', searchOnly = false }
   const [loading, setLoading] = useState(false);
   const [exportState, setExportState] = useState<'idle' | 'loading' | 'error'>('idle');
   useEffect(() => {
-    const params = new URLSearchParams({ search, status, datePreset, fromDate, toDate, page: String(page), pageSize: String(pageSize) });
-    setLoading(true);
-    fetch(`/api/admin/enquiries?${params}`).then(async response => { if (response.status === 401) router.replace('/admin/login'); else if (response.ok) { const result = await response.json(); setRows(result.data); setTotal(result.total); } }).finally(() => setLoading(false));
+    const timer = window.setTimeout(() => {
+      const params = new URLSearchParams({ search, status, datePreset, fromDate, toDate, page: String(page), pageSize: String(pageSize) });
+      setLoading(true);
+      fetch(`/api/admin/enquiries?${params}`).then(async response => { if (response.status === 401) router.replace('/admin/login'); else if (response.ok) { const result = await response.json(); setRows(result.data); setTotal(result.total); } }).finally(() => setLoading(false));
+    }, search ? 250 : 0);
+    return () => window.clearTimeout(timer);
   }, [datePreset, fromDate, page, router, search, status, toDate]);
   useEffect(() => { if (searchParams.get('deleted') === '1') router.replace('/admin/enquiries'); }, [router, searchParams]);
   const pageCount = Math.max(1, Math.ceil(total / pageSize));

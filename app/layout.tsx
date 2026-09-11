@@ -13,5 +13,5 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const requestHeaders = await headers();
-  return <html lang="en"><body><SiteHeader clientIp={getClientIp(requestHeaders)} />{children}</body></html>;
+  return <html lang="en"><body suppressHydrationWarning><SiteHeader clientIp={getClientIp(requestHeaders)} />{children}</body></html>;
 }

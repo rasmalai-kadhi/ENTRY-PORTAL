@@ -3,6 +3,7 @@ import path from 'node:path';
 import { PDFDocument, StandardFonts, degrees, rgb } from 'pdf-lib';
 import type { Enquiry } from '@/types/enquiry';
 import type { PdfFieldMapping } from '@/types/pdf-mapping';
+import { formatDob } from '@/lib/enquiry/dob';
 
 const TEMPLATE = path.join(process.cwd(), 'private', 'templates', 'entry-form.pdf');
 const NON_PDF_KEYS = new Set(['id', 'pdfStoragePath', 'status', 'createdAt', 'updatedAt', 'answers']);
@@ -71,7 +72,7 @@ export async function stampPdf(enquiry: Enquiry, mappings: PdfFieldMapping[]): P
       }
       continue;
     }
-    const stampedText = raw.toUpperCase();
+    const stampedText = (mapping.field_key === 'dob' ? formatDob(raw) : raw).toUpperCase();
     const font = await getFont(mapping.font_family);
     const size = Math.max(1, mapping.font_size);
     const lines = mapping.multiline ? wrapText(stampedText, font, size, mapping.width) : [stampedText];

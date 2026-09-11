@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { adminSessionRemaining } from '@/lib/auth/session-ttl';
+import { Toast } from '@/components/ui/Toast';
 
 export function AdminHeader() {
   const pathname = usePathname();
@@ -16,6 +17,8 @@ export function AdminHeader() {
   const [editingDisplayName, setEditingDisplayName] = useState(false);
   const [displayNameInput, setDisplayNameInput] = useState('');
   const [savingDisplayName, setSavingDisplayName] = useState(false);
+  const [notice, setNotice] = useState('');
+  const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
     fetch('/api/admin/session', { cache: 'no-store' }).then(async response => {
@@ -50,18 +53,22 @@ export function AdminHeader() {
       if (response.ok) {
         setDisplayName(newName);
         setEditingDisplayName(false);
-      }
+        setNotice('Display name saved.');
+      } else setNotice('Unable to save display name.');
+    } catch { setNotice('Unable to save display name.');
     } finally {
       setSavingDisplayName(false);
     }
   }
 
   async function signOut() {
+    if (signingOut) return;
+    setSigningOut(true);
     await createClient().auth.signOut();
     router.replace('/admin/login');
   }
 
-  return <header className="admin-topbar">
+  return <><header className="admin-topbar">
     <div className="admin-topbar-inner">
       <Link className="brand-lockup admin-brand" href="/admin" aria-label="Eduspray dashboard"><Image src="/images/logo.png" alt="Eduspray" width={200} height={64} className="brand-mark" /></Link>
       <nav className="admin-nav" aria-label="Admin navigation">
@@ -97,12 +104,12 @@ export function AdminHeader() {
               <>
                 <button className="profile-menu-link" onClick={() => { router.push('/admin/settings'); setMenuOpen(false); }}>PDF field mapping</button>
                 <button className="profile-menu-link" onClick={() => setEditingDisplayName(true)}>Edit display name</button>
-                <button onClick={signOut}>Log out</button>
+                  <button onClick={signOut} disabled={signingOut}>{signingOut ? 'Signing out...' : 'Log out'}</button>
               </>
             )}
           </div>
         )}
       </div>
     </div>
-  </header>;
+  </header>{notice && <Toast message={notice} onClose={() => setNotice('')} />}</>;
 }

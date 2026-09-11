@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/Button';
+import { formatDob } from '@/lib/enquiry/dob';
+import { Toast } from '@/components/ui/Toast';
 
 type Detail = Record<string, string | null> & {
   id: string;
@@ -60,6 +61,8 @@ export function EnquiryDetail({ id }: { id: string }) {
   const [notice, setNotice] = useState('');
   const [syncLoading, setSyncLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [pdfAction, setPdfAction] = useState<'idle' | 'download' | 'print'>('idle');
+  const [pdfLoading, setPdfLoading] = useState(true);
 
   useEffect(() => {
     fetch(`/api/admin/enquiries/${id}`).then(async response => {
@@ -69,7 +72,7 @@ export function EnquiryDetail({ id }: { id: string }) {
   }, [id, router]);
 
   async function deleteEnquiry() {
-    if (deleteText !== 'DELETE') return;
+    if (deleteText !== 'DELETE' || deleteLoading) return;
     setDeleteLoading(true);
     try {
       const response = await fetch(`/api/admin/enquiries/${id}`, {
@@ -89,6 +92,7 @@ export function EnquiryDetail({ id }: { id: string }) {
   }
 
   async function syncToGoogleSheets() {
+    if (syncLoading) return;
     setSyncLoading(true);
     setNotice('');
     try {
@@ -114,6 +118,46 @@ export function EnquiryDetail({ id }: { id: string }) {
     }
   }
 
+  async function downloadPdf() {
+    if (pdfAction !== 'idle') return;
+    setPdfAction('download');
+    try {
+      const response = await fetch(`/api/admin/enquiries/${id}/download`);
+      if (!response.ok) throw new Error('Unable to download PDF.');
+      const url = URL.createObjectURL(await response.blob());
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${data?.enquiry_number ?? 'enquiry'}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+      setNotice('PDF downloaded successfully.');
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : 'Unable to download PDF.');
+    } finally {
+      setPdfAction('idle');
+    }
+  }
+
+  async function printPdf() {
+    if (pdfAction !== 'idle') return;
+    const printWindow = window.open('about:blank', '_blank');
+    setPdfAction('print');
+    try {
+      const response = await fetch(`/api/admin/enquiries/${id}/pdf`);
+      if (!response.ok) throw new Error('Unable to generate PDF.');
+      const url = URL.createObjectURL(await response.blob());
+      if (printWindow) printWindow.location.href = url;
+      else window.open(url, '_blank');
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      setNotice('PDF opened for printing.');
+    } catch (error) {
+      printWindow?.close();
+      setNotice(error instanceof Error ? error.message : 'Unable to generate PDF.');
+    } finally {
+      setPdfAction('idle');
+    }
+  }
+
   if (!data) {
     return (
       <main className="admin-shell">
@@ -136,12 +180,12 @@ export function EnquiryDetail({ id }: { id: string }) {
             </p>
           </div>
           <div className="admin-actions">
-            <Button variant="secondary" href={`/api/admin/enquiries/${id}/download`}>
-              Download PDF
-            </Button>
-            <Button href={`/api/admin/enquiries/${id}/pdf`} target="_blank" rel="noreferrer">
-              Print PDF
-            </Button>
+            <button className="ui-button ui-button-secondary" onClick={downloadPdf} disabled={pdfAction !== 'idle'}>
+              {pdfAction === 'download' ? 'Downloading...' : 'Download PDF'}
+            </button>
+            <button className="ui-button ui-button-primary" onClick={printPdf} disabled={pdfAction !== 'idle'}>
+              {pdfAction === 'print' ? 'Generating...' : 'Print PDF'}
+            </button>
             <button
               disabled={syncLoading}
               onClick={syncToGoogleSheets}
@@ -162,16 +206,7 @@ export function EnquiryDetail({ id }: { id: string }) {
           </div>
         </header>
 
-        {notice && (
-          <p
-            className={`admin-alert ${
-              notice.includes('Successfully') ? 'admin-alert-success' : 'admin-alert-error'
-            }`}
-            role="alert"
-          >
-            {notice}
-          </p>
-        )}
+        {notice && <Toast message={notice} error={notice.toLowerCase().includes('unable') || notice.toLowerCase().includes('failed')} onClose={() => setNotice('')} />}
 
         {data.google_sheet_synced && data.google_sheet_synced_at && (
           <p className="sync-status">
@@ -194,7 +229,9 @@ export function EnquiryDetail({ id }: { id: string }) {
                       <div className="data-row" key={key}>
                         <dt>{labels[key] ?? key}</dt>
                         <dd>
-                          {key === 'created_at'
+                          {key === 'dob'
+                            ? formatDob(data[key])
+                            : key === 'created_at'
                             ? new Date(data[key] ?? '').toLocaleString()
                             : data[key] || 'Not provided'}
                         </dd>
@@ -209,9 +246,11 @@ export function EnquiryDetail({ id }: { id: string }) {
               <span className="section-eyebrow">Document preview</span>
               <h2>Generated PDF</h2>
             </div>
+            {pdfLoading && <p className="pdf-preview-loading-text" role="status">Loading PDF preview...</p>}
             <iframe
               title="Generated enquiry PDF"
               src={`/api/admin/enquiries/${id}/pdf`}
+              onLoad={() => setPdfLoading(false)}
             />
           </section>
         </div>

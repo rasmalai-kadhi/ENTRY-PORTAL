@@ -60,7 +60,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$head
 ;
 async function createClient() {
     const cookieStore = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$headers$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["cookies"])();
-    return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$ssr$2f$dist$2f$module$2f$createServerClient$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["createServerClient"])(("TURBOPACK compile-time value", "https://jcrqjmjafbvdhvpebjcz.supabase.co"), ("TURBOPACK compile-time value", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjcnFqbWphZmJ2ZGh2cGViamN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyMDA2ODcsImV4cCI6MjEwMjc3NjY4N30.aopM-UvIM_lodR5YhIQw_kZjEcOJGvbgF_qvmIVeDKk"), {
+    return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$ssr$2f$dist$2f$module$2f$createServerClient$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["createServerClient"])(("TURBOPACK compile-time value", "https://jcrqjmjafbvdhvpebjcz.supabase.co"), ("TURBOPACK compile-time value", "sb_publishable_LjXLRy7nhMfcIWe8sxseoA_9Jxls6MJ"), {
         cookies: {
             getAll () {
                 return cookieStore.getAll();

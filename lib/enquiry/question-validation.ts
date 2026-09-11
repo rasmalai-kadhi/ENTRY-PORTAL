@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { FormQuestion } from '@/types/form-question';
+import { normalizeDob } from '@/lib/enquiry/dob';
 
 function characterPattern(question: FormQuestion) {
   let pattern = '';
@@ -19,7 +20,7 @@ export function buildQuestionSchema(question: FormQuestion) {
   if (question.required) schema = schema.min(1, `${question.label} is required`);
   schema = schema.max(question.max_length, `${question.label} must be ${question.max_length} characters or fewer`);
   if (question.type === 'email') schema = schema.refine(value => value === '' || z.email().safeParse(value).success, 'Enter a valid email');
-  if (question.type === 'date') schema = schema.refine(value => value === '' || (!Number.isNaN(Date.parse(value)) && /^\d{4}-\d{2}-\d{2}$/.test(value)), 'Enter a valid date');
+  if (question.type === 'date') schema = schema.refine(value => value === '' || (!Number.isNaN(Date.parse(normalizeDob(value))) && (/^\d{4}-\d{2}-\d{2}$/.test(value) || (question.field_key === 'dob' && /^\d{2}-\d{2}-\d{4}$/.test(value)))), 'Enter a valid date');
   if (question.type === 'number') {
     const numberPattern = question.number_format === 'decimal' ? /^\d+(\.\d+)?$/ : /^\d+$/;
     schema = schema.refine(value => value === '' || numberPattern.test(value), question.number_format === 'decimal' ? 'Enter a valid decimal number' : 'Enter a whole number');

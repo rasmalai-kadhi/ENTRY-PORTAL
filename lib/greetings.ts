@@ -8,7 +8,6 @@ const phrases: Record<GreetingPeriod, readonly string[]> = {
     "Konnichiwa",
     "Nǐ hǎo",
     "Hola",
-    "Buongiorno",
   ],
 
   afternoon: [
@@ -18,25 +17,21 @@ const phrases: Record<GreetingPeriod, readonly string[]> = {
     "Konnichiwa",
     "Nǐ hǎo",
     "Hola",
-    "Buon pomeriggio",
   ],
 
   evening: [
     "Good Evening",
     "Namaste",
-    "Bonsoir",
+    "Bonjour",
     "Konnichiwa",
     "Nǐ hǎo",
-    "Buenas tardes",
-    "Buona sera",
+    "Hola",
   ],
 
   night: [
     "Good Night",
     "Namaste",
     "Bonne nuit",
-    "Buenas noches",
-    "Buona notte",
   ],
 };
 

@@ -1,12 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import { AdminHeader } from '@/components/admin/AdminHeader';
 import { usePathname } from 'next/navigation';
 
 export function SiteHeader({ clientIp }: { clientIp: string }) {
   const pathname = usePathname();
-  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) return <AdminHeader />;
+  if (pathname.startsWith('/admin')) return null;
 
   return (
     <header className="site-header">

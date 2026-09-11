@@ -15,8 +15,7 @@ const phrases = {
         "Bonjour",
         "Konnichiwa",
         "Nǐ hǎo",
-        "Hola",
-        "Buongiorno"
+        "Hola"
     ],
     afternoon: [
         "Good Afternoon",
@@ -24,24 +23,20 @@ const phrases = {
         "Bonjour",
         "Konnichiwa",
         "Nǐ hǎo",
-        "Hola",
-        "Buon pomeriggio"
+        "Hola"
     ],
     evening: [
         "Good Evening",
         "Namaste",
-        "Bonsoir",
+        "Bonjour",
         "Konnichiwa",
         "Nǐ hǎo",
-        "Buenas tardes",
-        "Buona sera"
+        "Hola"
     ],
     night: [
         "Good Night",
         "Namaste",
-        "Bonne nuit",
-        "Buenas noches",
-        "Buona notte"
+        "Bonne nuit"
     ]
 };
 function greetingPeriodForHour(hour) {

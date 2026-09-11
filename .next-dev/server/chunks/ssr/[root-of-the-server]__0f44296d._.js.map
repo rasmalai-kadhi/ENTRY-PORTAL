@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 28, "column": 0}, "map": {"version":3,"sources":["file:///D:/enquiry/ENTRY-PORTAL/components/site/SiteHeader.tsx"],"sourcesContent":["'use client';\r\n\r\nimport Image from 'next/image';\r\nimport { usePathname } from 'next/navigation';\r\n\r\nexport function SiteHeader({ clientIp }: { clientIp: string }) {\r\n  const pathname = usePathname();\r\n  if (pathname.startsWith('/admin')) return null;\r\n\r\n  return (\r\n    <header className=\"site-header\">\r\n      <div className=\"container site-header-inner\">\r\n        <a className=\"brand-lockup site-brand-logo\" href=\"/enquiry\" aria-label=\"Eduspray home\"><Image src=\"/images/logo.png\" alt=\"Eduspray\" width={200} height={64} className=\"brand-mark\" /></a>\r\n        <span className=\"client-ip\" title=\"Your network address\">IP: {clientIp}</span>\r\n      </div>\r\n    </header>\r\n  );\r\n}\r\n"],"names":[],"mappings":";;;;;AAEA;AACA;AAHA;;;;AAKO,SAAS,WAAW,EAAE,QAAQ,EAAwB;IAC3D,MAAM,WAAW,IAAA,iJAAW;IAC5B,IAAI,SAAS,UAAU,CAAC,WAAW,OAAO;IAE1C,qBACE,8OAAC;QAAO,WAAU;kBAChB,cAAA,8OAAC;YAAI,WAAU;;8BACb,8OAAC;oBAAE,WAAU;oBAA+B,MAAK;oBAAW,cAAW;8BAAgB,cAAA,8OAAC,wIAAK;wBAAC,KAAI;wBAAmB,KAAI;wBAAW,OAAO;wBAAK,QAAQ;wBAAI,WAAU;;;;;;;;;;;8BACtK,8OAAC;oBAAK,WAAU;oBAAY,OAAM;;wBAAuB;wBAAK;;;;;;;;;;;;;;;;;;AAItE","debugId":null}}]
+}
