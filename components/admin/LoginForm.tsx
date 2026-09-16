@@ -4,6 +4,7 @@ import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/Button';
+import { BookLoader } from '@/components/ui/BookLoader';
 
 export function LoginForm() {
   const router = useRouter();
@@ -33,6 +34,6 @@ export function LoginForm() {
     <div className="field"><label htmlFor="email">Email</label><input id="email" name="email" type="email" required /></div>
     <div className="field"><label htmlFor="password">Password</label><input id="password" name="password" type="password" required /></div>
     {error && <p className="error">{error}</p>}
-    <Button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Signing in...' : 'Sign in'}</Button>
+    <Button type="submit" disabled={isSubmitting}>{isSubmitting ? <BookLoader inline text="Signing in..." /> : 'Sign in'}</Button>
   </form>;
 }

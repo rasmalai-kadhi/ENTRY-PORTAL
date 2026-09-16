@@ -59,54 +59,70 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
-const empty = {
-    field_key: '',
-    label: '',
-    type: 'text',
-    number_format: 'integer',
-    required: false,
-    allow_alphabets: true,
-    allow_numbers: true,
-    allow_special_characters: true,
-    max_length: 255,
-    options: [],
-    display_order: 0,
-    active: true,
-    placeholder: ''
+const emptySection = {
+    title: '',
+    description: '',
+    active: true
 };
-const clone = (questions)=>questions.map((question)=>({
+const emptyQuestion = (sectionId, displayOrder)=>({
+        field_key: '',
+        label: '',
+        type: 'text',
+        number_format: 'integer',
+        required: false,
+        allow_alphabets: true,
+        allow_numbers: true,
+        allow_special_characters: true,
+        max_length: 255,
+        options: [],
+        display_order: displayOrder,
+        section_id: sectionId,
+        active: true,
+        placeholder: ''
+    });
+const cloneQuestions = (questions)=>questions.map((question)=>({
             ...question,
             options: [
                 ...question.options
             ]
         }));
+const newId = ()=>crypto.randomUUID();
 function QuestionsManager() {
     _s();
-    const [saved, setSaved] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
-    const [draft, setDraft] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
-    const [search, setSearch] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
-    const [editingId, setEditingId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
-    const [editingSnapshot, setEditingSnapshot] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
-    const [form, setForm] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(empty);
+    const [saved, setSaved] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
+        sections: [],
+        questions: []
+    });
+    const [draft, setDraft] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(saved);
+    const [editingSection, setEditingSection] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [sectionForm, setSectionForm] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(emptySection);
+    const [editingQuestion, setEditingQuestion] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [questionForm, setQuestionForm] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(emptyQuestion('', 0));
     const [optionsText, setOptionsText] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
-    const [notice, setNotice] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [dragged, setDragged] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
-    const [saving, setSaving] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [deleteTarget, setDeleteTarget] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [deleteText, setDeleteText] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
+    const [notice, setNotice] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [saving, setSaving] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     async function load() {
         const response = await fetch('/api/admin/form-questions', {
             cache: 'no-store'
         });
-        if (response.ok) {
-            var _data;
-            const data = clone((_data = (await response.json()).data) !== null && _data !== void 0 ? _data : []);
-            setSaved(data);
-            setDraft(clone(data));
-        } else setNotice({
-            text: 'Unable to load questions.',
-            error: true
-        });
+        if (!response.ok) {
+            setNotice({
+                text: 'Unable to load form configuration.',
+                error: true
+            });
+            return;
+        }
+        const data = await response.json();
+        var _data_sections, _data_questions;
+        const next = {
+            sections: (_data_sections = data.sections) !== null && _data_sections !== void 0 ? _data_sections : [],
+            questions: cloneQuestions((_data_questions = data.questions) !== null && _data_questions !== void 0 ? _data_questions : [])
+        };
+        setSaved(next);
+        setDraft(next);
     }
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "QuestionsManager.useEffect": ()=>{
@@ -114,112 +130,165 @@ function QuestionsManager() {
         }
     }["QuestionsManager.useEffect"], []);
     const hasChanges = JSON.stringify(saved) !== JSON.stringify(draft);
-    const visible = draft.filter((question)=>"".concat(question.field_key, " ").concat(question.label).toLowerCase().includes(search.toLowerCase()));
-    function open(question) {
-        const value = question ? {
-            ...question,
-            options: [
-                ...question.options
-            ]
-        } : {
-            ...empty,
-            display_order: draft.length ? Math.max(...draft.map((item)=>item.display_order)) + 10 : 10
-        };
+    const questionsIn = (sectionId)=>draft.questions.filter((question)=>question.section_id === sectionId).sort((a, b)=>a.display_order - b.display_order);
+    function openSection(section) {
+        var _section_id;
+        setEditingSection((_section_id = section === null || section === void 0 ? void 0 : section.id) !== null && _section_id !== void 0 ? _section_id : newId());
+        setSectionForm(section ? {
+            title: section.title,
+            description: section.description,
+            active: section.active
+        } : emptySection);
+    }
+    function applySection(event) {
+        event.preventDefault();
+        if (!editingSection || !sectionForm.title.trim()) return;
+        setDraft((previous)=>{
+            const exists = previous.sections.some((section)=>section.id === editingSection);
+            const section = {
+                id: editingSection,
+                ...sectionForm,
+                title: sectionForm.title.trim(),
+                display_order: exists ? previous.sections.find((item)=>item.id === editingSection).display_order : (previous.sections.length + 1) * 10
+            };
+            return {
+                ...previous,
+                sections: exists ? previous.sections.map((item)=>item.id === editingSection ? section : item) : [
+                    ...previous.sections,
+                    section
+                ]
+            };
+        });
+        setEditingSection(null);
+    }
+    function openQuestion(question, sectionId) {
+        var _draft_sections_;
+        var _ref, _ref1;
+        const targetSection = (_ref1 = (_ref = sectionId !== null && sectionId !== void 0 ? sectionId : question === null || question === void 0 ? void 0 : question.section_id) !== null && _ref !== void 0 ? _ref : (_draft_sections_ = draft.sections[0]) === null || _draft_sections_ === void 0 ? void 0 : _draft_sections_.id) !== null && _ref1 !== void 0 ? _ref1 : '';
         var _question_id;
-        setEditingId((_question_id = question === null || question === void 0 ? void 0 : question.id) !== null && _question_id !== void 0 ? _question_id : "new-".concat(Date.now()));
-        setEditingSnapshot(question ? {
+        setEditingQuestion((_question_id = question === null || question === void 0 ? void 0 : question.id) !== null && _question_id !== void 0 ? _question_id : newId());
+        setQuestionForm(question ? {
             ...question,
             options: [
                 ...question.options
             ]
-        } : null);
-        setForm(value);
+        } : emptyQuestion(targetSection, questionsIn(targetSection).length * 10 + 10));
         var _question_options_join;
         setOptionsText((_question_options_join = question === null || question === void 0 ? void 0 : question.options.join('\n')) !== null && _question_options_join !== void 0 ? _question_options_join : '');
     }
-    function update(name, value) {
-        setForm((previous)=>({
+    function applyQuestion(event) {
+        event.preventDefault();
+        if (!editingQuestion || !questionForm.field_key || !questionForm.label) return;
+        const question = {
+            ...questionForm,
+            id: editingQuestion,
+            options: questionForm.type === 'select' ? optionsText.split('\n').map((value)=>value.trim()).filter(Boolean) : []
+        };
+        setDraft((previous)=>({
+                ...previous,
+                questions: previous.questions.some((item)=>item.id === editingQuestion) ? previous.questions.map((item)=>item.id === editingQuestion ? question : item) : [
+                    ...previous.questions,
+                    question
+                ]
+            }));
+        setEditingQuestion(null);
+    }
+    function updateQuestion(name, value) {
+        setQuestionForm((previous)=>({
                 ...previous,
                 [name]: value
             }));
     }
-    function cancelEdit() {
-        if (editingId === null || editingId === void 0 ? void 0 : editingId.startsWith('new-')) setDraft((previous)=>previous.filter((question)=>question.id !== editingId));
-        else if (editingSnapshot) setDraft((previous)=>previous.map((question)=>question.id === editingId ? editingSnapshot : question));
-        setEditingId(null);
-        setEditingSnapshot(null);
-        setForm(empty);
-        setOptionsText('');
-    }
-    function applyEdit(event) {
-        event.preventDefault();
-        if (!editingId) return;
-        const question = {
-            ...form,
-            options: form.type === 'select' ? optionsText.split('\n').map((value)=>value.trim()).filter(Boolean) : [],
-            id: editingId
-        };
-        setDraft((previous)=>previous.some((item)=>item.id === editingId) ? previous.map((item)=>item.id === editingId ? question : item) : [
-                ...previous,
-                question
-            ]);
-        setEditingId(null);
-        setEditingSnapshot(null);
-        setForm(empty);
-        setOptionsText('');
-    }
-    function requestRemove(question) {
-        setDeleteTarget(question);
-        setDeleteText('');
-    }
-    function removeConfirmed() {
-        if (!deleteTarget || deleteText !== 'DELETE') return;
-        if (editingId === deleteTarget.id) cancelEdit();
-        setDraft((previous)=>previous.filter((question)=>question.id !== deleteTarget.id));
-        setDeleteTarget(null);
-        setDeleteText('');
-        setNotice({
-            text: 'Question marked for deletion. Save Changes to apply it.'
+    function requestDelete(type, id) {
+        setDeleteTarget({
+            type,
+            id
         });
+        setDeleteText('');
     }
-    function drop(targetId) {
-        if (!dragged || dragged === targetId) return;
-        const next = [
-            ...draft
-        ];
-        const from = next.findIndex((item)=>item.id === dragged);
-        const to = next.findIndex((item)=>item.id === targetId);
-        const [item] = next.splice(from, 1);
-        next.splice(to, 0, item);
-        setDraft(next.map((question, index)=>({
-                ...question,
-                display_order: (index + 1) * 10
-            })));
+    function confirmDelete() {
+        if (!deleteTarget || deleteText !== 'DELETE') return;
+        if (deleteTarget.type === 'section' && questionsIn(deleteTarget.id).length) {
+            setNotice({
+                text: 'Move all questions out of this section before deleting it.',
+                error: true
+            });
+            setDeleteTarget(null);
+            return;
+        }
+        setDraft((previous)=>deleteTarget.type === 'section' ? {
+                sections: previous.sections.filter((section)=>section.id !== deleteTarget.id),
+                questions: previous.questions
+            } : {
+                sections: previous.sections,
+                questions: previous.questions.filter((question)=>question.id !== deleteTarget.id)
+            });
+        setDeleteTarget(null);
+    }
+    function reorderSections(targetId) {
+        if (!dragged || dragged.type !== 'section' || dragged.id === targetId) return;
+        setDraft((previous)=>{
+            const sections = [
+                ...previous.sections
+            ];
+            const from = sections.findIndex((section)=>section.id === dragged.id);
+            const to = sections.findIndex((section)=>section.id === targetId);
+            const [item] = sections.splice(from, 1);
+            sections.splice(to, 0, item);
+            return {
+                ...previous,
+                sections: sections.map((section, index)=>({
+                        ...section,
+                        display_order: (index + 1) * 10
+                    }))
+            };
+        });
+        setDragged(null);
+    }
+    function moveQuestion(targetSectionId, targetQuestionId) {
+        if (!dragged || dragged.type !== 'question' || dragged.id === targetQuestionId) return;
+        setDraft((previous)=>{
+            const moved = previous.questions.find((question)=>question.id === dragged.id);
+            if (!moved) return previous;
+            const source = previous.questions.filter((question)=>question.id !== moved.id);
+            const destination = source.filter((question)=>question.section_id === targetSectionId);
+            const targetIndex = targetQuestionId ? destination.findIndex((question)=>question.id === targetQuestionId) : destination.length;
+            destination.splice(Math.max(targetIndex, 0), 0, {
+                ...moved,
+                section_id: targetSectionId
+            });
+            const ordered = [
+                ...previous.sections.map((section)=>section.id),
+                null
+            ].flatMap((sectionId)=>sectionId === targetSectionId ? destination : source.filter((question)=>question.section_id === sectionId)).map((question, index)=>({
+                    ...question,
+                    display_order: (index + 1) * 10
+                }));
+            return {
+                ...previous,
+                questions: ordered
+            };
+        });
         setDragged(null);
     }
     async function saveChanges() {
         if (saving) return;
         setSaving(true);
         setNotice(null);
+        const deletedSections = saved.sections.filter((section)=>!draft.sections.some((item)=>item.id === section.id)).map((section)=>section.id);
+        const deletedQuestions = saved.questions.filter((question)=>!draft.questions.some((item)=>item.id === question.id)).map((question)=>question.id);
         try {
-            const savedIds = new Set(saved.map((question)=>question.id));
-            const deletedIds = saved.filter((question)=>!draft.some((item)=>item.id === question.id)).map((question)=>question.id);
-            const questions = draft.map((param)=>{
-                let { created_at: _created, updated_at: _updated, ...question } = param;
-                return savedIds.has(question.id) ? question : {
-                    ...question,
-                    id: undefined
-                };
-            });
             const response = await fetch('/api/admin/form-questions', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    questions,
-                    deletedIds,
-                    deleteConfirmation: deletedIds.length ? 'DELETE' : undefined
+                    sections: draft.sections,
+                    questions: draft.questions,
+                    deletedSectionIds: deletedSections,
+                    deletedQuestionIds: deletedQuestions,
+                    deleteConfirmation: deletedSections.length || deletedQuestions.length ? 'DELETE' : undefined
                 })
             });
             const result = await response.json();
@@ -231,12 +300,15 @@ function QuestionsManager() {
                 });
                 return;
             }
-            var _result_data;
-            const data = clone((_result_data = result.data) !== null && _result_data !== void 0 ? _result_data : []);
-            setSaved(data);
-            setDraft(clone(data));
+            var _result_sections, _result_questions;
+            const next = {
+                sections: (_result_sections = result.sections) !== null && _result_sections !== void 0 ? _result_sections : [],
+                questions: cloneQuestions((_result_questions = result.questions) !== null && _result_questions !== void 0 ? _result_questions : [])
+            };
+            setSaved(next);
+            setDraft(next);
             setNotice({
-                text: 'Changes saved successfully'
+                text: 'Changes saved successfully.'
             });
         } catch (e) {
             setNotice({
@@ -247,7 +319,7 @@ function QuestionsManager() {
             setSaving(false);
         }
     }
-    var _form_placeholder;
+    var _questionForm_section_id, _questionForm_placeholder;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
         className: "container admin-shell",
         children: [
@@ -261,86 +333,60 @@ function QuestionsManager() {
                                 children: "Form configuration"
                             }, void 0, false, {
                                 fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                lineNumber: 39,
+                                lineNumber: 45,
                                 columnNumber: 88
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                                 children: "Questions"
                             }, void 0, false, {
                                 fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                lineNumber: 39,
+                                lineNumber: 45,
                                 columnNumber: 133
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "admin-subtitle",
-                                children: "Manage the questions shown on the public enquiry form."
+                                children: "Organize sections and questions shown on the public enquiry form."
                             }, void 0, false, {
                                 fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                lineNumber: 39,
+                                lineNumber: 45,
                                 columnNumber: 151
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/admin/QuestionsManager.tsx",
-                        lineNumber: 39,
+                        lineNumber: 45,
                         columnNumber: 83
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "admin-actions",
                         children: [
-                            editingId && form.type === 'number' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                children: [
-                                    "Number format",
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
-                                        "aria-label": "Number format",
-                                        value: form.number_format,
-                                        onChange: (event)=>update('number_format', event.target.value),
-                                        children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                                value: "integer",
-                                                children: "Integer"
-                                            }, void 0, false, {
-                                                fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                lineNumber: 39,
-                                                columnNumber: 436
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                                value: "decimal",
-                                                children: "Decimal"
-                                            }, void 0, false, {
-                                                fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                lineNumber: 39,
-                                                columnNumber: 476
-                                            }, this)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                        lineNumber: 39,
-                                        columnNumber: 310
-                                    }, this)
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                lineNumber: 39,
-                                columnNumber: 290
-                            }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
-                                onClick: ()=>open(),
-                                children: "Add question"
+                                variant: "secondary",
+                                onClick: ()=>openSection(),
+                                children: "+ Add Section"
                             }, void 0, false, {
                                 fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                lineNumber: 39,
-                                columnNumber: 534
+                                lineNumber: 45,
+                                columnNumber: 287
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                                onClick: ()=>openQuestion(),
+                                children: "+ Add Question"
+                            }, void 0, false, {
+                                fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                lineNumber: 45,
+                                columnNumber: 367
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/admin/QuestionsManager.tsx",
-                        lineNumber: 39,
-                        columnNumber: 245
+                        lineNumber: 45,
+                        columnNumber: 256
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/admin/QuestionsManager.tsx",
-                lineNumber: 39,
+                lineNumber: 45,
                 columnNumber: 50
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -349,47 +395,27 @@ function QuestionsManager() {
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "questions-toolbar",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                "aria-label": "Search questions",
-                                placeholder: "Search questions",
-                                value: search,
-                                onChange: (event)=>setSearch(event.target.value)
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                children: hasChanges ? 'Unsaved changes' : 'All changes saved'
                             }, void 0, false, {
                                 fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                lineNumber: 40,
+                                lineNumber: 46,
                                 columnNumber: 95
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "questions-save-area",
-                                children: [
-                                    hasChanges && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: "unsaved-indicator",
-                                        children: "Unsaved changes"
-                                    }, void 0, false, {
-                                        fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                        lineNumber: 40,
-                                        columnNumber: 282
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
-                                        variant: "secondary",
-                                        disabled: !hasChanges || saving,
-                                        onClick: saveChanges,
-                                        children: saving ? 'Saving...' : 'Save Changes'
-                                    }, void 0, false, {
-                                        fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                        lineNumber: 40,
-                                        columnNumber: 341
-                                    }, this)
-                                ]
-                            }, void 0, true, {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                                variant: "secondary",
+                                disabled: !hasChanges || saving,
+                                onClick: saveChanges,
+                                children: saving ? 'Saving...' : 'Save Changes'
+                            }, void 0, false, {
                                 fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                lineNumber: 40,
-                                columnNumber: 230
+                                lineNumber: 46,
+                                columnNumber: 162
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/admin/QuestionsManager.tsx",
-                        lineNumber: 40,
+                        lineNumber: 46,
                         columnNumber: 60
                     }, this),
                     notice && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Toast$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Toast"], {
@@ -398,246 +424,523 @@ function QuestionsManager() {
                         onClose: ()=>setNotice(null)
                     }, void 0, false, {
                         fileName: "[project]/components/admin/QuestionsManager.tsx",
-                        lineNumber: 40,
-                        columnNumber: 495
+                        lineNumber: 46,
+                        columnNumber: 310
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "table-wrap",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("table", {
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("thead", {
-                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
+                        className: "form-sections-tree",
+                        children: [
+                            draft.sections.map((section)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
+                                    className: "form-section-editor".concat(section.active ? '' : ' is-disabled'),
+                                    draggable: true,
+                                    onDragStart: ()=>setDragged({
+                                            type: 'section',
+                                            id: section.id
+                                        }),
+                                    onDragOver: (event)=>event.preventDefault(),
+                                    onDrop: ()=>reorderSections(section.id),
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
+                                            className: "form-section-header",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                            className: "section-eyebrow",
+                                                            children: "Section"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                            lineNumber: 47,
+                                                            columnNumber: 384
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                                            children: section.title
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                            lineNumber: 47,
+                                                            columnNumber: 426
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                            children: section.description || 'No description'
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                            lineNumber: 47,
+                                                            columnNumber: 450
+                                                        }, this)
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                    lineNumber: 47,
+                                                    columnNumber: 379
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "section-actions",
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                            className: "status-badge",
+                                                            children: section.active ? 'Active' : 'Disabled'
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                            lineNumber: 47,
+                                                            columnNumber: 537
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                            type: "button",
+                                                            onClick: ()=>openSection(section),
+                                                            children: "Edit"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                            lineNumber: 47,
+                                                            columnNumber: 615
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                            type: "button",
+                                                            onClick: ()=>requestDelete('section', section.id),
+                                                            children: "Delete"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                            lineNumber: 47,
+                                                            columnNumber: 687
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                            type: "button",
+                                                            onClick: ()=>openQuestion(undefined, section.id),
+                                                            children: "+ Question"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                            lineNumber: 47,
+                                                            columnNumber: 777
+                                                        }, this)
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                    lineNumber: 47,
+                                                    columnNumber: 504
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                            lineNumber: 47,
+                                            columnNumber: 339
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "section-question-list",
+                                            children: [
+                                                questionsIn(section.id).map((question)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("article", {
+                                                        className: "section-question-row",
+                                                        draggable: true,
+                                                        onDragStart: (event)=>{
+                                                            event.stopPropagation();
+                                                            setDragged({
+                                                                type: 'question',
+                                                                id: question.id
+                                                            });
+                                                        },
+                                                        onDragOver: (event)=>event.preventDefault(),
+                                                        onDrop: ()=>moveQuestion(section.id, question.id),
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                children: [
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                                                        children: question.label
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                                        lineNumber: 47,
+                                                                        columnNumber: 1241
+                                                                    }, this),
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
+                                                                        children: [
+                                                                            question.field_key,
+                                                                            " · ",
+                                                                            question.type,
+                                                                            " · ",
+                                                                            question.required ? 'Required' : 'Optional',
+                                                                            " ",
+                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                                className: "question-status-badge ".concat(question.active ? 'is-active' : 'is-inactive'),
+                                                                                children: question.active ? 'ACTIVE' : 'INACTIVE'
+                                                                            }, void 0, false, {
+                                                                                fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                                                lineNumber: 47,
+                                                                                columnNumber: 1368
+                                                                            }, this)
+                                                                        ]
+                                                                    }, void 0, true, {
+                                                                        fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                                        lineNumber: 47,
+                                                                        columnNumber: 1274
+                                                                    }, this)
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                                lineNumber: 47,
+                                                                columnNumber: 1236
+                                                            }, this),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                className: "question-actions",
+                                                                children: [
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                                        type: "button",
+                                                                        onClick: ()=>openQuestion(question),
+                                                                        children: "Edit"
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                                        lineNumber: 47,
+                                                                        columnNumber: 1555
+                                                                    }, this),
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                                        type: "button",
+                                                                        onClick: ()=>requestDelete('question', question.id),
+                                                                        children: "Delete"
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                                        lineNumber: 47,
+                                                                        columnNumber: 1629
+                                                                    }, this)
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                                lineNumber: 47,
+                                                                columnNumber: 1521
+                                                            }, this)
+                                                        ]
+                                                    }, question.id, true, {
+                                                        fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                        lineNumber: 47,
+                                                        columnNumber: 965
+                                                    }, this)),
+                                                !questionsIn(section.id).length && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                    className: "empty-section",
+                                                    onDragOver: (event)=>event.preventDefault(),
+                                                    onDrop: ()=>moveQuestion(section.id),
+                                                    children: "Drop questions here or add one."
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                    lineNumber: 47,
+                                                    columnNumber: 1775
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                            lineNumber: 47,
+                                            columnNumber: 885
+                                        }, this)
+                                    ]
+                                }, section.id, true, {
+                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                    lineNumber: 47,
+                                    columnNumber: 74
+                                }, this)),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
+                                className: "form-section-editor unassigned-section",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
+                                        className: "form-section-header",
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                    className: "section-eyebrow",
+                                                    children: "Not published"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                    lineNumber: 47,
+                                                    columnNumber: 2048
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                                    children: "Unassigned questions"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                    lineNumber: 47,
+                                                    columnNumber: 2096
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                    children: "These questions are retained but do not appear on the public form."
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                    lineNumber: 47,
+                                                    columnNumber: 2125
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                            lineNumber: 47,
+                                            columnNumber: 2043
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                        lineNumber: 47,
+                                        columnNumber: 2003
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "section-question-list",
                                         children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                                children: "Order"
+                                            questionsIn('').concat(draft.questions.filter((question)=>question.section_id === null).sort((a, b)=>a.display_order - b.display_order)).map((question)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("article", {
+                                                    className: "section-question-row",
+                                                    draggable: true,
+                                                    onDragStart: ()=>setDragged({
+                                                            type: 'question',
+                                                            id: question.id
+                                                        }),
+                                                    onDragOver: (event)=>event.preventDefault(),
+                                                    onDrop: ()=>moveQuestion(null, question.id),
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                            children: [
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                                                    children: question.label
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                                    lineNumber: 47,
+                                                                    columnNumber: 2646
+                                                                }, this),
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
+                                                                    children: [
+                                                                        question.field_key,
+                                                                        " · ",
+                                                                        question.type,
+                                                                        " · ",
+                                                                        question.required ? 'Required' : 'Optional',
+                                                                        " ",
+                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                            className: "question-status-badge ".concat(question.active ? 'is-active' : 'is-inactive'),
+                                                                            children: question.active ? 'ACTIVE' : 'INACTIVE'
+                                                                        }, void 0, false, {
+                                                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                                            lineNumber: 47,
+                                                                            columnNumber: 2773
+                                                                        }, this)
+                                                                    ]
+                                                                }, void 0, true, {
+                                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                                    lineNumber: 47,
+                                                                    columnNumber: 2679
+                                                                }, this)
+                                                            ]
+                                                        }, void 0, true, {
+                                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                            lineNumber: 47,
+                                                            columnNumber: 2641
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                            className: "question-actions",
+                                                            children: [
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                                    type: "button",
+                                                                    onClick: ()=>openQuestion(question),
+                                                                    children: "Edit"
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                                    lineNumber: 47,
+                                                                    columnNumber: 2960
+                                                                }, this),
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                                    type: "button",
+                                                                    onClick: ()=>requestDelete('question', question.id),
+                                                                    children: "Delete"
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                                    lineNumber: 47,
+                                                                    columnNumber: 3034
+                                                                }, this)
+                                                            ]
+                                                        }, void 0, true, {
+                                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                            lineNumber: 47,
+                                                            columnNumber: 2926
+                                                        }, this)
+                                                    ]
+                                                }, question.id, true, {
+                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                    lineNumber: 47,
+                                                    columnNumber: 2409
+                                                }, this)),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                className: "empty-section",
+                                                onDragOver: (event)=>event.preventDefault(),
+                                                onDrop: ()=>moveQuestion(null),
+                                                children: "Drop questions here to unassign."
                                             }, void 0, false, {
                                                 fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                lineNumber: 41,
-                                                columnNumber: 53
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                                children: "Question"
-                                            }, void 0, false, {
-                                                fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                lineNumber: 41,
-                                                columnNumber: 67
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                                children: "Type"
-                                            }, void 0, false, {
-                                                fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                lineNumber: 41,
-                                                columnNumber: 84
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                                children: "Required"
-                                            }, void 0, false, {
-                                                fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                lineNumber: 41,
-                                                columnNumber: 97
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                                children: "Validation"
-                                            }, void 0, false, {
-                                                fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                lineNumber: 41,
-                                                columnNumber: 114
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                                children: "Status"
-                                            }, void 0, false, {
-                                                fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                lineNumber: 41,
-                                                columnNumber: 133
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                                children: "Actions"
-                                            }, void 0, false, {
-                                                fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                lineNumber: 41,
-                                                columnNumber: 148
+                                                lineNumber: 47,
+                                                columnNumber: 3144
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                        lineNumber: 41,
-                                        columnNumber: 49
+                                        lineNumber: 47,
+                                        columnNumber: 2213
                                     }, this)
-                                }, void 0, false, {
-                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 41,
-                                    columnNumber: 42
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
-                                    children: visible.map((question, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
-                                            className: editingId === question.id ? 'question-row-editing' : '',
-                                            draggable: !editingId,
-                                            onDragStart: ()=>setDragged(question.id),
-                                            onDragOver: (event)=>event.preventDefault(),
-                                            onDrop: ()=>drop(question.id),
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
-                                                    children: index + 1
-                                                }, void 0, false, {
-                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                    lineNumber: 41,
-                                                    columnNumber: 453
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
-                                                    children: [
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
-                                                            children: question.label
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                            lineNumber: 41,
-                                                            columnNumber: 477
-                                                        }, this),
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
-                                                            className: "question-key",
-                                                            children: question.field_key
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                            lineNumber: 41,
-                                                            columnNumber: 510
-                                                        }, this),
-                                                        editingId === question.id && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                            className: "editing-badge",
-                                                            children: "Editing"
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                            lineNumber: 41,
-                                                            columnNumber: 600
-                                                        }, this)
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                    lineNumber: 41,
-                                                    columnNumber: 473
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
-                                                    children: question.type
-                                                }, void 0, false, {
-                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                    lineNumber: 41,
-                                                    columnNumber: 652
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
-                                                    children: question.required ? 'Yes' : 'No'
-                                                }, void 0, false, {
-                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                    lineNumber: 41,
-                                                    columnNumber: 676
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
-                                                    children: [
-                                                        question.max_length,
-                                                        " chars",
-                                                        question.type === 'number' ? ', numeric' : ''
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                    lineNumber: 41,
-                                                    columnNumber: 719
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
-                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "status-badge",
-                                                        children: question.active ? 'Active' : 'Disabled'
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                        lineNumber: 41,
-                                                        columnNumber: 806
-                                                    }, this)
-                                                }, void 0, false, {
-                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                    lineNumber: 41,
-                                                    columnNumber: 802
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
-                                                    className: "question-actions",
-                                                    children: [
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                            type: "button",
-                                                            onClick: ()=>open(question),
-                                                            children: "Edit"
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                            lineNumber: 41,
-                                                            columnNumber: 923
-                                                        }, this),
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                            type: "button",
-                                                            onClick: ()=>requestRemove(question),
-                                                            children: "Delete"
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                            lineNumber: 41,
-                                                            columnNumber: 989
-                                                        }, this)
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                    lineNumber: 41,
-                                                    columnNumber: 890
-                                                }, this)
-                                            ]
-                                        }, question.id, true, {
-                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                            lineNumber: 41,
-                                            columnNumber: 218
-                                        }, this))
-                                }, void 0, false, {
-                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 41,
-                                    columnNumber: 177
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/components/admin/QuestionsManager.tsx",
-                            lineNumber: 41,
-                            columnNumber: 35
-                        }, this)
-                    }, void 0, false, {
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                lineNumber: 47,
+                                columnNumber: 1943
+                            }, this)
+                        ]
+                    }, void 0, true, {
                         fileName: "[project]/components/admin/QuestionsManager.tsx",
-                        lineNumber: 41,
+                        lineNumber: 47,
                         columnNumber: 7
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/admin/QuestionsManager.tsx",
-                lineNumber: 40,
+                lineNumber: 46,
                 columnNumber: 5
             }, this),
-            editingId && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            editingSection && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "modal-backdrop",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
                     className: "question-dialog",
-                    onSubmit: applyEdit,
+                    onSubmit: applySection,
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "section-heading",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                                    children: editingSnapshot ? 'Edit question' : 'Add question'
+                                    children: draft.sections.some((section)=>section.id === editingSection) ? 'Edit section' : 'Add section'
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 43,
-                                    columnNumber: 139
+                                    lineNumber: 49,
+                                    columnNumber: 147
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     type: "button",
-                                    onClick: cancelEdit,
+                                    onClick: ()=>setEditingSection(null),
                                     children: "Cancel"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 43,
-                                    columnNumber: 200
+                                    lineNumber: 49,
+                                    columnNumber: 252
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                            lineNumber: 43,
-                            columnNumber: 106
+                            lineNumber: 49,
+                            columnNumber: 114
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "question-form-grid",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                    className: "field-full",
+                                    children: [
+                                        "Title",
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                            required: true,
+                                            value: sectionForm.title,
+                                            onChange: (event)=>setSectionForm((previous)=>({
+                                                        ...previous,
+                                                        title: event.target.value
+                                                    }))
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                            lineNumber: 49,
+                                            columnNumber: 406
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                    lineNumber: 49,
+                                    columnNumber: 371
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                    className: "field-full",
+                                    children: [
+                                        "Description",
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
+                                            value: sectionForm.description,
+                                            onChange: (event)=>setSectionForm((previous)=>({
+                                                        ...previous,
+                                                        description: event.target.value
+                                                    }))
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                            lineNumber: 49,
+                                            columnNumber: 592
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                    lineNumber: 49,
+                                    columnNumber: 551
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                            type: "checkbox",
+                                            checked: sectionForm.active,
+                                            onChange: (event)=>setSectionForm((previous)=>({
+                                                        ...previous,
+                                                        active: event.target.checked
+                                                    }))
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                            lineNumber: 49,
+                                            columnNumber: 750
+                                        }, this),
+                                        " Active"
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                    lineNumber: 49,
+                                    columnNumber: 743
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                            lineNumber: 49,
+                            columnNumber: 335
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                            type: "submit",
+                            children: "Apply to draft"
+                        }, void 0, false, {
+                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                            lineNumber: 49,
+                            columnNumber: 921
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                    lineNumber: 49,
+                    columnNumber: 56
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/components/admin/QuestionsManager.tsx",
+                lineNumber: 49,
+                columnNumber: 24
+            }, this),
+            editingQuestion && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "modal-backdrop",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
+                    className: "question-dialog",
+                    onSubmit: applyQuestion,
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "section-heading",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                    children: draft.questions.some((question)=>question.id === editingQuestion) ? 'Edit question' : 'Add question'
+                                }, void 0, false, {
+                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                    lineNumber: 50,
+                                    columnNumber: 149
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    type: "button",
+                                    onClick: ()=>setEditingQuestion(null),
+                                    children: "Cancel"
+                                }, void 0, false, {
+                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                    lineNumber: 50,
+                                    columnNumber: 260
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                            lineNumber: 50,
+                            columnNumber: 116
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "question-form-grid",
@@ -648,47 +951,79 @@ function QuestionsManager() {
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                             required: true,
                                             pattern: "[A-Za-z][A-Za-z0-9_]*",
-                                            value: form.field_key,
-                                            disabled: !!editingSnapshot,
-                                            onChange: (event)=>update('field_key', event.target.value)
+                                            value: questionForm.field_key,
+                                            disabled: draft.questions.some((question)=>question.id === editingQuestion),
+                                            onChange: (event)=>updateQuestion('field_key', event.target.value)
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                            lineNumber: 43,
-                                            columnNumber: 316
+                                            lineNumber: 50,
+                                            columnNumber: 396
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 43,
-                                    columnNumber: 300
+                                    lineNumber: 50,
+                                    columnNumber: 380
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                     children: [
                                         "Label",
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                             required: true,
-                                            value: form.label,
-                                            onChange: (event)=>update('label', event.target.value)
+                                            value: questionForm.label,
+                                            onChange: (event)=>updateQuestion('label', event.target.value)
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                            lineNumber: 43,
-                                            columnNumber: 498
+                                            lineNumber: 50,
+                                            columnNumber: 642
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 43,
-                                    columnNumber: 486
+                                    lineNumber: 50,
+                                    columnNumber: 630
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                    children: [
+                                        "Section",
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
+                                            value: (_questionForm_section_id = questionForm.section_id) !== null && _questionForm_section_id !== void 0 ? _questionForm_section_id : '',
+                                            onChange: (event)=>updateQuestion('section_id', event.target.value || null),
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                    value: "",
+                                                    children: "Unassigned"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                    lineNumber: 50,
+                                                    columnNumber: 896
+                                                }, this),
+                                                draft.sections.map((section)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                        value: section.id,
+                                                        children: section.title
+                                                    }, section.id, false, {
+                                                        fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                                        lineNumber: 50,
+                                                        columnNumber: 963
+                                                    }, this))
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                            lineNumber: 50,
+                                            columnNumber: 773
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/components/admin/QuestionsManager.tsx",
+                                    lineNumber: 50,
+                                    columnNumber: 759
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                     children: [
                                         "Type",
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
-                                            value: form.type,
-                                            onChange: (event)=>{
-                                                update('type', event.target.value);
-                                                if (event.target.value !== 'select') setOptionsText('');
-                                            },
+                                            value: questionForm.type,
+                                            onChange: (event)=>updateQuestion('type', event.target.value),
                                             children: [
                                                 'text',
                                                 'number',
@@ -701,19 +1036,19 @@ function QuestionsManager() {
                                                     children: type
                                                 }, type, false, {
                                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                                    lineNumber: 43,
-                                                    columnNumber: 849
+                                                    lineNumber: 50,
+                                                    columnNumber: 1254
                                                 }, this))
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                            lineNumber: 43,
-                                            columnNumber: 610
+                                            lineNumber: 50,
+                                            columnNumber: 1061
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 43,
-                                    columnNumber: 599
+                                    lineNumber: 50,
+                                    columnNumber: 1050
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                     children: [
@@ -723,38 +1058,37 @@ function QuestionsManager() {
                                             type: "number",
                                             min: "1",
                                             max: "10000",
-                                            value: form.max_length,
-                                            onChange: (event)=>update('max_length', Number(event.target.value))
+                                            value: questionForm.max_length,
+                                            onChange: (event)=>updateQuestion('max_length', Number(event.target.value))
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                            lineNumber: 43,
-                                            columnNumber: 919
+                                            lineNumber: 50,
+                                            columnNumber: 1324
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 43,
-                                    columnNumber: 902
+                                    lineNumber: 50,
+                                    columnNumber: 1307
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                    className: "field-full",
                                     children: [
                                         "Placeholder",
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                            value: (_form_placeholder = form.placeholder) !== null && _form_placeholder !== void 0 ? _form_placeholder : '',
-                                            onChange: (event)=>update('placeholder', event.target.value)
+                                            value: (_questionForm_placeholder = questionForm.placeholder) !== null && _questionForm_placeholder !== void 0 ? _questionForm_placeholder : '',
+                                            onChange: (event)=>updateQuestion('placeholder', event.target.value)
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                            lineNumber: 43,
-                                            columnNumber: 1113
+                                            lineNumber: 50,
+                                            columnNumber: 1511
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 43,
-                                    columnNumber: 1072
+                                    lineNumber: 50,
+                                    columnNumber: 1493
                                 }, this),
-                                form.type === 'select' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                questionForm.type === 'select' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                     className: "field-full",
                                     children: [
                                         "Options, one per line",
@@ -763,129 +1097,129 @@ function QuestionsManager() {
                                             onChange: (event)=>setOptionsText(event.target.value)
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                            lineNumber: 43,
-                                            columnNumber: 1301
+                                            lineNumber: 50,
+                                            columnNumber: 1723
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 43,
-                                    columnNumber: 1250
+                                    lineNumber: 50,
+                                    columnNumber: 1672
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                             type: "checkbox",
-                                            checked: form.active,
-                                            onChange: (event)=>update('active', event.target.checked)
+                                            checked: questionForm.active,
+                                            onChange: (event)=>updateQuestion('active', event.target.checked)
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                            lineNumber: 43,
-                                            columnNumber: 1404
+                                            lineNumber: 50,
+                                            columnNumber: 1826
                                         }, this),
                                         " Active"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 43,
-                                    columnNumber: 1397
+                                    lineNumber: 50,
+                                    columnNumber: 1819
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                             type: "checkbox",
-                                            checked: form.required,
-                                            onChange: (event)=>update('required', event.target.checked)
+                                            checked: questionForm.required,
+                                            onChange: (event)=>updateQuestion('required', event.target.checked)
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                            lineNumber: 43,
-                                            columnNumber: 1532
+                                            lineNumber: 50,
+                                            columnNumber: 1970
                                         }, this),
                                         " Required"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 43,
-                                    columnNumber: 1525
+                                    lineNumber: 50,
+                                    columnNumber: 1963
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                             type: "checkbox",
-                                            checked: form.allow_alphabets,
-                                            onChange: (event)=>update('allow_alphabets', event.target.checked)
+                                            checked: questionForm.allow_alphabets,
+                                            onChange: (event)=>updateQuestion('allow_alphabets', event.target.checked)
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                            lineNumber: 43,
-                                            columnNumber: 1666
+                                            lineNumber: 50,
+                                            columnNumber: 2120
                                         }, this),
                                         " Allow alphabets"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 43,
-                                    columnNumber: 1659
+                                    lineNumber: 50,
+                                    columnNumber: 2113
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                             type: "checkbox",
-                                            checked: form.allow_numbers,
-                                            onChange: (event)=>update('allow_numbers', event.target.checked)
+                                            checked: questionForm.allow_numbers,
+                                            onChange: (event)=>updateQuestion('allow_numbers', event.target.checked)
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                            lineNumber: 43,
-                                            columnNumber: 1821
+                                            lineNumber: 50,
+                                            columnNumber: 2291
                                         }, this),
                                         " Allow numbers"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 43,
-                                    columnNumber: 1814
+                                    lineNumber: 50,
+                                    columnNumber: 2284
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                             type: "checkbox",
-                                            checked: form.allow_special_characters,
-                                            onChange: (event)=>update('allow_special_characters', event.target.checked)
+                                            checked: questionForm.allow_special_characters,
+                                            onChange: (event)=>updateQuestion('allow_special_characters', event.target.checked)
                                         }, void 0, false, {
                                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                            lineNumber: 43,
-                                            columnNumber: 1970
+                                            lineNumber: 50,
+                                            columnNumber: 2456
                                         }, this),
                                         " Allow special characters"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 43,
-                                    columnNumber: 1963
+                                    lineNumber: 50,
+                                    columnNumber: 2449
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                            lineNumber: 43,
-                            columnNumber: 264
+                            lineNumber: 50,
+                            columnNumber: 344
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                             type: "submit",
                             children: "Apply to draft"
                         }, void 0, false, {
                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                            lineNumber: 43,
-                            columnNumber: 2151
+                            lineNumber: 50,
+                            columnNumber: 2653
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                    lineNumber: 43,
-                    columnNumber: 51
+                    lineNumber: 50,
+                    columnNumber: 57
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/admin/QuestionsManager.tsx",
-                lineNumber: 43,
-                columnNumber: 19
+                lineNumber: 50,
+                columnNumber: 25
             }, this),
             deleteTarget && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "modal-backdrop",
@@ -893,32 +1227,35 @@ function QuestionsManager() {
                     className: "question-dialog",
                     role: "dialog",
                     "aria-modal": "true",
-                    "aria-labelledby": "delete-question-title",
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                            id: "delete-question-title",
-                            children: "Delete question?"
-                        }, void 0, false, {
+                            children: [
+                                "Delete ",
+                                deleteTarget.type,
+                                "?"
+                            ]
+                        }, void 0, true, {
                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                            lineNumber: 44,
-                            columnNumber: 163
+                            lineNumber: 51,
+                            columnNumber: 123
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                             children: [
-                                "This question will be permanently deleted when you save changes. Type ",
+                                deleteTarget.type === 'section' ? 'A section can only be deleted after all its questions are reassigned.' : 'This question will be permanently deleted when you save changes.',
+                                " Type ",
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
                                     children: "DELETE"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 44,
-                                    columnNumber: 288
+                                    lineNumber: 51,
+                                    columnNumber: 344
                                 }, this),
                                 " to confirm."
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                            lineNumber: 44,
-                            columnNumber: 215
+                            lineNumber: 51,
+                            columnNumber: 159
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                             autoFocus: true,
@@ -928,8 +1265,8 @@ function QuestionsManager() {
                             "aria-label": "Type DELETE to confirm"
                         }, void 0, false, {
                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                            lineNumber: 44,
-                            columnNumber: 327
+                            lineNumber: 51,
+                            columnNumber: 383
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "dialog-actions",
@@ -940,45 +1277,45 @@ function QuestionsManager() {
                                     children: "Cancel"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 44,
-                                    columnNumber: 513
+                                    lineNumber: 51,
+                                    columnNumber: 569
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     type: "button",
                                     className: "danger-button",
                                     disabled: deleteText !== 'DELETE',
-                                    onClick: removeConfirmed,
+                                    onClick: confirmDelete,
                                     children: "Delete"
                                 }, void 0, false, {
                                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                                    lineNumber: 44,
-                                    columnNumber: 588
+                                    lineNumber: 51,
+                                    columnNumber: 644
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/admin/QuestionsManager.tsx",
-                            lineNumber: 44,
-                            columnNumber: 481
+                            lineNumber: 51,
+                            columnNumber: 537
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/admin/QuestionsManager.tsx",
-                    lineNumber: 44,
+                    lineNumber: 51,
                     columnNumber: 54
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/admin/QuestionsManager.tsx",
-                lineNumber: 44,
+                lineNumber: 51,
                 columnNumber: 22
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/admin/QuestionsManager.tsx",
-        lineNumber: 39,
+        lineNumber: 45,
         columnNumber: 10
     }, this);
 }
-_s(QuestionsManager, "HDYbXLUyWqiKzqySXtm/SCz93cY=");
+_s(QuestionsManager, "BEnv/aNTmj8b8KEYca1GnSqiUIs=");
 _c = QuestionsManager;
 var _c;
 __turbopack_context__.k.register(_c, "QuestionsManager");

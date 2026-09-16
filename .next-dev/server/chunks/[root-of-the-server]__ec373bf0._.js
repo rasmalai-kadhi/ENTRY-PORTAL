@@ -167,7 +167,10 @@ function normalizeQuestions(value) {
         const options = Array.isArray(question.options) ? question.options.filter((option)=>typeof option === 'string') : [];
         return {
             ...question,
-            options
+            options,
+            section: typeof question.section === 'string' && question.section.trim() ? question.section.trim() : 'Additional Details',
+            section_order: Number.isInteger(question.section_order) ? Number(question.section_order) : 99,
+            section_description: typeof question.section_description === 'string' ? question.section_description : null
         };
     }) : [];
 }
@@ -186,13 +189,20 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$enquiry$2f$question$2
 ;
 ;
 async function GET() {
-    const { data, error } = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])().from('form_questions').select('*').eq('active', true).order('display_order');
+    const { data: sections, error: sectionsError } = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])().from('form_sections').select('id, title, description, display_order, active').eq('active', true).order('display_order');
+    if (sectionsError) return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+        error: 'Unable to load form sections.'
+    }, {
+        status: 500
+    });
+    const { data, error } = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])().from('form_questions').select('*').eq('active', true).not('section_id', 'is', null).order('display_order');
     if (error) return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
         error: 'Unable to load form questions.'
     }, {
         status: 500
     });
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+        sections,
         data: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$enquiry$2f$question$2d$validation$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["normalizeQuestions"])(data)
     }, {
         headers: {

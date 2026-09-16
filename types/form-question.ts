@@ -14,6 +14,10 @@ export type FormQuestion = {
   max_length: number;
   options: string[];
   display_order: number;
+  section_id?: string | null;
+  section?: string;
+  section_order?: number;
+  section_description?: string | null;
   active: boolean;
   placeholder: string | null;
   created_at?: string;

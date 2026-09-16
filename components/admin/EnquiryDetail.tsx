@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { formatDob } from '@/lib/enquiry/dob';
 import { Toast } from '@/components/ui/Toast';
+import { BookLoader } from '@/components/ui/BookLoader';
 
 type Detail = Record<string, string | null> & {
   id: string;
@@ -162,7 +163,7 @@ export function EnquiryDetail({ id }: { id: string }) {
     return (
       <main className="admin-shell">
         <div className="container">
-          <div className="loading-state">Loading enquiry details...</div>
+          <BookLoader text="Loading enquiry details" />
         </div>
       </main>
     );
@@ -181,17 +182,17 @@ export function EnquiryDetail({ id }: { id: string }) {
           </div>
           <div className="admin-actions">
             <button className="ui-button ui-button-secondary" onClick={downloadPdf} disabled={pdfAction !== 'idle'}>
-              {pdfAction === 'download' ? 'Downloading...' : 'Download PDF'}
+              {pdfAction === 'download' ? <BookLoader inline text="Downloading..." /> : 'Download PDF'}
             </button>
             <button className="ui-button ui-button-primary" onClick={printPdf} disabled={pdfAction !== 'idle'}>
-              {pdfAction === 'print' ? 'Generating...' : 'Print PDF'}
+              {pdfAction === 'print' ? <BookLoader inline text="Generating..." /> : 'Print PDF'}
             </button>
             <button
               disabled={syncLoading}
               onClick={syncToGoogleSheets}
               className="sync-button"
             >
-              {syncLoading ? 'Syncing...' : 'Sync to Google Sheets'}
+              {syncLoading ? <BookLoader inline text="Syncing..." /> : 'Sync to Google Sheets'}
             </button>
             <button
               className="danger-button"

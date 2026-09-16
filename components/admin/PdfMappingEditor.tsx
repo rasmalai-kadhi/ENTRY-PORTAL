@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist';
 import type { PdfAlignment, PdfFieldMapping } from '@/types/pdf-mapping';
 import { Toast } from '@/components/ui/Toast';
+import { BookLoader } from '@/components/ui/BookLoader';
 
 const fields = [
   ['date', 'Submission Date'], ['enquiryNumber', 'Enquiry ID'], ['course', 'Course'], ['name', 'Full Name'], ['dob', 'Date of Birth'], ['gender', 'Gender'],
@@ -173,7 +174,7 @@ export function PdfMappingEditor() {
   return <main className="mapping-editor-page">
     <header className="mapping-toolbar">
       <div><button className="back-button" onClick={() => router.back()}>← Back</button><h1>PDF field mapping</h1><p>Place submitted values on the original entry form.</p></div>
-      <div className="mapping-toolbar-actions"><button className="btn-secondary" onClick={undo} disabled={!history.length}>Undo</button><button className="btn-secondary" onClick={redo} disabled={!future.length}>Redo</button><button className="btn-secondary" onClick={reset} disabled={saving}>Reset</button><button className="btn-primary" onClick={save} disabled={saving}>{saving ? 'Saving...' : 'Save mappings'}</button></div>
+      <div className="mapping-toolbar-actions"><button className="btn-secondary" onClick={undo} disabled={!history.length}>Undo</button><button className="btn-secondary" onClick={redo} disabled={!future.length}>Redo</button><button className="btn-secondary" onClick={reset} disabled={saving}>Reset</button><button className="btn-primary" onClick={save} disabled={saving}>{saving ? <BookLoader inline text="Saving..." /> : 'Save mappings'}</button></div>
     </header>
     {notice && <Toast message={notice} onClose={() => setNotice('')} />}
     <div className="mapping-layout">

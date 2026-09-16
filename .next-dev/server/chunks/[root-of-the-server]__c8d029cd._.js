@@ -125,7 +125,10 @@ function normalizeQuestions(value) {
         const options = Array.isArray(question.options) ? question.options.filter((option)=>typeof option === 'string') : [];
         return {
             ...question,
-            options
+            options,
+            section: typeof question.section === 'string' && question.section.trim() ? question.section.trim() : 'Additional Details',
+            section_order: Number.isInteger(question.section_order) ? Number(question.section_order) : 99,
+            section_description: typeof question.section_description === 'string' ? question.section_description : null
         };
     }) : [];
 }

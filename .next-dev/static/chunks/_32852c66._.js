@@ -120,7 +120,10 @@ function normalizeQuestions(value) {
         const options = Array.isArray(question.options) ? question.options.filter((option)=>typeof option === 'string') : [];
         return {
             ...question,
-            options
+            options,
+            section: typeof question.section === 'string' && question.section.trim() ? question.section.trim() : 'Additional Details',
+            section_order: Number.isInteger(question.section_order) ? Number(question.section_order) : 99,
+            section_description: typeof question.section_description === 'string' ? question.section_description : null
         };
     }) : [];
 }
@@ -143,16 +146,28 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$enquiry$2f$question$2d$validation$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/enquiry/question-validation.ts [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.signature();
-"use client";
+'use client';
 ;
 ;
 ;
 ;
 ;
+const DRAFT_KEY = 'eduspray-enquiry-draft-v1';
+function makeSections(sections, questions) {
+    return [
+        ...sections
+    ].sort((a, b)=>a.display_order - b.display_order).map((section)=>({
+            key: section.id,
+            title: section.title,
+            description: section.description,
+            questions: questions.filter((question)=>question.section_id === section.id).sort((a, b)=>a.display_order - b.display_order)
+        }));
+}
 function EnquiryForm(param) {
     let { initialClientIp } = param;
     _s();
     const [questions, setQuestions] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [sections, setSections] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [loadError, setLoadError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "EnquiryForm.useEffect": ()=>{
@@ -161,8 +176,11 @@ function EnquiryForm(param) {
             }).then({
                 "EnquiryForm.useEffect": async (response)=>{
                     if (!response.ok) throw new Error();
-                    var _data;
-                    setQuestions((_data = (await response.json()).data) !== null && _data !== void 0 ? _data : []);
+                    const result = await response.json();
+                    var _result_data;
+                    setQuestions((_result_data = result.data) !== null && _result_data !== void 0 ? _result_data : []);
+                    var _result_sections;
+                    setSections((_result_sections = result.sections) !== null && _result_sections !== void 0 ? _result_sections : []);
                 }
             }["EnquiryForm.useEffect"]).catch({
                 "EnquiryForm.useEffect": ()=>setLoadError(true)
@@ -175,54 +193,191 @@ function EnquiryForm(param) {
         children: "Unable to load the enquiry form. Please refresh and try again."
     }, void 0, false, {
         fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-        lineNumber: 14,
+        lineNumber: 25,
         columnNumber: 25
     }, this);
-    if (!questions) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+    if (!questions || !sections) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "card",
         children: "Loading enquiry form..."
     }, void 0, false, {
         fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-        lineNumber: 15,
-        columnNumber: 26
+        lineNumber: 26,
+        columnNumber: 39
     }, this);
-    if (!questions.length) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+    if (!sections.length) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "card",
         children: "The enquiry form is not available right now."
     }, void 0, false, {
         fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-        lineNumber: 16,
-        columnNumber: 33
+        lineNumber: 27,
+        columnNumber: 32
     }, this);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(DynamicQuestionForm, {
         questions: questions,
+        sections: sections,
         initialClientIp: initialClientIp
     }, void 0, false, {
         fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-        lineNumber: 17,
+        lineNumber: 28,
         columnNumber: 10
     }, this);
 }
-_s(EnquiryForm, "5oX452046ACnGeoBKIcvKsvEVJY=");
+_s(EnquiryForm, "+9GAY8NSAXu5nNbXb21PdgEqQi4=");
 _c = EnquiryForm;
 function DynamicQuestionForm(param) {
-    let { questions, initialClientIp } = param;
+    let { questions, sections: configuredSections, initialClientIp } = param;
     _s1();
+    const sections = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
+        "DynamicQuestionForm.useMemo[sections]": ()=>makeSections(configuredSections, questions)
+    }["DynamicQuestionForm.useMemo[sections]"], [
+        configuredSections,
+        questions
+    ]);
     const [focusedField, setFocusedField] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [consent, setConsent] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const schema = (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$enquiry$2f$question$2d$validation$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["buildQuestionsSchema"])(questions);
-    const { register, handleSubmit, watch, formState: { errors, isSubmitting, isValid } } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useForm"])({
+    const [currentStep, setCurrentStep] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(0);
+    const [savedDraft, setSavedDraft] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [draftChoiceVisible, setDraftChoiceVisible] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
+    const hydratedDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(false);
+    const submissionState = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])('idle');
+    const schema = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
+        "DynamicQuestionForm.useMemo[schema]": ()=>(0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$enquiry$2f$question$2d$validation$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["buildQuestionsSchema"])(questions)
+    }["DynamicQuestionForm.useMemo[schema]"], [
+        questions
+    ]);
+    const defaultValues = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
+        "DynamicQuestionForm.useMemo[defaultValues]": ()=>Object.fromEntries(questions.map({
+                "DynamicQuestionForm.useMemo[defaultValues]": (question)=>[
+                        question.field_key,
+                        ''
+                    ]
+            }["DynamicQuestionForm.useMemo[defaultValues]"]))
+    }["DynamicQuestionForm.useMemo[defaultValues]"], [
+        questions
+    ]);
+    const { register, handleSubmit, watch, trigger, reset, formState: { errors, isSubmitting, isValid } } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useForm"])({
         resolver: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$hookform$2f$resolvers$2f$zod$2f$dist$2f$zod$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["zodResolver"])(schema),
-        mode: "onChange",
-        reValidateMode: "onChange",
-        defaultValues: Object.fromEntries(questions.map({
-            "DynamicQuestionForm.useForm": (question)=>[
-                    question.field_key,
-                    ''
-                ]
-        }["DynamicQuestionForm.useForm"]))
+        mode: 'onChange',
+        reValidateMode: 'onChange',
+        defaultValues
     });
     const values = watch();
+    const currentSection = sections[currentStep];
+    const requiredQuestions = questions.filter((question)=>question.required);
+    const validRequiredCount = requiredQuestions.filter((question)=>{
+        var _values_question_field_key;
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$enquiry$2f$question$2d$validation$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["buildQuestionSchema"])(question).safeParse(String((_values_question_field_key = values[question.field_key]) !== null && _values_question_field_key !== void 0 ? _values_question_field_key : '')).success;
+    }).length;
+    const progress = Math.round((validRequiredCount + (consent ? 1 : 0)) / Math.max(requiredQuestions.length + 1, 1) * 100);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "DynamicQuestionForm.useEffect": ()=>{
+            try {
+                const raw = localStorage.getItem(DRAFT_KEY);
+                if (!raw) {
+                    hydratedDraft.current = true;
+                    setDraftChoiceVisible(false);
+                    return;
+                }
+                const draft = JSON.parse(raw);
+                if ((draft === null || draft === void 0 ? void 0 : draft.values) && (Object.values(draft.values).some(Boolean) || draft.consent)) setSavedDraft(draft);
+                else {
+                    localStorage.removeItem(DRAFT_KEY);
+                    hydratedDraft.current = true;
+                    setDraftChoiceVisible(false);
+                }
+            } catch (e) {
+                hydratedDraft.current = true;
+                setDraftChoiceVisible(false);
+            }
+        }
+    }["DynamicQuestionForm.useEffect"], []);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "DynamicQuestionForm.useEffect": ()=>{
+            if (!hydratedDraft.current) return;
+            const hasData = Object.values(values).some({
+                "DynamicQuestionForm.useEffect": (value)=>String(value !== null && value !== void 0 ? value : '').trim()
+            }["DynamicQuestionForm.useEffect"]) || consent;
+            if (hasData) localStorage.setItem(DRAFT_KEY, JSON.stringify({
+                values,
+                consent
+            }));
+            else localStorage.removeItem(DRAFT_KEY);
+        }
+    }["DynamicQuestionForm.useEffect"], [
+        values,
+        consent
+    ]);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "DynamicQuestionForm.useEffect": ()=>{
+            const hasData = Object.values(values).some({
+                "DynamicQuestionForm.useEffect": (value)=>String(value !== null && value !== void 0 ? value : '').trim()
+            }["DynamicQuestionForm.useEffect"]) || consent;
+            if (!hasData) return;
+            const warn = {
+                "DynamicQuestionForm.useEffect.warn": (event)=>{
+                    if (submissionState.current !== 'idle') return;
+                    event.preventDefault();
+                    event.returnValue = '';
+                }
+            }["DynamicQuestionForm.useEffect.warn"];
+            window.addEventListener('beforeunload', warn);
+            return ({
+                "DynamicQuestionForm.useEffect": ()=>window.removeEventListener('beforeunload', warn)
+            })["DynamicQuestionForm.useEffect"];
+        }
+    }["DynamicQuestionForm.useEffect"], [
+        values,
+        consent
+    ]);
+    function resumeDraft() {
+        if (!savedDraft) return;
+        reset(savedDraft.values);
+        setConsent(savedDraft.consent);
+        hydratedDraft.current = true;
+        setDraftChoiceVisible(false);
+    }
+    function startOver() {
+        localStorage.removeItem(DRAFT_KEY);
+        reset(defaultValues);
+        setConsent(false);
+        setSavedDraft(null);
+        hydratedDraft.current = true;
+        setDraftChoiceVisible(false);
+        setCurrentStep(0);
+    }
+    function scrollToFirstInvalid(keys) {
+        const key = keys.find((item)=>errors[item]) || keys.find((item)=>{
+            var _values_item;
+            return !String((_values_item = values[item]) !== null && _values_item !== void 0 ? _values_item : '').trim();
+        });
+        if (!key) return;
+        const field = document.getElementsByName(key)[0];
+        field === null || field === void 0 ? void 0 : field.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+        });
+        field === null || field === void 0 ? void 0 : field.focus();
+    }
+    async function nextStep() {
+        const keys = currentSection.questions.map((question)=>question.field_key);
+        const valid = await trigger(keys);
+        if (!valid) {
+            window.setTimeout(()=>scrollToFirstInvalid(keys), 0);
+            return;
+        }
+        setCurrentStep((step)=>Math.min(step + 1, sections.length - 1));
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+    function previousStep() {
+        setCurrentStep((step)=>Math.max(step - 1, 0));
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
     function fieldProps(key) {
         const question = questions.find((item)=>item.field_key === key);
         const registration = register(key);
@@ -250,259 +405,509 @@ function DynamicQuestionForm(param) {
         return "question-control".concat(focusedField === question.field_key ? ' is-focused' : invalid ? ' is-invalid' : valid ? ' is-valid' : '');
     }
     async function onSubmit(answers) {
+        submissionState.current = 'submitting';
         try {
-            const response = await fetch("/api/enquiries", {
-                method: "POST",
+            const response = await fetch('/api/enquiries', {
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     answers,
                     ...answers,
                     terms_accepted: consent,
-                    signatureDataUrl: ""
+                    signatureDataUrl: ''
                 })
             });
             const text = await response.text();
             const json = text ? JSON.parse(text) : {};
             if (!response.ok) throw new Error(json.error || json.message || "Submission failed with status ".concat(response.status, "."));
-            if (json.clientIp) sessionStorage.setItem("eduspray-submitted-ip", json.clientIp);
-            if (json.enquiryNumber) sessionStorage.setItem("eduspray-enquiry-number", json.enquiryNumber);
-            window.location.href = "/enquiry/success";
+            submissionState.current = 'completed';
+            localStorage.removeItem(DRAFT_KEY);
+            reset(defaultValues);
+            setConsent(false);
+            setSavedDraft(null);
+            if (json.clientIp) sessionStorage.setItem('eduspray-submitted-ip', json.clientIp);
+            if (json.enquiryNumber) sessionStorage.setItem('eduspray-enquiry-number', json.enquiryNumber);
+            window.location.href = '/enquiry/success';
         } catch (error) {
-            alert(error instanceof Error ? error.message : "Unable to submit enquiry.");
+            submissionState.current = 'idle';
+            alert(error instanceof Error ? error.message : 'Unable to submit enquiry.');
         }
     }
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
-        className: "card grid",
-        onSubmit: handleSubmit(onSubmit),
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
         children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "form-grid",
-                children: questions.map((question)=>{
-                    var _errors_question_field_key;
-                    var _question_placeholder, _question_placeholder1, _errors_question_field_key_message;
-                    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "field".concat(question.type === 'textarea' ? ' field-full' : ''),
+            draftChoiceVisible && savedDraft && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "draft-prompt",
+                role: "dialog",
+                "aria-labelledby": "draft-title",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                htmlFor: question.field_key,
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                id: "draft-title",
+                                children: "Resume your enquiry?"
+                            }, void 0, false, {
+                                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                lineNumber: 63,
+                                columnNumber: 121
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                children: "We found saved information from an unfinished form on this device."
+                            }, void 0, false, {
+                                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                lineNumber: 63,
+                                columnNumber: 167
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                        lineNumber: 63,
+                        columnNumber: 116
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "draft-actions",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                                variant: "secondary",
+                                onClick: startOver,
+                                children: "Start over"
+                            }, void 0, false, {
+                                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                lineNumber: 63,
+                                columnNumber: 277
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                                onClick: resumeDraft,
+                                children: "Resume form"
+                            }, void 0, false, {
+                                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                lineNumber: 63,
+                                columnNumber: 344
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                        lineNumber: 63,
+                        columnNumber: 246
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                lineNumber: 63,
+                columnNumber: 42
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
+                className: "card grid enquiry-form",
+                onSubmit: handleSubmit(onSubmit),
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "progress-panel",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "progress-heading",
                                 children: [
-                                    question.label,
-                                    question.required && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: "required-mark",
-                                        "aria-hidden": "true",
-                                        children: " *"
-                                    }, void 0, false, {
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                        children: [
+                                            "Step ",
+                                            currentStep + 1,
+                                            " of ",
+                                            sections.length
+                                        ]
+                                    }, void 0, true, {
                                         fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                                        lineNumber: 39,
-                                        columnNumber: 295
+                                        lineNumber: 65,
+                                        columnNumber: 73
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        children: [
+                                            progress,
+                                            "% complete"
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                        lineNumber: 65,
+                                        columnNumber: 133
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                                lineNumber: 39,
-                                columnNumber: 221
+                                lineNumber: 65,
+                                columnNumber: 39
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                className: "field-description",
-                                children: question.placeholder || ''
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "progress-track",
+                                role: "progressbar",
+                                "aria-valuemin": 0,
+                                "aria-valuemax": 100,
+                                "aria-valuenow": progress,
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                    style: {
+                                        width: "".concat(progress, "%")
+                                    }
+                                }, void 0, false, {
+                                    fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                    lineNumber: 65,
+                                    columnNumber: 286
+                                }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                                lineNumber: 39,
-                                columnNumber: 364
+                                lineNumber: 65,
+                                columnNumber: 172
                             }, this),
-                            question.type === 'textarea' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
-                                className: fieldClass(question),
-                                id: question.field_key,
-                                rows: 3,
-                                placeholder: (_question_placeholder = question.placeholder) !== null && _question_placeholder !== void 0 ? _question_placeholder : '',
-                                "aria-invalid": errors[question.field_key] ? "true" : "false",
-                                ...fieldProps(question.field_key)
-                            }, void 0, false, {
-                                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                                lineNumber: 39,
-                                columnNumber: 467
-                            }, this) : question.type === 'select' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
-                                className: fieldClass(question),
-                                id: question.field_key,
-                                defaultValue: "",
-                                "aria-invalid": errors[question.field_key] ? "true" : "false",
-                                ...fieldProps(question.field_key),
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                        value: "",
-                                        children: question.placeholder || 'Select an option'
-                                    }, void 0, false, {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "progress-steps",
+                                children: sections.map((section, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: index === currentStep ? 'is-current' : index < currentStep && section.questions.filter((question)=>question.required).every((question)=>{
+                                            var _values_question_field_key;
+                                            return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$enquiry$2f$question$2d$validation$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["buildQuestionSchema"])(question).safeParse(String((_values_question_field_key = values[question.field_key]) !== null && _values_question_field_key !== void 0 ? _values_question_field_key : '')).success;
+                                        }) ? 'is-complete' : '',
+                                        children: [
+                                            index + 1,
+                                            ". ",
+                                            section.title
+                                        ]
+                                    }, section.key, true, {
                                         fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                                        lineNumber: 39,
-                                        columnNumber: 893
-                                    }, this),
-                                    question.options.map((option)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                            value: option,
-                                            children: option
-                                        }, option, false, {
-                                            fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                                            lineNumber: 39,
-                                            columnNumber: 1005
-                                        }, this))
+                                        lineNumber: 65,
+                                        columnNumber: 400
+                                    }, this))
+                            }, void 0, false, {
+                                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                lineNumber: 65,
+                                columnNumber: 334
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                        lineNumber: 65,
+                        columnNumber: 7
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "section-intro",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                className: "section-eyebrow",
+                                children: [
+                                    "Section ",
+                                    currentStep + 1
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                                lineNumber: 39,
-                                columnNumber: 715
-                            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                className: fieldClass(question),
-                                id: question.field_key,
-                                type: question.type === 'phone' ? 'tel' : question.type === 'number' ? 'text' : question.type,
-                                inputMode: question.type === 'phone' ? 'numeric' : question.type === 'number' ? question.number_format === 'decimal' ? 'decimal' : 'numeric' : undefined,
-                                step: question.type === 'number' ? question.number_format === 'decimal' ? 'any' : '1' : undefined,
-                                maxLength: question.max_length,
-                                placeholder: (_question_placeholder1 = question.placeholder) !== null && _question_placeholder1 !== void 0 ? _question_placeholder1 : '',
-                                "aria-invalid": errors[question.field_key] ? "true" : "false",
-                                ...fieldProps(question.field_key)
-                            }, void 0, false, {
-                                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                                lineNumber: 39,
-                                columnNumber: 1072
+                                lineNumber: 66,
+                                columnNumber: 38
                             }, this),
-                            errors[question.field_key] && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                className: "error",
-                                children: String((_errors_question_field_key_message = (_errors_question_field_key = errors[question.field_key]) === null || _errors_question_field_key === void 0 ? void 0 : _errors_question_field_key.message) !== null && _errors_question_field_key_message !== void 0 ? _errors_question_field_key_message : '')
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                children: currentSection.title
                             }, void 0, false, {
                                 fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                                lineNumber: 39,
-                                columnNumber: 1688
+                                lineNumber: 66,
+                                columnNumber: 98
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                children: currentSection.description
+                            }, void 0, false, {
+                                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                lineNumber: 66,
+                                columnNumber: 129
                             }, this)
                         ]
-                    }, question.id, true, {
+                    }, void 0, true, {
                         fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                        lineNumber: 39,
-                        columnNumber: 126
-                    }, this);
-                })
-            }, void 0, false, {
-                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                lineNumber: 39,
-                columnNumber: 72
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                className: "consent-row",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                        type: "checkbox",
-                        checked: consent,
-                        onChange: (event)=>setConsent(event.target.checked)
-                    }, void 0, false, {
-                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                        lineNumber: 39,
-                        columnNumber: 1816
+                        lineNumber: 66,
+                        columnNumber: 7
                     }, this),
-                    " ",
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "form-grid",
                         children: [
-                            "I agree to the ",
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
-                                href: "/terms",
-                                target: "_blank",
-                                rel: "noreferrer",
-                                children: "Terms of Use"
+                            currentStep === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "field",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                        htmlFor: "submission-date",
+                                        children: "Date"
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                        lineNumber: 67,
+                                        columnNumber: 79
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "field-description",
+                                        children: "Generated when this enquiry is submitted."
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                        lineNumber: 67,
+                                        columnNumber: 124
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                        className: "question-control",
+                                        id: "submission-date",
+                                        value: new Intl.DateTimeFormat('en-GB').format(new Date()),
+                                        readOnly: true
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                        lineNumber: 67,
+                                        columnNumber: 208
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                lineNumber: 67,
+                                columnNumber: 56
+                            }, this),
+                            currentSection.questions.map((question)=>{
+                                var _errors_question_field_key;
+                                var _question_placeholder, _question_placeholder1, _errors_question_field_key_message;
+                                return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "field".concat(question.type === 'textarea' ? ' field-full' : ''),
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                            htmlFor: question.field_key,
+                                            children: [
+                                                question.label,
+                                                question.required && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    className: "required-mark",
+                                                    "aria-hidden": "true",
+                                                    children: " *"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                                    lineNumber: 67,
+                                                    columnNumber: 554
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                            lineNumber: 67,
+                                            columnNumber: 480
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            className: "field-description",
+                                            children: question.placeholder || ''
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                            lineNumber: 67,
+                                            columnNumber: 623
+                                        }, this),
+                                        question.type === 'textarea' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
+                                            className: fieldClass(question),
+                                            id: question.field_key,
+                                            rows: 3,
+                                            placeholder: (_question_placeholder = question.placeholder) !== null && _question_placeholder !== void 0 ? _question_placeholder : '',
+                                            "aria-invalid": errors[question.field_key] ? 'true' : 'false',
+                                            ...fieldProps(question.field_key)
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                            lineNumber: 67,
+                                            columnNumber: 726
+                                        }, this) : question.type === 'select' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
+                                            className: fieldClass(question),
+                                            id: question.field_key,
+                                            defaultValue: "",
+                                            "aria-invalid": errors[question.field_key] ? 'true' : 'false',
+                                            ...fieldProps(question.field_key),
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                    value: "",
+                                                    children: question.placeholder || 'Select an option'
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                                    lineNumber: 67,
+                                                    columnNumber: 1152
+                                                }, this),
+                                                question.options.map((option)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                        value: option,
+                                                        children: option
+                                                    }, option, false, {
+                                                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                                        lineNumber: 67,
+                                                        columnNumber: 1264
+                                                    }, this))
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                            lineNumber: 67,
+                                            columnNumber: 974
+                                        }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                            className: fieldClass(question),
+                                            id: question.field_key,
+                                            type: question.type === 'phone' ? 'tel' : question.type === 'number' ? 'text' : question.type,
+                                            inputMode: question.type === 'phone' ? 'numeric' : question.type === 'number' ? question.number_format === 'decimal' ? 'decimal' : 'numeric' : undefined,
+                                            step: question.type === 'number' ? question.number_format === 'decimal' ? 'any' : '1' : undefined,
+                                            maxLength: question.max_length,
+                                            placeholder: (_question_placeholder1 = question.placeholder) !== null && _question_placeholder1 !== void 0 ? _question_placeholder1 : '',
+                                            "aria-invalid": errors[question.field_key] ? 'true' : 'false',
+                                            ...fieldProps(question.field_key)
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                            lineNumber: 67,
+                                            columnNumber: 1331
+                                        }, this),
+                                        errors[question.field_key] && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            className: "error",
+                                            children: String((_errors_question_field_key_message = (_errors_question_field_key = errors[question.field_key]) === null || _errors_question_field_key === void 0 ? void 0 : _errors_question_field_key.message) !== null && _errors_question_field_key_message !== void 0 ? _errors_question_field_key_message : '')
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                            lineNumber: 67,
+                                            columnNumber: 1947
+                                        }, this)
+                                    ]
+                                }, question.id, true, {
+                                    fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                    lineNumber: 67,
+                                    columnNumber: 385
+                                }, this);
+                            })
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                        lineNumber: 67,
+                        columnNumber: 7
+                    }, this),
+                    currentStep === sections.length - 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                        className: "consent-row",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                type: "checkbox",
+                                checked: consent,
+                                onChange: (event)=>setConsent(event.target.checked)
                             }, void 0, false, {
                                 fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                                lineNumber: 39,
-                                columnNumber: 1934
+                                lineNumber: 68,
+                                columnNumber: 78
                             }, this),
-                            " and acknowledge the ",
+                            " ",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                children: [
+                                    "I agree to the ",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
+                                        href: "/terms",
+                                        target: "_blank",
+                                        rel: "noreferrer",
+                                        children: "Terms of Use"
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                        lineNumber: 68,
+                                        columnNumber: 196
+                                    }, this),
+                                    " and acknowledge the ",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
+                                        href: "/privacy",
+                                        target: "_blank",
+                                        rel: "noreferrer",
+                                        children: "Privacy/Data Collection Policy"
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                        lineNumber: 68,
+                                        columnNumber: 283
+                                    }, this),
+                                    "."
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                lineNumber: 68,
+                                columnNumber: 175
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                        lineNumber: 68,
+                        columnNumber: 47
+                    }, this),
+                    currentStep === sections.length - 1 && (!isValid || !consent) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        className: "form-submit-hint",
+                        role: "status",
+                        children: !isValid ? 'Complete all required fields to submit.' : 'Accept the Terms of Use and Privacy/Data Collection Policy to submit.'
+                    }, void 0, false, {
+                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                        lineNumber: 69,
+                        columnNumber: 73
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "step-actions",
+                        children: [
+                            currentStep > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                                variant: "secondary",
+                                onClick: previousStep,
+                                children: "Back"
+                            }, void 0, false, {
+                                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                lineNumber: 70,
+                                columnNumber: 57
+                            }, this),
+                            currentStep < sections.length - 1 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                                type: "button",
+                                onClick: nextStep,
+                                children: "Next"
+                            }, void 0, false, {
+                                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                lineNumber: 70,
+                                columnNumber: 159
+                            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                                className: "form-submit",
+                                type: "submit",
+                                disabled: !isValid || !consent || isSubmitting,
+                                children: isSubmitting ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            className: "submit-spinner",
+                                            "aria-hidden": "true"
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                            lineNumber: 70,
+                                            columnNumber: 328
+                                        }, this),
+                                        " Submitting..."
+                                    ]
+                                }, void 0, true) : 'Submit Enquiry'
+                            }, void 0, false, {
+                                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                lineNumber: 70,
+                                columnNumber: 216
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                        lineNumber: 70,
+                        columnNumber: 7
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        className: "form-connection-status",
+                        "aria-live": "polite",
+                        children: [
+                            "Network record: ",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                children: initialClientIp
+                            }, void 0, false, {
+                                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
+                                lineNumber: 71,
+                                columnNumber: 80
+                            }, this),
+                            ". This portal collects IP addresses as described in the ",
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
                                 href: "/privacy",
-                                target: "_blank",
-                                rel: "noreferrer",
                                 children: "Privacy/Data Collection Policy"
                             }, void 0, false, {
                                 fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                                lineNumber: 39,
-                                columnNumber: 2021
+                                lineNumber: 71,
+                                columnNumber: 170
                             }, this),
                             "."
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                        lineNumber: 39,
-                        columnNumber: 1913
+                        lineNumber: 71,
+                        columnNumber: 7
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                lineNumber: 39,
-                columnNumber: 1785
-            }, this),
-            (!isValid || !consent) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                className: "form-submit-hint",
-                role: "status",
-                children: !isValid ? 'Complete all required fields to submit.' : 'Accept the Terms of Use and Privacy/Data Collection Policy to submit.'
-            }, void 0, false, {
-                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                lineNumber: 39,
-                columnNumber: 2150
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
-                className: "form-submit",
-                type: "submit",
-                disabled: !isValid || !consent || isSubmitting,
-                children: isSubmitting ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                            className: "submit-spinner",
-                            "aria-hidden": "true"
-                        }, void 0, false, {
-                            fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                            lineNumber: 39,
-                            columnNumber: 2441
-                        }, this),
-                        " Submitting..."
-                    ]
-                }, void 0, true) : "Submit Enquiry"
-            }, void 0, false, {
-                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                lineNumber: 39,
-                columnNumber: 2329
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                className: "form-connection-status",
-                "aria-live": "polite",
-                children: [
-                    "Network record: ",
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
-                        children: initialClientIp
-                    }, void 0, false, {
-                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                        lineNumber: 39,
-                        columnNumber: 2614
-                    }, this),
-                    ". This portal collects IP addresses as described in the ",
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
-                        href: "/privacy",
-                        children: "Privacy/Data Collection Policy"
-                    }, void 0, false, {
-                        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                        lineNumber: 39,
-                        columnNumber: 2704
-                    }, this),
-                    "."
-                ]
-            }, void 0, true, {
-                fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-                lineNumber: 39,
-                columnNumber: 2541
+                lineNumber: 64,
+                columnNumber: 5
             }, this)
         ]
-    }, void 0, true, {
-        fileName: "[project]/components/enquiry/EnquiryForm.tsx",
-        lineNumber: 39,
-        columnNumber: 10
-    }, this);
+    }, void 0, true);
 }
-_s1(DynamicQuestionForm, "8hppxPpDoIv8qTrKpQ9P6SUYsDE=", false, function() {
+_s1(DynamicQuestionForm, "rDszNQhURgo/DQPopL0wsTCjvyA=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useForm"]
     ];

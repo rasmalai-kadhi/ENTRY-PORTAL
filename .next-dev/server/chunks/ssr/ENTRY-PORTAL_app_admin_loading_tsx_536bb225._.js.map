@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///D:/enquiry/ENTRY-PORTAL/app/admin/loading.tsx"],"sourcesContent":["import { BookLoader } from '@/components/ui/BookLoader';\r\n\r\nexport default function Loading() {\r\n  return <BookLoader fullPage text=\"Loading admin\" />;\r\n}"],"names":[],"mappings":";;;;;AAAA;;;AAEe,SAAS;IACtB,qBAAO,iQAAC,gKAAU;QAAC,QAAQ;QAAC,MAAK;;;;;;AACnC","debugId":null}}]
+}

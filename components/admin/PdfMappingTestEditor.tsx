@@ -6,6 +6,7 @@ import { PdfPreview } from '@/components/admin/PdfPreview';
 import type { Enquiry } from '@/types/enquiry';
 import type { PdfAlignment, PdfFieldMapping } from '@/types/pdf-mapping';
 import { Toast } from '@/components/ui/Toast';
+import { BookLoader } from '@/components/ui/BookLoader';
 
 const fields = [
   ['date', 'Submission Date'], ['enquiryNumber', 'Enquiry ID'], ['course', 'Course'], ['name', 'Full Name'], ['dob', 'Date of Birth'], ['gender', 'Gender'],
@@ -119,11 +120,11 @@ export function PdfMappingTestEditor({ initialMappings }: { initialMappings?: Pd
   async function changePage(next: number) { if (!pdf || next < 1 || next > pdf.pageCount) return; const page = await pdf.document.getPage(next); const viewport = page.getViewport({ scale: 1 }); setPdf({ ...pdf, width: viewport.width, height: viewport.height }); setPageNumber(next); setSelectedId(null); }
   function changeNumber(key: keyof PdfFieldMapping, value: string) { if (!current) return; const number = Number(value); if (Number.isFinite(number)) updateMapping(current.id!, { [key]: number }); }
 
-  if (loading) return <main className="mapping-editor-page"><div className="mapping-loading">Loading PDF mapping test...</div></main>;
+  if (loading) return <main className="mapping-editor-page"><BookLoader fullPage text="Loading PDF mapping test" /></main>;
   const pageMappings = mappings.filter(mapping => mapping.page_number === pageNumber);
   return <main className="mapping-editor-page">
-    <header className="mapping-toolbar"><div><Link className="back-link" href="/admin">← Dashboard</Link><div className="dev-badge">TEST / DEVELOPMENT</div><h1>PDF mapping calibration</h1><p>Changes are preview-only until you explicitly save mappings.</p></div><div className="mapping-toolbar-actions"><button className="btn-secondary" onClick={undo} disabled={!history.length || saving}>Undo</button><button className="btn-secondary" onClick={redo} disabled={!future.length || saving}>Redo</button><button className="btn-secondary" onClick={resetSaved} disabled={saving}>Reset</button><button className="btn-secondary" onClick={resetDefaults} disabled={saving}>Reset all</button><button className="btn-primary" onClick={save} disabled={saving}>{saving ? 'Saving...' : 'Save mapping'}</button></div></header>
-    {previewLoading && <p className="mapping-notice" role="status">Generating preview...</p>}
+    <header className="mapping-toolbar"><div><Link className="back-link" href="/admin">← Dashboard</Link><div className="dev-badge">TEST / DEVELOPMENT</div><h1>PDF mapping calibration</h1><p>Changes are preview-only until you explicitly save mappings.</p></div><div className="mapping-toolbar-actions"><button className="btn-secondary" onClick={undo} disabled={!history.length || saving}>Undo</button><button className="btn-secondary" onClick={redo} disabled={!future.length || saving}>Redo</button><button className="btn-secondary" onClick={resetSaved} disabled={saving}>Reset</button><button className="btn-secondary" onClick={resetDefaults} disabled={saving}>Reset all</button><button className="btn-primary" onClick={save} disabled={saving}>{saving ? <BookLoader inline text="Saving..." /> : 'Save mapping'}</button></div></header>
+    {previewLoading && <BookLoader inline text="Generating preview..." />}
     {notice && <Toast message={notice} error={notice.toLowerCase().includes('error') || notice.toLowerCase().includes('failed') || notice.toLowerCase().includes('unable')} onClose={() => setNotice('')} />}
     <div className="mapping-layout">
       <aside className="mapping-sidebar mapping-fields"><div className="mapping-sidebar-heading"><span className="section-eyebrow">Sample enquiry</span><h2>Rahul Sharma</h2><p>Fixed data only. This page never creates an enquiry or uploads a file.</p></div><div className="sample-data">{Object.entries(sample).filter(([key, value]) => key !== 'signatureDataUrl' && value).map(([key, value]) => <div key={key}><small>{key}</small><span>{String(value)}</span></div>)}</div></aside>

@@ -41,6 +41,6 @@ export function normalizeQuestions(value: unknown): FormQuestion[] {
   return Array.isArray(value) ? value.map((rawQuestion: unknown) => {
     const question = rawQuestion as Record<string, unknown>;
     const options = Array.isArray(question.options) ? question.options.filter((option: unknown): option is string => typeof option === 'string') : [];
-    return { ...question, options };
+    return { ...question, options, section: typeof question.section === 'string' && question.section.trim() ? question.section.trim() : 'Additional Details', section_order: Number.isInteger(question.section_order) ? Number(question.section_order) : 99, section_description: typeof question.section_description === 'string' ? question.section_description : null };
   }) as FormQuestion[] : [];
 }

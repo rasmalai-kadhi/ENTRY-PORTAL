@@ -1,1 +1,12 @@
-{}
+{
+  "/admin/enquiries/[id]/page": "app/admin/enquiries/[id]/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/api/admin/enquiries/[id]/pdf/route": "app/api/admin/enquiries/[id]/pdf/route.js",
+  "/api/admin/enquiries/[id]/route": "app/api/admin/enquiries/[id]/route.js",
+  "/api/admin/session/route": "app/api/admin/session/route.js",
+  "/api/admin/stats/route": "app/api/admin/stats/route.js",
+  "/api/enquiries/route": "app/api/enquiries/route.js",
+  "/api/form-questions/route": "app/api/form-questions/route.js",
+  "/enquiry/page": "app/enquiry/page.js",
+  "/enquiry/success/page": "app/enquiry/success/page.js"
+}

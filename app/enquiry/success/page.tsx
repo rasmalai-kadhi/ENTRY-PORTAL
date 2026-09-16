@@ -16,8 +16,13 @@ export default function SuccessPage() {
       <section className="success-panel" aria-labelledby="success-title">
         <div className="success-mark" aria-hidden="true"><span>✓</span></div>
         <p className="success-kicker">Form submitted successfully.</p>
-        <h1 id="success-title">You've officially taken the first step toward a bright future with Eduspray.</h1>
-        {enquiryNumber && <p className="success-copy">Enquiry number: <strong>{enquiryNumber}</strong></p>}
+        <h1 id="success-title">Your journey to the right future starts here with <span>Eduspray.</span></h1>
+        <div className="success-divider" aria-hidden="true"><span /></div>
+        <div className="success-reference" aria-label={`Enquiry reference ${enquiryNumber || 'Pending'}`}>
+          <span className="success-reference-icon" aria-hidden="true" />
+          <span className="success-reference-label">Enquiry Reference:</span>
+          <strong>{enquiryNumber || 'Pending'}</strong>
+        </div>
       </section>
     </main>
   );
