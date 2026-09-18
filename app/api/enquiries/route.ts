@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => null) as Record<string, unknown> | null;
     if (!body) return jsonError("Invalid request body.", 400);
     if (body.terms_accepted !== true) return jsonError('You must accept the Terms of Use and Privacy/Data Collection Policy.', 400);
-    const questionsResult = await createAdminClient().from('form_questions').select('*').eq('active', true).order('display_order');
+    const questionsResult = await createAdminClient().from('form_questions').select('*').eq('active', true).not('section_id', 'is', null).order('display_order');
     if (questionsResult.error) return jsonError('Unable to load form configuration.', 503);
     const questions = normalizeQuestions(questionsResult.data);
     const answers = body.answers && typeof body.answers === 'object' ? body.answers as Record<string, unknown> : body;

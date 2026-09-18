@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAdminContext } from '@/lib/auth/admin';
-import { getPdfFieldMappings } from '@/lib/pdf/get-mappings';
+import { getPdfMappingData } from '@/lib/pdf/get-mappings';
 import { PDF_TEMPLATE_ID } from '@/types/pdf-mapping';
 
 export const runtime = 'nodejs';
@@ -9,7 +9,7 @@ export async function GET() {
   const context = await getAdminContext();
   if (!context) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
-    return NextResponse.json({ data: await getPdfFieldMappings() });
+    return NextResponse.json(await getPdfMappingData());
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Unable to load mappings.' }, { status: 500 });
   }

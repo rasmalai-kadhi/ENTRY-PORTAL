@@ -1,4 +1,4 @@
-import { PDF_TEMPLATE_ID, type PdfFieldMapping } from '@/types/pdf-mapping';
+import { PDF_TEMPLATE_ID, type PdfFieldDefinition, type PdfFieldMapping, type PdfMappingData } from '@/types/pdf-mapping';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 export async function getPdfFieldMappings(): Promise<PdfFieldMapping[]> {
@@ -10,6 +10,20 @@ export async function getPdfFieldMappings(): Promise<PdfFieldMapping[]> {
     .order('field_label');
 
   if (error) throw new Error(`Unable to load PDF field mappings: ${error.message}`);
-  if (!data?.length) throw new Error(`No saved PDF field mappings found for template "${PDF_TEMPLATE_ID}".`);
   return data as PdfFieldMapping[];
+}
+
+export async function getPdfMappingData(): Promise<PdfMappingData> {
+  const supabase = createAdminClient();
+  const [{ data: questions, error: questionsError }, mappings] = await Promise.all([
+    supabase.from('form_questions').select('field_key, label').eq('active', true).order('display_order'),
+    getPdfFieldMappings(),
+  ]);
+  if (questionsError) throw new Error(`Unable to load active form questions: ${questionsError.message}`);
+  const fields = (questions ?? []) as PdfFieldDefinition[];
+  const labels = new Map(fields.map(field => [field.field_key, field.label]));
+  return {
+    fields,
+    mappings: mappings.map(mapping => ({ ...mapping, field_label: labels.get(mapping.field_key) ?? mapping.field_label ?? mapping.field_key })),
+  };
 }

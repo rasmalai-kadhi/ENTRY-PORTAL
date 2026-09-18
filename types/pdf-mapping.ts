@@ -1,5 +1,10 @@
 export type PdfAlignment = 'left' | 'center' | 'right';
 
+export type PdfFieldDefinition = {
+  field_key: string;
+  label: string;
+};
+
 export type PdfFieldMapping = {
   id?: string;
   template_id: string;
@@ -18,6 +23,11 @@ export type PdfFieldMapping = {
   rotation: number;
   created_at?: string;
   updated_at?: string;
+};
+
+export type PdfMappingData = {
+  fields: PdfFieldDefinition[];
+  mappings: PdfFieldMapping[];
 };
 
 export const PDF_TEMPLATE_ID = 'entry-form';

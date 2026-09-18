@@ -40,8 +40,10 @@ export async function stampPdf(enquiry: Enquiry, mappings: PdfFieldMapping[]): P
   const input = await fs.readFile(TEMPLATE);
   const pdf = await PDFDocument.load(input);
   const mappedKeys = new Set(mappings.map(mapping => mapping.field_key));
-  for (const [key, value] of Object.entries(enquiry)) {
-    if (value && !mappedKeys.has(key) && !NON_PDF_KEYS.has(key)) throw new Error(`No mapping found for field: ${key}`);
+  const submittedFields = new Map(Object.entries(enquiry).filter(([key]) => !NON_PDF_KEYS.has(key)));
+  for (const [key, value] of Object.entries(enquiry.answers ?? {})) submittedFields.set(key, value);
+  for (const [key, value] of submittedFields) {
+    if (value && !mappedKeys.has(key)) console.warn(`Unmapped field: ${key}`);
   }
   console.info('MAPPING_SOURCE = SUPABASE');
   const fonts = new Map<string, Awaited<ReturnType<PDFDocument['embedFont']>>>();

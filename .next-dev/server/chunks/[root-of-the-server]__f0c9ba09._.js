@@ -189,7 +189,9 @@ async function verifySupabaseConnection() {
 
 __turbopack_context__.s([
     "getPdfFieldMappings",
-    ()=>getPdfFieldMappings
+    ()=>getPdfFieldMappings,
+    "getPdfMappingData",
+    ()=>getPdfMappingData
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$ENTRY$2d$PORTAL$2f$types$2f$pdf$2d$mapping$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/ENTRY-PORTAL/types/pdf-mapping.ts [app-route] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$ENTRY$2d$PORTAL$2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/ENTRY-PORTAL/lib/supabase/admin.ts [app-route] (ecmascript)");
@@ -198,8 +200,27 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$ENTRY$2d$PORTAL$2f$lib$2f$su
 async function getPdfFieldMappings() {
     const { data, error } = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$ENTRY$2d$PORTAL$2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])().from('pdf_field_mappings').select('*').eq('template_id', __TURBOPACK__imported__module__$5b$project$5d2f$ENTRY$2d$PORTAL$2f$types$2f$pdf$2d$mapping$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["PDF_TEMPLATE_ID"]).order('page_number').order('field_label');
     if (error) throw new Error(`Unable to load PDF field mappings: ${error.message}`);
-    if (!data?.length) throw new Error(`No saved PDF field mappings found for template "${__TURBOPACK__imported__module__$5b$project$5d2f$ENTRY$2d$PORTAL$2f$types$2f$pdf$2d$mapping$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["PDF_TEMPLATE_ID"]}".`);
     return data;
+}
+async function getPdfMappingData() {
+    const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ENTRY$2d$PORTAL$2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])();
+    const [{ data: questions, error: questionsError }, mappings] = await Promise.all([
+        supabase.from('form_questions').select('field_key, label').eq('active', true).order('display_order'),
+        getPdfFieldMappings()
+    ]);
+    if (questionsError) throw new Error(`Unable to load active form questions: ${questionsError.message}`);
+    const fields = questions ?? [];
+    const labels = new Map(fields.map((field)=>[
+            field.field_key,
+            field.label
+        ]));
+    return {
+        fields,
+        mappings: mappings.map((mapping)=>({
+                ...mapping,
+                field_label: labels.get(mapping.field_key) ?? mapping.field_label ?? mapping.field_key
+            }))
+    };
 }
 }),
 "[externals]/node:fs/promises [external] (node:fs/promises, cjs)", ((__turbopack_context__, module, exports) => {
@@ -271,8 +292,10 @@ async function stampPdf(enquiry, mappings) {
     const input = await __TURBOPACK__imported__module__$5b$externals$5d2f$node$3a$fs$2f$promises__$5b$external$5d$__$28$node$3a$fs$2f$promises$2c$__cjs$29$__["default"].readFile(TEMPLATE);
     const pdf = await __TURBOPACK__imported__module__$5b$project$5d2f$ENTRY$2d$PORTAL$2f$node_modules$2f$pdf$2d$lib$2f$es$2f$api$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["PDFDocument"].load(input);
     const mappedKeys = new Set(mappings.map((mapping)=>mapping.field_key));
-    for (const [key, value] of Object.entries(enquiry)){
-        if (value && !mappedKeys.has(key) && !NON_PDF_KEYS.has(key)) throw new Error(`No mapping found for field: ${key}`);
+    const submittedFields = new Map(Object.entries(enquiry).filter(([key])=>!NON_PDF_KEYS.has(key)));
+    for (const [key, value] of Object.entries(enquiry.answers ?? {}))submittedFields.set(key, value);
+    for (const [key, value] of submittedFields){
+        if (value && !mappedKeys.has(key)) console.warn(`Unmapped field: ${key}`);
     }
     console.info('MAPPING_SOURCE = SUPABASE');
     const fonts = new Map();
@@ -933,7 +956,7 @@ async function POST(request) {
         const body = await request.json().catch(()=>null);
         if (!body) return jsonError("Invalid request body.", 400);
         if (body.terms_accepted !== true) return jsonError('You must accept the Terms of Use and Privacy/Data Collection Policy.', 400);
-        const questionsResult = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$ENTRY$2d$PORTAL$2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])().from('form_questions').select('*').eq('active', true).order('display_order');
+        const questionsResult = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$ENTRY$2d$PORTAL$2f$lib$2f$supabase$2f$admin$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createAdminClient"])().from('form_questions').select('*').eq('active', true).not('section_id', 'is', null).order('display_order');
         if (questionsResult.error) return jsonError('Unable to load form configuration.', 503);
         const questions = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ENTRY$2d$PORTAL$2f$lib$2f$enquiry$2f$question$2d$validation$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["normalizeQuestions"])(questionsResult.data);
         const answers = body.answers && typeof body.answers === 'object' ? body.answers : body;

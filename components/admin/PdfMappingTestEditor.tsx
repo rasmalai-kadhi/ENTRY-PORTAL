@@ -4,16 +4,9 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { PdfPreview } from '@/components/admin/PdfPreview';
 import type { Enquiry } from '@/types/enquiry';
-import type { PdfAlignment, PdfFieldMapping } from '@/types/pdf-mapping';
+import type { PdfAlignment, PdfFieldDefinition, PdfFieldMapping } from '@/types/pdf-mapping';
 import { Toast } from '@/components/ui/Toast';
 import { BookLoader } from '@/components/ui/BookLoader';
-
-const fields = [
-  ['date', 'Submission Date'], ['enquiryNumber', 'Enquiry ID'], ['course', 'Course'], ['name', 'Full Name'], ['dob', 'Date of Birth'], ['gender', 'Gender'],
-  ['motherName', "Mother's Name"], ['fatherName', "Father's Name"], ['address', 'Address'], ['mobile1', 'Primary Mobile'], ['mobile2', 'Alternate Mobile'], ['email', 'Email'],
-  ['class10Percent', 'Class 10 Percentage'], ['class12Stream', 'Class 12 Stream'], ['class12Percent', 'Class 12 Percentage'], ['physicsMarks', 'Physics Marks'], ['chemistryMarks', 'Chemistry Marks'], ['mathsMarks', 'Mathematics Marks'], ['biologyMarks', 'Biology Marks'], ['csMarks', 'Computer Science Marks'], ['schoolNameWithState', 'School Name and State'],
-  ['neetUgScore', 'NEET UG Score'], ['neetPgScore', 'NEET PG Score'], ['category', 'Admission Category'], ['cuetScoreRank', 'CUET Score / Rank'], ['cetScoreRank', 'UG / PG CET Score / Rank'], ['clatScoreRank', 'CLAT Score / Rank'], ['catScoreRank', 'CAT Score / Percentile'], ['jeeMainsCrl', 'JEE Mains CRL'], ['percentile', 'Overall Percentile'], ['pcmPercent', 'PCM Percentage'], ['pcbPercent', 'PCB Percentage'], ['collegeUniversityName', 'College / University'], ['courses', 'Other Courses'], ['marks', 'Other Marks Information'], ['reference', 'How did you hear about us?'], ['signatureDataUrl', 'Signature'],
-] as const;
 
 type PdfInfo = { document: import('pdfjs-dist').PDFDocumentProxy; width: number; height: number; pageCount: number };
 type Interaction = { id: string; mode: 'move' | 'resize'; startX: number; startY: number; original: PdfFieldMapping };
@@ -34,6 +27,7 @@ export function PdfMappingTestEditor({ initialMappings }: { initialMappings?: Pd
   const renderTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [pdf, setPdf] = useState<PdfInfo | null>(null);
   const [mappings, setMappings] = useState<PdfFieldMapping[]>([]);
+  const [fields, setFields] = useState<[string, string][]>([]);
   const [savedMappings, setSavedMappings] = useState<PdfFieldMapping[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -67,13 +61,14 @@ export function PdfMappingTestEditor({ initialMappings }: { initialMappings?: Pd
         : await fetch('/api/admin/pdf-mappings', { cache: 'no-store' });
       if (mappingsResponse && !mappingsResponse.ok) throw new Error('Unable to load saved PDF mappings.');
       const responseData = mappingsResponse
-        ? await mappingsResponse.json() as { data?: PdfFieldMapping[] }
+        ? await mappingsResponse.json() as { fields?: PdfFieldDefinition[]; mappings?: PdfFieldMapping[] }
         : undefined;
-      const savedMappings = initialMappings ?? responseData?.data ?? [];
+      const savedMappings = initialMappings ?? responseData?.mappings ?? [];
       const nextMappings = savedMappings.map(withId);
       if (!nextMappings.length) throw new Error('No saved PDF mappings found. Run the PDF mapping setup before opening this test page.');
       if (!active) return;
       setPdf({ document, width: viewport.width, height: viewport.height, pageCount: document.numPages });
+      setFields((responseData?.fields ?? []).map(field => [field.field_key, field.label]));
       setFitScale(Math.min(1, Math.max(.35, ((stageRef.current?.clientWidth ?? 900) - 36) / viewport.width)));
       setMappings(cloneMappings(nextMappings));
       setSavedMappings(cloneMappings(nextMappings));
@@ -114,7 +109,7 @@ export function PdfMappingTestEditor({ initialMappings }: { initialMappings?: Pd
   }
   function undo() { const previous = history.at(-1); if (!previous) return; setFuture(next => [cloneMappings(mappings), ...next]); setMappings(cloneMappings(previous)); setHistory(history.slice(0, -1)); }
   function redo() { const next = future[0]; if (!next) return; setHistory(previous => [...previous, cloneMappings(mappings)]); setMappings(cloneMappings(next)); setFuture(future.slice(1)); }
-  async function save() { if (saving) return; setSaving(true); try { const response = await fetch('/api/admin/pdf-mappings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mappings }) }); if (!response.ok) { setNotice('Could not save mappings.'); return; } const refreshedResponse = await fetch('/api/admin/pdf-mappings', { cache: 'no-store' }); const refreshed = await refreshedResponse.json() as { data?: PdfFieldMapping[] }; const nextMappings = (refreshed.data ?? []).map(withId); setMappings(cloneMappings(nextMappings)); setSavedMappings(cloneMappings(nextMappings)); setNotice('Mappings saved to Supabase and preview refreshed.'); } catch { setNotice('Could not save mappings.'); } finally { setSaving(false); } }
+  async function save() { if (saving) return; setSaving(true); try { const response = await fetch('/api/admin/pdf-mappings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mappings }) }); if (!response.ok) { setNotice('Could not save mappings.'); return; } const refreshedResponse = await fetch('/api/admin/pdf-mappings', { cache: 'no-store' }); const refreshed = await refreshedResponse.json() as { fields?: PdfFieldDefinition[]; mappings?: PdfFieldMapping[] }; const nextMappings = (refreshed.mappings ?? []).map(withId); setFields((refreshed.fields ?? []).map(field => [field.field_key, field.label])); setMappings(cloneMappings(nextMappings)); setSavedMappings(cloneMappings(nextMappings)); setNotice('Mappings saved to Supabase and preview refreshed.'); } catch { setNotice('Could not save mappings.'); } finally { setSaving(false); } }
   function resetSaved() { snapshot(); setMappings(cloneMappings(savedMappings)); setSelectedId(null); }
   function resetDefaults() { snapshot(); setMappings(cloneMappings(savedMappings)); setSelectedId(null); setNotice('Reset to the current saved Supabase mappings.'); }
   async function changePage(next: number) { if (!pdf || next < 1 || next > pdf.pageCount) return; const page = await pdf.document.getPage(next); const viewport = page.getViewport({ scale: 1 }); setPdf({ ...pdf, width: viewport.width, height: viewport.height }); setPageNumber(next); setSelectedId(null); }
