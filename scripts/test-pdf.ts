@@ -2,11 +2,53 @@ import fs from 'node:fs/promises';
 import { generateEnquiryPdf } from '@/lib/pdf/generate';
 import type { Enquiry } from '@/types/enquiry';
 
-const sample = { enquiryNumber: 'ENQ-TEST-0001', date: '19/08/2026', course: 'MBBS', name: 'Test Candidate', dob: '01/01/2000', gender: 'M', motherName: 'Mother', fatherName: 'Father', address: 'Test Address', mobile1: '9999999999', mobile2: '', email: 'test@example.com', class10Percent: '90', class12Stream: 'SCIENCE', class12Percent: '88', physicsMarks: '90', chemistryMarks: '91', mathsMarks: '92', biologyMarks: '93', csMarks: '', schoolNameWithState: 'Test School, Delhi', neetUgScore: '650', neetPgScore: '', category: 'GEN', cuetScoreRank: '', cetScoreRank: '', clatScoreRank: '', catScoreRank: '', jeeMainsCrl: '', percentile: '', pcmPercent: '', pcbPercent: '', collegeUniversityName: '', courses: '', marks: '', reference: 'Website', description: 'Test', signatureDataUrl: '' } as Enquiry;
+const sample: Enquiry = {
+  enquiryNumber: 'ENQ-20261004-0042',
+  date: '04/10/2026',
+  course: 'MBBS (Bachelor of Medicine & Bachelor of Surgery)',
+  name: 'Aarav Sharma',
+  dob: '2005-08-15',
+  gender: 'M',
+  motherName: 'Sunita Sharma',
+  fatherName: 'Rajesh Sharma',
+  address: 'Plot No. 45, Sector 12, Dwarka, New Delhi - 110078',
+  mobile1: '9876543210',
+  mobile2: '9876543211',
+  email: 'aarav.sharma@example.com',
+  class10Percent: '94.6',
+  class12Stream: 'SCIENCE (PCB)',
+  class12Percent: '91.2',
+  physicsMarks: '92',
+  chemistryMarks: '90',
+  mathsMarks: '88',
+  biologyMarks: '95',
+  csMarks: '',
+  schoolNameWithState: 'Delhi Public School, R.K. Puram, New Delhi',
+  neetUgScore: '665',
+  neetPgScore: '',
+  category: 'General',
+  cuetScoreRank: '',
+  cetScoreRank: '',
+  clatScoreRank: '',
+  catScoreRank: '',
+  jeeMainsCrl: '12450',
+  percentile: '98.75',
+  pcmPercent: '90.0',
+  pcbPercent: '92.33',
+  collegeUniversityName: '',
+  courses: 'B.Sc. Biotechnology',
+  marks: 'KVPY Fellow (Rank 412)',
+  reference: 'Educational Seminar / Web Portal',
+  clientIp: '103.21.244.18',
+  signatureDataUrl: '',
+  answers: {},
+};
+
 async function main() {
-	const pdf = await generateEnquiryPdf(sample);
-	await fs.writeFile('sample-stamped-output.pdf', pdf);
-	console.log('Created sample-stamped-output.pdf');
+  const pdf = await generateEnquiryPdf(sample);
+  await fs.writeFile('sample-computer-generated-bill.pdf', pdf);
+  console.log(`Created sample-computer-generated-bill.pdf (${pdf.length} bytes)`);
 }
 
 void main();
+

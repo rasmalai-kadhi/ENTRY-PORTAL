@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { SiteHeader } from '@/components/site/SiteHeader';
 import { getClientIp } from '@/lib/request/client-ip';
+import { getMaintenanceSettings } from '@/lib/site-settings';
 
 export const metadata: Metadata = {
   title: 'Eduspray Enquiry System',
@@ -13,5 +14,6 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const requestHeaders = await headers();
-  return <html lang="en"><body suppressHydrationWarning><SiteHeader clientIp={getClientIp(requestHeaders)} />{children}</body></html>;
+  const maintenance = await getMaintenanceSettings().catch(() => null);
+  return <html lang="en"><body suppressHydrationWarning><SiteHeader clientIp={getClientIp(requestHeaders)} maintenance={maintenance} />{children}</body></html>;
 }

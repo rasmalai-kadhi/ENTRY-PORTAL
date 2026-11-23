@@ -36,6 +36,7 @@ export interface Enquiry {
   courses: string;
   marks: string;
   reference: string;
+  description?: string;
   signatureDataUrl: string;
   answers?: Record<string, string>;
   termsAccepted?: boolean;

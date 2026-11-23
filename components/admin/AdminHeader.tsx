@@ -75,6 +75,7 @@ export function AdminHeader() {
         <Link className={pathname === '/admin' ? 'active' : ''} href="/admin">Dashboard</Link>
         <Link className={pathname === '/admin/enquiries' ? 'active' : ''} href="/admin/enquiries">Enquiries</Link>
         <Link className={pathname === '/admin/questions' ? 'active' : ''} href="/admin/questions">Questions</Link>
+        <Link className={pathname.startsWith('/admin/maintenance') ? 'active' : ''} href="/admin/maintenance">Maintenance</Link>
       </nav>
       <div className="profile-wrap">
         <button className="profile-button" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span className="avatar">{email ? email[0].toUpperCase() : 'A'}</span><span className="profile-label">Profile</span></button>
@@ -102,7 +103,8 @@ export function AdminHeader() {
               </div>
             ) : (
               <>
-                <button className="profile-menu-link" onClick={() => { router.push('/admin/settings'); setMenuOpen(false); }}>PDF field mapping</button>
+                <button className="profile-menu-link" onClick={() => { router.push('/admin/maintenance'); setMenuOpen(false); }}>Maintenance Mode</button>
+                <button className="profile-menu-link" onClick={() => { router.push('/admin/settings'); setMenuOpen(false); }}>Document &amp; PDF Settings</button>
                 <button className="profile-menu-link" onClick={() => setEditingDisplayName(true)}>Edit display name</button>
                   <button onClick={signOut} disabled={signingOut}>{signingOut ? 'Signing out...' : 'Log out'}</button>
               </>

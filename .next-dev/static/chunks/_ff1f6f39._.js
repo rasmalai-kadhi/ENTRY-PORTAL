@@ -36,35 +36,6 @@ function SuccessPage() {
             className: "success-panel",
             "aria-labelledby": "success-title",
             children: [
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                    className: "success-decoration success-decoration-top",
-                    "aria-hidden": "true"
-                }, void 0, false, {
-                    fileName: "[project]/app/enquiry/success/page.tsx",
-                    lineNumber: 17,
-                    columnNumber: 9
-                }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                    className: "success-decoration success-decoration-bottom",
-                    "aria-hidden": "true"
-                }, void 0, false, {
-                    fileName: "[project]/app/enquiry/success/page.tsx",
-                    lineNumber: 18,
-                    columnNumber: 9
-                }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                    className: "success-plane",
-                    "aria-hidden": "true",
-                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {}, void 0, false, {
-                        fileName: "[project]/app/enquiry/success/page.tsx",
-                        lineNumber: 19,
-                        columnNumber: 60
-                    }, this)
-                }, void 0, false, {
-                    fileName: "[project]/app/enquiry/success/page.tsx",
-                    lineNumber: 19,
-                    columnNumber: 9
-                }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "success-mark",
                     "aria-hidden": "true",
@@ -72,12 +43,12 @@ function SuccessPage() {
                         children: "✓"
                     }, void 0, false, {
                         fileName: "[project]/app/enquiry/success/page.tsx",
-                        lineNumber: 20,
+                        lineNumber: 17,
                         columnNumber: 58
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/enquiry/success/page.tsx",
-                    lineNumber: 20,
+                    lineNumber: 17,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -85,7 +56,7 @@ function SuccessPage() {
                     children: "Form submitted successfully."
                 }, void 0, false, {
                     fileName: "[project]/app/enquiry/success/page.tsx",
-                    lineNumber: 21,
+                    lineNumber: 18,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
@@ -96,13 +67,13 @@ function SuccessPage() {
                             children: "Eduspray."
                         }, void 0, false, {
                             fileName: "[project]/app/enquiry/success/page.tsx",
-                            lineNumber: 22,
+                            lineNumber: 19,
                             columnNumber: 82
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/enquiry/success/page.tsx",
-                    lineNumber: 22,
+                    lineNumber: 19,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -110,12 +81,12 @@ function SuccessPage() {
                     "aria-hidden": "true",
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {}, void 0, false, {
                         fileName: "[project]/app/enquiry/success/page.tsx",
-                        lineNumber: 23,
+                        lineNumber: 20,
                         columnNumber: 61
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/enquiry/success/page.tsx",
-                    lineNumber: 23,
+                    lineNumber: 20,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -127,7 +98,7 @@ function SuccessPage() {
                             "aria-hidden": "true"
                         }, void 0, false, {
                             fileName: "[project]/app/enquiry/success/page.tsx",
-                            lineNumber: 25,
+                            lineNumber: 22,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -135,20 +106,20 @@ function SuccessPage() {
                             children: "Enquiry Reference:"
                         }, void 0, false, {
                             fileName: "[project]/app/enquiry/success/page.tsx",
-                            lineNumber: 26,
+                            lineNumber: 23,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
                             children: enquiryNumber || 'Pending'
                         }, void 0, false, {
                             fileName: "[project]/app/enquiry/success/page.tsx",
-                            lineNumber: 27,
+                            lineNumber: 24,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/enquiry/success/page.tsx",
-                    lineNumber: 24,
+                    lineNumber: 21,
                     columnNumber: 9
                 }, this)
             ]

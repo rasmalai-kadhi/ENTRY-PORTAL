@@ -7,6 +7,11 @@ import { syncEnquiryToGoogleSheets } from "@/lib/pdf/google-sheets-sync";
 import type { Enquiry } from "@/types/enquiry";
 import { getClientIp } from "@/lib/request/client-ip";
 import { normalizeDob } from "@/lib/enquiry/dob";
+import { cookies } from "next/headers";
+import { getAdminContext } from "@/lib/auth/admin";
+import { getMaintenanceSettings } from '@/lib/site-settings';
+import { isMaintenanceActive } from '@/lib/site-settings-shared';
+import { MAINTENANCE_BYPASS_COOKIE, verifyBypassToken } from "@/lib/maintenance/security";
 
 export const runtime = "nodejs";
 const legacyKeys = ['course', 'name', 'dob', 'gender', 'motherName', 'fatherName', 'address', 'mobile1', 'mobile2', 'email', 'class10Percent', 'class12Stream', 'class12Percent', 'physicsMarks', 'chemistryMarks', 'mathsMarks', 'biologyMarks', 'csMarks', 'schoolNameWithState', 'neetUgScore', 'neetPgScore', 'category', 'cuetScoreRank', 'cetScoreRank', 'clatScoreRank', 'catScoreRank', 'jeeMainsCrl', 'percentile', 'pcmPercent', 'pcbPercent', 'collegeUniversityName', 'courses', 'marks', 'reference', 'signatureDataUrl'];
@@ -19,6 +24,16 @@ export async function POST(request: Request) {
   try {
     const clientIp = getClientIp(request.headers);
     if (!await verifySupabaseConnection()) return jsonError("Database connection unavailable.", 503);
+    const maintenance = await getMaintenanceSettings();
+    if (isMaintenanceActive(maintenance)) {
+      const cookieStore = await cookies();
+      const token = cookieStore.get(MAINTENANCE_BYPASS_COOKIE)?.value;
+      const isBypassed = await verifyBypassToken(token);
+      const admin = await getAdminContext().catch(() => null);
+      if (!isBypassed && !admin) {
+        return jsonError('The enquiry form is temporarily unavailable for maintenance.', 503);
+      }
+    }
     const body = await request.json().catch(() => null) as Record<string, unknown> | null;
     if (!body) return jsonError("Invalid request body.", 400);
     if (body.terms_accepted !== true) return jsonError('You must accept the Terms of Use and Privacy/Data Collection Policy.', 400);
@@ -31,19 +46,32 @@ export async function POST(request: Request) {
     if (!parsed.success) return NextResponse.json({ ok: false, error: "Please check the form fields.", fields: parsed.error.flatten().fieldErrors }, { status: 400 });
     const now = new Date();
     const enquiryNumber = await generateEnquiryNumber();
-    const answerValues = parsed.data as Record<string, string>;
-    const enquiry: Enquiry = { ...answerValues, answers: answerValues, enquiryNumber, date: now.toLocaleDateString("en-GB") } as Enquiry;
+    const rawAnswers = (body.answers && typeof body.answers === 'object' ? body.answers : body) as Record<string, unknown>;
+    const combinedAnswers: Record<string, string> = {
+      ...(typeof rawAnswers === 'object' && rawAnswers ? Object.fromEntries(Object.entries(rawAnswers).map(([k, v]) => [k, String(v ?? '')])) : {}),
+      ...(parsed.data as Record<string, string>),
+      ...(typeof body.signatureDataUrl === 'string' && body.signatureDataUrl ? { signatureDataUrl: body.signatureDataUrl } : {}),
+      ...(typeof body.description === 'string' && body.description ? { description: body.description } : {}),
+    };
+    const enquiry: Enquiry = {
+      ...combinedAnswers,
+      answers: combinedAnswers,
+      enquiryNumber,
+      date: now.toLocaleDateString("en-GB"),
+      description: combinedAnswers.description || '',
+      signatureDataUrl: combinedAnswers.signatureDataUrl || '',
+    } as Enquiry;
     const pdfBytes = await generateEnquiryPdf(enquiry);
     const pdfStoragePath = `${enquiryNumber}/${enquiryNumber}.pdf`;
     const supabase = createAdminClient();
     const { error: uploadError } = await supabase.storage.from("generated-forms").upload(pdfStoragePath, Buffer.from(pdfBytes), { contentType: "application/pdf", upsert: false });
     if (uploadError) throw uploadError;
-    const legacyValues = Object.fromEntries(legacyKeys.map(key => [key, answerValues[key] ?? '']));
-    const { error: insertError } = await supabase.from("enquiries").insert({ ...legacyValues, answers: answerValues, date: enquiry.date, enquiry_number: enquiryNumber, client_ip: clientIp, terms_accepted: true, terms_accepted_at: now.toISOString(), terms_version: TERMS_VERSION, privacy_version: PRIVACY_VERSION, submitted_at: now.toISOString(), pdf_storage_path: pdfStoragePath, status: "submitted" });
+    const legacyValues = Object.fromEntries(legacyKeys.map(key => [key, combinedAnswers[key] ?? '']));
+    const { error: insertError } = await supabase.from("enquiries").insert({ ...legacyValues, answers: combinedAnswers, date: enquiry.date, enquiry_number: enquiryNumber, client_ip: clientIp, terms_accepted: true, terms_accepted_at: now.toISOString(), terms_version: TERMS_VERSION, privacy_version: PRIVACY_VERSION, submitted_at: now.toISOString(), pdf_storage_path: pdfStoragePath, status: "submitted" });
     if (insertError) { await supabase.storage.from("generated-forms").remove([pdfStoragePath]); throw insertError; }
     
     // Trigger Google Sheets sync asynchronously (non-blocking)
-    const enquiryForSync = { ...legacyValues, answers: answerValues, enquiry_number: enquiryNumber, date: enquiry.date, client_ip: clientIp, status: "submitted", submitted_at: now.toISOString() } as Record<string, unknown>;
+    const enquiryForSync = { ...legacyValues, answers: combinedAnswers, enquiry_number: enquiryNumber, date: enquiry.date, client_ip: clientIp, status: "submitted", submitted_at: now.toISOString() } as Record<string, unknown>;
     syncEnquiryToGoogleSheets(enquiryForSync).then(result => {
       if (result.success) {
         console.log(`[SYNC SUCCESS] Enquiry ${enquiryNumber} synced to Google Sheets (Row: ${result.rowId})`);

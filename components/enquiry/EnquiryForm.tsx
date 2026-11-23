@@ -24,7 +24,18 @@ export function EnquiryForm({ initialClientIp }: { initialClientIp: string }) {
   const [questions, setQuestions] = useState<FormQuestion[] | null>(null);
   const [sections, setSections] = useState<FormSection[] | null>(null);
   const [loadError, setLoadError] = useState(false);
-  useEffect(() => { fetch('/api/form-questions', { cache: 'no-store' }).then(async response => { if (!response.ok) throw new Error(); const result = await response.json(); setQuestions(result.data ?? []); setSections(result.sections ?? []); }).catch(() => setLoadError(true)); }, []);
+
+  useEffect(() => {
+    fetch('/api/form-questions', { cache: 'no-store' })
+      .then(async response => {
+        if (!response.ok) throw new Error();
+        const result = await response.json();
+        setQuestions(result.data ?? []);
+        setSections(result.sections ?? []);
+      })
+      .catch(() => setLoadError(true));
+  }, []);
+
   if (loadError) return <div className="admin-alert" role="alert">Unable to load the enquiry form. Please refresh and try again.</div>;
   if (!questions || !sections) return <div className="card enquiry-form-loading" role="status" aria-label="Loading enquiry form"><SkeletonLine width="42%" height={24} /><SkeletonLine width="76%" height={16} /><div className="enquiry-form-skeleton-fields"><SkeletonLine height={44} /><SkeletonLine height={44} /><SkeletonLine height={44} /><SkeletonLine height={44} /></div></div>;
   if (!sections.length) return <div className="card">The enquiry form is not available right now.</div>;
@@ -83,7 +94,7 @@ function DynamicQuestionForm({ questions, sections: configuredSections, initialC
       <div className="step-actions">{currentStep > 0 && <Button variant="secondary" onClick={previousStep} disabled={isSubmitting}>Back</Button>}{currentStep < sections.length - 1 ? <Button type="button" onClick={nextStep} disabled={isSubmitting}>Next</Button> : <Button className="form-submit" type="submit" disabled={!isValid || !consent || isSubmitting}>{isSubmitting ? <><span className="submit-spinner" aria-hidden="true" />Submitting...</> : 'Submit Enquiry'}</Button>}</div>
       <p className="form-connection-status" aria-live="polite">Network record: <strong>{initialClientIp}</strong>. This portal collects IP addresses as described in the <a href="/privacy">Privacy/Data Collection Policy</a>.</p>
     </form>
-    {isSubmissionActive && <div className="submission-overlay" role="status" aria-label="Submitting enquiry"><BookLoader text="Submitting..." /></div>}
+    {isSubmissionActive && <div className="submission-overlay" role="status" aria-label="Submitting enquiry"><BookLoader text="Submitting your enquiry..." /></div>}
     </div>
     {submissionError && <Toast message={submissionError} error onClose={() => setSubmissionError(null)} />}
   </>;

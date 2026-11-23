@@ -48,7 +48,33 @@ async function middleware(request) {
         }
     });
     // Refresh the auth session - this will update the session in cookies if needed
-    await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
+    const pathname = request.nextUrl.pathname;
+    const authHeader = request.headers.get('authorization');
+    const hasBearerToken = Boolean(authHeader && authHeader.toLowerCase().startsWith('bearer '));
+    // Protect /api/admin/* endpoints
+    if (pathname.startsWith('/api/admin')) {
+        // GET /api/admin/session is used to check current session status
+        const isSessionStatusCheck = pathname === '/api/admin/session' && request.method === 'GET';
+        if (!isSessionStatusCheck && !user && !hasBearerToken) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$exports$2f$index$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                error: 'Unauthorized: Authentication token or session required.'
+            }, {
+                status: 401,
+                headers: {
+                    'Cache-Control': 'no-store'
+                }
+            });
+        }
+    }
+    // Protect /admin/* UI routes (redirect unauthenticated users to /admin/login)
+    if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
+        if (!user) {
+            const loginUrl = new URL('/admin/login', request.url);
+            loginUrl.searchParams.set('redirect', pathname);
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$exports$2f$index$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(loginUrl);
+        }
+    }
     return response;
 }
 const config = {

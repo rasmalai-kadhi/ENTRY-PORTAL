@@ -1,0 +1,10 @@
+{
+  "id": "global",
+  "maintenance_enabled": false,
+  "maintenance_message": "",
+  "maintenance_start": "2026-10-06T12:07:00.000Z",
+  "maintenance_end": "2026-10-06T12:37:00.000Z",
+  "password_protection_enabled": true,
+  "maintenance_password_hash": "8e76044476ea435651b02533fef3f67856b476c26f22b3a94b752d572a1c4a14",
+  "updated_at": "2026-10-06T12:09:40.636Z"
+}

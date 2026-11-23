@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { getAdminContext } from "@/lib/auth/admin";
 import { syncEnquiryToGoogleSheets } from "@/lib/pdf/google-sheets-sync";
 
 export const runtime = "nodejs";
@@ -13,8 +13,13 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const context = await getAdminContext();
+    if (!context) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await params;
-    const supabase = createAdminClient();
+    const supabase = context.supabase;
 
     // Fetch the enquiry from the database
     const { data: enquiry, error: fetchError } = await supabase
